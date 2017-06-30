@@ -3,7 +3,7 @@ import unittest
 import os  # noqa: F401
 import json  # noqa: F401
 import time
-import requests
+import requests  # noqa: F401
 
 from os import environ
 try:
@@ -75,15 +75,101 @@ class FeatureSetUtilsTest(unittest.TestCase):
     def getContext(self):
         return self.__class__.ctx
 
-    # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
-    def test_your_method(self):
-        # Prepare test objects in workspace if needed using
-        # self.getWsClient().save_objects({'workspace': self.getWsName(),
-        #                                  'objects': []})
-        #
-        # Run your method by
-        # ret = self.getImpl().your_method(self.getContext(), parameters...)
-        #
-        # Check returned data with
-        # self.assertEqual(ret[...], ...) or other unittest methods
-        pass
+    def test_bad_upload_featureset_from_diff_expr_params(self):
+        invalidate_input_params = {
+          'missing_diff_expression_ref': 'diff_expression_ref',
+          'feature_set_name': 'feature_set_name',
+          'p_cutoff': 'p_cutoff',
+          'q_cutoff': 'q_cutoff',
+          'fold_scale_type': 'fold_scale_type',
+          'fold_change_cutoff': 'fold_change_cutoff',
+          'workspace_name': 'workspace_name'
+        }
+        with self.assertRaisesRegexp(
+                    ValueError, '"diff_expression_ref" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
+
+        invalidate_input_params = {
+          'diff_expression_ref': 'diff_expression_ref',
+          'missing_feature_set_name': 'feature_set_name',
+          'p_cutoff': 'p_cutoff',
+          'q_cutoff': 'q_cutoff',
+          'fold_scale_type': 'fold_scale_type',
+          'fold_change_cutoff': 'fold_change_cutoff',
+          'workspace_name': 'workspace_name'
+        }
+        with self.assertRaisesRegexp(
+                    ValueError, '"feature_set_name" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
+
+        invalidate_input_params = {
+          'diff_expression_ref': 'diff_expression_ref',
+          'feature_set_name': 'feature_set_name',
+          'missing_p_cutoff': 'p_cutoff',
+          'q_cutoff': 'q_cutoff',
+          'fold_scale_type': 'fold_scale_type',
+          'fold_change_cutoff': 'fold_change_cutoff',
+          'workspace_name': 'workspace_name'
+        }
+        with self.assertRaisesRegexp(
+                    ValueError, '"p_cutoff" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
+
+        invalidate_input_params = {
+          'diff_expression_ref': 'diff_expression_ref',
+          'feature_set_name': 'feature_set_name',
+          'p_cutoff': 'p_cutoff',
+          'missing_q_cutoff': 'q_cutoff',
+          'fold_scale_type': 'fold_scale_type',
+          'fold_change_cutoff': 'fold_change_cutoff',
+          'workspace_name': 'workspace_name'
+        }
+        with self.assertRaisesRegexp(
+                    ValueError, '"q_cutoff" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
+
+        invalidate_input_params = {
+          'diff_expression_ref': 'diff_expression_ref',
+          'feature_set_name': 'feature_set_name',
+          'p_cutoff': 'p_cutoff',
+          'q_cutoff': 'q_cutoff',
+          'missing_fold_scale_type': 'fold_scale_type',
+          'fold_change_cutoff': 'fold_change_cutoff',
+          'workspace_name': 'workspace_name'
+        }
+        with self.assertRaisesRegexp(
+                    ValueError, '"fold_scale_type" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
+
+        invalidate_input_params = {
+          'diff_expression_ref': 'diff_expression_ref',
+          'feature_set_name': 'feature_set_name',
+          'p_cutoff': 'p_cutoff',
+          'q_cutoff': 'q_cutoff',
+          'fold_scale_type': 'fold_scale_type',
+          'missing_fold_change_cutoff': 'fold_change_cutoff',
+          'workspace_name': 'workspace_name'
+        }
+        with self.assertRaisesRegexp(
+                    ValueError, '"fold_change_cutoff" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
+
+        invalidate_input_params = {
+          'diff_expression_ref': 'diff_expression_ref',
+          'feature_set_name': 'feature_set_name',
+          'p_cutoff': 'p_cutoff',
+          'q_cutoff': 'q_cutoff',
+          'fold_scale_type': 'fold_scale_type',
+          'fold_change_cutoff': 'fold_change_cutoff',
+          'missing_workspace_name': 'workspace_name'
+        }
+        with self.assertRaisesRegexp(
+                    ValueError, '"workspace_name" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)

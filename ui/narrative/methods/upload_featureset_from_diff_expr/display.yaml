@@ -1,0 +1,61 @@
+#
+# define display information
+#
+name: Create FeatureSet From Differential Expression
+
+tooltip: |
+    Create FeatureSet based on given threshold cutoffs
+
+screenshots: []
+
+#
+# define a set of similar methods that might be useful to the user
+#
+method-suggestions :
+    related :
+        []
+    next :
+        []
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    diff_expression_ref :
+        ui-name : |
+            RNA-Seq Differential Expression
+        short-hint : |
+            RNA-Seq Differential Expression
+
+    p_cutoff :
+        ui-name : |
+            P-Value Cutoff
+        short-hint : |
+            P-Value Cutoff
+
+    q_cutoff :
+        ui-name : |
+            Alpha Cutoff
+        short-hint : |
+            q-value (corrected p-value) cutoff
+
+    fold_scale_type :
+        ui-name : |
+            Fold Change Cutoff Type
+        short-hint : |
+            Fold Change Cutoff Type
+
+    fold_change_cutoff :
+        ui-name : |
+            Fold Change Cutoff
+        short-hint : |
+            Absolute value of fold change cutoff
+
+    feature_set_name :
+        ui-name : |
+            Feature Set Name
+        short-hint : |
+            Feature Set Name
+
+description : |
+    <p>Create FeatureSet from RNASeqDifferentialExpression based on given threshold cutoffs<\p>

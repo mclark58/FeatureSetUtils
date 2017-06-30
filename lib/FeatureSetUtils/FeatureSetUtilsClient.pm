@@ -12,6 +12,7 @@ eval {
     $get_time = sub { Time::HiRes::gettimeofday() };
 };
 
+use Bio::KBase::AuthToken;
 
 # Client version should match Impl version
 # This is a Semantic Version number,
@@ -74,6 +75,27 @@ sub new
 	push(@{$self->{headers}}, 'Kbrpc-Errordest', $self->{kbrpc_error_dest});
     }
 
+    #
+    # This module requires authentication.
+    #
+    # We create an auth token, passing through the arguments that we were (hopefully) given.
+
+    {
+	my %arg_hash2 = @args;
+	if (exists $arg_hash2{"token"}) {
+	    $self->{token} = $arg_hash2{"token"};
+	} elsif (exists $arg_hash2{"user_id"}) {
+	    my $token = Bio::KBase::AuthToken->new(@args);
+	    if (!$token->error_message) {
+	        $self->{token} = $token->token;
+	    }
+	}
+	
+	if (exists $self->{token})
+	{
+	    $self->{client}->{token} = $self->{token};
+	}
+    }
 
     my $ua = $self->{client}->ua;	 
     my $timeout = $ENV{CDMI_TIMEOUT} || (30 * 60);	 
@@ -84,6 +106,116 @@ sub new
 }
 
 
+
+
+=head2 upload_featureset_from_diff_expr
+
+  $returnVal = $obj->upload_featureset_from_diff_expr($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a FeatureSetUtils.UploadFeatureSetFromDiffExprInput
+$returnVal is a FeatureSetUtils.UploadFeatureSetFromDiffExprResult
+UploadFeatureSetFromDiffExprInput is a reference to a hash where the following keys are defined:
+	diff_expression_ref has a value which is a FeatureSetUtils.obj_ref
+	feature_set_name has a value which is a string
+	p_cutoff has a value which is a float
+	q_cutoff has a value which is a float
+	fold_scale_type has a value which is a string
+	fold_change_cutoff has a value which is a float
+	workspace_name has a value which is a string
+obj_ref is a string
+UploadFeatureSetFromDiffExprResult is a reference to a hash where the following keys are defined:
+	result_directory has a value which is a string
+	feature_set_ref has a value which is a FeatureSetUtils.obj_ref
+	report_name has a value which is a string
+	report_ref has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a FeatureSetUtils.UploadFeatureSetFromDiffExprInput
+$returnVal is a FeatureSetUtils.UploadFeatureSetFromDiffExprResult
+UploadFeatureSetFromDiffExprInput is a reference to a hash where the following keys are defined:
+	diff_expression_ref has a value which is a FeatureSetUtils.obj_ref
+	feature_set_name has a value which is a string
+	p_cutoff has a value which is a float
+	q_cutoff has a value which is a float
+	fold_scale_type has a value which is a string
+	fold_change_cutoff has a value which is a float
+	workspace_name has a value which is a string
+obj_ref is a string
+UploadFeatureSetFromDiffExprResult is a reference to a hash where the following keys are defined:
+	result_directory has a value which is a string
+	feature_set_ref has a value which is a FeatureSetUtils.obj_ref
+	report_name has a value which is a string
+	report_ref has a value which is a string
+
+
+=end text
+
+=item Description
+
+upload_featureset_from_diff_expr: create a FeatureSet object from a RNASeqDifferentialExpression object
+
+=back
+
+=cut
+
+ sub upload_featureset_from_diff_expr
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function upload_featureset_from_diff_expr (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to upload_featureset_from_diff_expr:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'upload_featureset_from_diff_expr');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "FeatureSetUtils.upload_featureset_from_diff_expr",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'upload_featureset_from_diff_expr',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method upload_featureset_from_diff_expr",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'upload_featureset_from_diff_expr',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -119,7 +251,7 @@ sub status
 sub version {
     my ($self) = @_;
     my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-        method => "${last_module.module_name}.version",
+        method => "FeatureSetUtils.version",
         params => [],
     });
     if ($result) {
@@ -127,16 +259,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => '${last_method.name}',
+                method_name => 'upload_featureset_from_diff_expr',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method ${last_method.name}",
+            error => "Error invoking method upload_featureset_from_diff_expr",
             status_line => $self->{client}->status_line,
-            method_name => '${last_method.name}',
+            method_name => 'upload_featureset_from_diff_expr',
         );
     }
 }
@@ -170,6 +302,167 @@ sub _validate_version {
 }
 
 =head1 TYPES
+
+
+
+=head2 boolean
+
+=over 4
+
+
+
+=item Description
+
+A boolean - 0 for false, 1 for true.
+@range (0, 1)
+
+
+=item Definition
+
+=begin html
+
+<pre>
+an int
+</pre>
+
+=end html
+
+=begin text
+
+an int
+
+=end text
+
+=back
+
+
+
+=head2 obj_ref
+
+=over 4
+
+
+
+=item Description
+
+An X/Y/Z style reference
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 UploadFeatureSetFromDiffExprInput
+
+=over 4
+
+
+
+=item Description
+
+required params:
+diff_expression_ref: RNASeqDifferetialExpression object reference
+feature_set_name:  result FeatureSet object name
+p_cutoff: p value cutoff
+q_cutoff: q value cutoff
+fold_scale_type: one of ["linear", "log2+1", "log10+1"]
+fold_change_cutoff: fold change cutoff
+workspace_name: the name of the workspace it gets saved to
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+diff_expression_ref has a value which is a FeatureSetUtils.obj_ref
+feature_set_name has a value which is a string
+p_cutoff has a value which is a float
+q_cutoff has a value which is a float
+fold_scale_type has a value which is a string
+fold_change_cutoff has a value which is a float
+workspace_name has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+diff_expression_ref has a value which is a FeatureSetUtils.obj_ref
+feature_set_name has a value which is a string
+p_cutoff has a value which is a float
+q_cutoff has a value which is a float
+fold_scale_type has a value which is a string
+fold_change_cutoff has a value which is a float
+workspace_name has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 UploadFeatureSetFromDiffExprResult
+
+=over 4
+
+
+
+=item Description
+
+result_directory: folder path that holds all files generated by upload_featureset_from_diff_expr
+feature_set_ref: generated FeatureSet object reference
+report_name: report name generated by KBaseReport
+report_ref: report reference generated by KBaseReport
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+result_directory has a value which is a string
+feature_set_ref has a value which is a FeatureSetUtils.obj_ref
+report_name has a value which is a string
+report_ref has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+result_directory has a value which is a string
+feature_set_ref has a value which is a FeatureSetUtils.obj_ref
+report_name has a value which is a string
+report_ref has a value which is a string
+
+
+=end text
+
+=back
 
 
 
