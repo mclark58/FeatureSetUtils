@@ -1,0 +1,161 @@
+{
+    "ver": "1.0.0",
+    "authors": [
+        "tgu2"
+    ],
+    "contact": "help@kbase.us",
+    "categories": ["active"],
+    "widgets" : {
+        "input" : "kbaseNarrativeMethodInput",
+        "output" : "no-display"
+    },
+    "parameters": [ 
+        {
+            "id": "diff_expression_ref",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "text",
+            "text_options": {
+                "valid_ws_types": ["KBaseRNASeq.RNASeqDifferentialExpression"]
+            }
+        },
+        {
+            "id" : "p_cutoff",
+            "optional" : false,
+            "advanced" : false,
+            "allow_multiple" : false,
+            "default_values" : [ "0.05" ],    
+            "field_type" : "text",
+            "text_options" : {
+              "validate_as": "float"
+            }
+        },
+        {
+            "id" : "q_cutoff",
+            "optional" : false,
+            "advanced" : false,
+            "allow_multiple" : false,
+            "default_values" : [ "0.05" ],    
+            "field_type" : "text",
+            "text_options" : {
+              "validate_as": "float"
+            }
+        },
+        {
+            "id" : "fold_scale_type",
+            "optional" : false,
+            "advanced" : false,
+            "allow_multiple" : false,
+            "default_values" : [ "log2+1" ],
+            "field_type" : "dropdown",
+            "dropdown_options": 
+            {
+                "options": 
+                [
+                    {
+                      "display": "linear",
+                      "value": "linear"
+                    },
+                    {
+                      "display": "log2(ratio + 1)",
+                      "value": "log2+1"
+                    },
+                    {
+                      "display": "log10(ratio + 1)",
+                      "value": "log10+1"
+                    }
+                ]
+            }
+        },
+        {
+            "id" : "fold_change_cutoff",
+            "optional" : false,
+            "advanced" : false,
+            "allow_multiple" : false,
+            "default_values" : [ "1.5" ],    
+            "field_type" : "text",
+            "text_options" : {
+              "validate_as": "float"
+            }
+        },
+        {
+            "id" : "feature_set_name",
+            "optional" : false,
+            "advanced" : false,
+            "allow_multiple" : false,
+            "default_values" : [ "" ],
+            "field_type" : "text",
+            "text_options" : {
+              "valid_ws_types" : ["KBaseCollections.FeatureSet"],
+              "is_output_name": true
+            }
+        }
+    ],
+    "behavior": {
+        "service-mapping": {
+            "url": "",
+            "name": "FeatureSetUtils",
+            "method": "upload_featureset_from_diff_expr",
+            "input_mapping": [
+                {
+                  "narrative_system_variable": "workspace",
+                  "target_property" : "workspace_name"
+                },
+                {
+                  "input_parameter" : "diff_expression_ref",
+                  "target_type_transform": "resolved-ref",
+                  "target_property" : "diff_expression_ref"
+                },
+                {
+                  "input_parameter" : "p_cutoff",
+                  "target_property" : "p_cutoff"
+                },
+                {
+                  "input_parameter" : "q_cutoff",
+                  "target_property" : "q_cutoff"
+                },
+                {
+                  "input_parameter" : "fold_scale_type",
+                  "target_property" : "fold_scale_type"
+                },
+                {
+                  "input_parameter" : "fold_change_cutoff",
+                  "target_property" : "fold_change_cutoff"
+                },
+                {
+                  "input_parameter" : "feature_set_name",
+                  "target_property" : "feature_set_name"
+                }
+            ],
+            "output_mapping": [
+                {
+                  "service_method_output_path": [0, "result_directory"],
+                  "target_property": "result_directory"
+                },
+                {
+                  "service_method_output_path": [0,"feature_set_ref"],
+                  "target_property": "feature_set_ref"
+                },
+                {
+                  "service_method_output_path": [0,"report_name"],
+                  "target_property": "report_name"
+                },
+                {
+                  "service_method_output_path": [0,"report_ref"],
+                  "target_property": "report_ref"
+                },
+                {
+                  "constant_value": "16",
+                  "target_property": "report_window_line_height"
+                },
+                {
+                  "narrative_system_variable": "workspace",
+                  "target_property": "wsName"
+                }
+            ]
+        }
+    },
+    "job_id_output_field": "docker"
+}
