@@ -209,5 +209,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
         result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(), input_params)[0]
 
         self.assertTrue('result_directory' in result)
-        result_files = os.listdir(result['result_directory'])
-        print result_files
+        self.assertTrue('feature_set_ref' in result)
+        self.assertTrue('report_name' in result)
+        self.assertTrue('report_ref' in result)
