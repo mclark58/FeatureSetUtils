@@ -378,7 +378,7 @@ a string
 
 required params:
 diff_expression_ref: RNASeqDifferetialExpression object reference
-feature_set_name:  result FeatureSet object name
+feature_set_name: result FeatureSet object name
 p_cutoff: p value cutoff
 q_cutoff: q value cutoff
 fold_scale_type: one of ["linear", "log2+1", "log10+1"]

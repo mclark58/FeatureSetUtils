@@ -24,7 +24,7 @@ class FeatureSetUtils:
     ######################################### noqa
     VERSION = "1.0.0"
     GIT_URL = "https://github.com/Tianhao-Gu/FeatureSetUtils.git"
-    GIT_COMMIT_HASH = "8ffe95e68c61e248f6788b9da07890affc02d017"
+    GIT_COMMIT_HASH = "53a1dfa28add9f5fbe48e5f6577cc1c37928fc95"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -45,7 +45,7 @@ class FeatureSetUtils:
         upload_featureset_from_diff_expr: create a FeatureSet object from a RNASeqDifferentialExpression object
         :param params: instance of type "UploadFeatureSetFromDiffExprInput"
            (required params: diff_expression_ref: RNASeqDifferetialExpression
-           object reference feature_set_name:  result FeatureSet object name
+           object reference feature_set_name: result FeatureSet object name
            p_cutoff: p value cutoff q_cutoff: q value cutoff fold_scale_type:
            one of ["linear", "log2+1", "log10+1"] fold_change_cutoff: fold
            change cutoff workspace_name: the name of the workspace it gets

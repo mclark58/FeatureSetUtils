@@ -51,23 +51,28 @@ class FeatureSetUtilsTest(unittest.TestCase):
         cls.scratch = cls.cfg['scratch']
         cls.callback_url = os.environ['SDK_CALLBACK_URL']
 
+        suffix = int(time.time() * 1000)
+        cls.wsName = "test_kb_stringtie_" + str(suffix)
+        cls.wsClient.create_workspace({'workspace': cls.wsName})
+
+        cls.prepare_data()
+
     @classmethod
     def tearDownClass(cls):
         if hasattr(cls, 'wsName'):
             cls.wsClient.delete_workspace({'workspace': cls.wsName})
             print('Test workspace was deleted')
 
+    @classmethod
+    def prepare_data(cls):
+        # upload differetial expression object
+        cls.diff_expression_ref = '2409/228/1'
+
     def getWsClient(self):
         return self.__class__.wsClient
 
     def getWsName(self):
-        if hasattr(self.__class__, 'wsName'):
-            return self.__class__.wsName
-        suffix = int(time.time() * 1000)
-        wsName = "test_FeatureSetUtils_" + str(suffix)
-        ret = self.getWsClient().create_workspace({'workspace': wsName})  # noqa
-        self.__class__.wsName = wsName
-        return wsName
+        return self.__class__.wsName
 
     def getImpl(self):
         return self.__class__.serviceImpl
@@ -173,3 +178,36 @@ class FeatureSetUtilsTest(unittest.TestCase):
                     ValueError, '"workspace_name" parameter is required, but missing'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
+
+        invalidate_input_params = {
+          'diff_expression_ref': 'diff_expression_ref',
+          'feature_set_name': 'feature_set_name',
+          'p_cutoff': 'p_cutoff',
+          'q_cutoff': 'q_cutoff',
+          'fold_scale_type': 'invalid',
+          'fold_change_cutoff': 'fold_change_cutoff',
+          'workspace_name': 'workspace_name'
+        }
+        with self.assertRaisesRegexp(
+                    ValueError, 'Input fold scale type value \[invalid\] is not valid'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
+
+    def test_upload_featureset_from_diff_expr(self):
+
+        feature_set_name = 'MyFeatureSet'
+        input_params = {
+            'diff_expression_ref': self.diff_expression_ref,
+            'feature_set_name': feature_set_name,
+            'p_cutoff': 0.05,
+            'q_cutoff': 0.05,
+            "fold_scale_type": 'log2+1',
+            "fold_change_cutoff": 1,
+            'workspace_name': self.getWsName()
+        }
+
+        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(), input_params)[0]
+
+        self.assertTrue('result_directory' in result)
+        result_files = os.listdir(result['result_directory'])
+        print result_files

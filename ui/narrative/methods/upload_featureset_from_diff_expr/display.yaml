@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Create FeatureSet From Differential Expression
+name: Create Feature Set From Differential Expression - v1.0.0
 
 tooltip: |
     Create FeatureSet based on given threshold cutoffs
