@@ -115,7 +115,7 @@ class FeatureSetBuilder:
         html_report.append({'path': result_file_path,
                             'name': os.path.basename(result_file_path),
                             'label': os.path.basename(result_file_path),
-                            'description': 'HTML summary report for FeatureSet App'})
+                            'description': 'HTML summary report'})
         return html_report
 
     def _process_diff_expression(self, diff_expression_ref, result_directory):
