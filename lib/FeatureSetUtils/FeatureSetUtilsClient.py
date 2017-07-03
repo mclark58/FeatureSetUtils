@@ -38,7 +38,7 @@ class FeatureSetUtils(object):
         upload_featureset_from_diff_expr: create a FeatureSet object from a RNASeqDifferentialExpression object
         :param params: instance of type "UploadFeatureSetFromDiffExprInput"
            (required params: diff_expression_ref: RNASeqDifferetialExpression
-           object reference feature_set_name:  result FeatureSet object name
+           object reference feature_set_name: result FeatureSet object name
            p_cutoff: p value cutoff q_cutoff: q value cutoff fold_scale_type:
            one of ["linear", "log2+1", "log10+1"] fold_change_cutoff: fold
            change cutoff workspace_name: the name of the workspace it gets
