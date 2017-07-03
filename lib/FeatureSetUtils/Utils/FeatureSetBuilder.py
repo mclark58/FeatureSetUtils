@@ -109,7 +109,7 @@ class FeatureSetBuilder:
                                                           reference_genome_info)
 
                 report_template = report_template.replace('Filtered_Features',
-                                                          len(feature_ids))
+                                                          str(len(feature_ids)))
 
                 report_template = report_template.replace('<tr><td>Feature_IDs</td><td>',
                                                           feature_ids_content)
