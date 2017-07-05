@@ -77,10 +77,11 @@ tr:nth-child(even) {
 <p></p>
 
 <div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Overview')" id="defaultOpen">Overview</button>
+  <button class="tablinks" onclick="openTab(event, 'Up Features')" id="defaultOpen">Up Features</button>
+  <button class="tablinks" onclick="openTab(event, 'Down Features')">Down Features</button>
 </div>
 
-<div id="Overview" class="tabcontent">
+<div id="Up Features" class="tabcontent">
   <table>
     <tr>
         <th>Reference Genome</th>
@@ -94,7 +95,7 @@ tr:nth-child(even) {
     <tr>
         <th>Filtered Features</th>
     </tr>
-    <tr><td>Filtered_Features</td><td>
+    <tr><td>Upper_Filtered_Features</td><td>
   </table>
 
   <p><br/></p>
@@ -103,7 +104,34 @@ tr:nth-child(even) {
     <tr>
         <th onclick="sortTable(0)">Filtered Feature ID</th>
     </tr>
-    <tr><td>Feature_IDs</td><td>
+    <tr><td>Upper_Feature_IDs</td><td>
+  </table>
+</div>
+
+<div id="Down Features" class="tabcontent">
+  <table>
+    <tr>
+        <th>Reference Genome</th>
+    </tr>
+    <tr><td>Reference_Genome_Info</td><td>
+  </table>
+
+  <p><br/></p>
+
+  <table>
+    <tr>
+        <th>Filtered Features</th>
+    </tr>
+    <tr><td>Lower_Filtered_Features</td><td>
+  </table>
+
+  <p><br/></p>
+
+  <table>
+    <tr>
+        <th onclick="sortTable(0)">Filtered Feature ID</th>
+    </tr>
+    <tr><td>Lower_Feature_IDs</td><td>
   </table>
 </div>
 
