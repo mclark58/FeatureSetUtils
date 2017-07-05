@@ -217,10 +217,15 @@ class FeatureSetBuilder:
                 row_fold_change_cutoff = row['log2FoldChange']
 
                 if 'NA' not in [row_p_value, row_q_value, row_fold_change_cutoff]:
-                    matches_condition = (float(row_p_value) > comp_p_value and
-                                         float(row_q_value) > comp_q_value and
-                                         (float(row_fold_change_cutoff) > comp_fold_change_cutoff or
-                                          float(row_fold_change_cutoff) < -comp_fold_change_cutoff))
+                    p_value_condition = ((float(row_p_value) >= comp_p_value) and
+                                         (float(row_p_value) <= 1 - comp_p_value))
+                    q_value_condition = ((float(row_q_value) >= comp_q_value) and
+                                         (float(row_q_value) <= 1 - comp_q_value))
+                    fold_change_condition = ((float(row_fold_change_cutoff) >= comp_fold_change_cutoff) or
+                                             (float(row_fold_change_cutoff) <= -comp_fold_change_cutoff))
+                    matches_condition = (p_value_condition and
+                                         q_value_condition and
+                                         fold_change_condition)
                 else:
                     matches_condition = False
 
