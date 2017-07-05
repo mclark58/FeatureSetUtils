@@ -135,8 +135,12 @@
                   "target_property": "result_directory"
                 },
                 {
-                  "service_method_output_path": [0,"feature_set_ref"],
-                  "target_property": "feature_set_ref"
+                  "service_method_output_path": [0,"up_feature_set_ref"],
+                  "target_property": "up_feature_set_ref"
+                },
+                {
+                  "service_method_output_path": [0,"down_feature_set_ref"],
+                  "target_property": "down_feature_set_ref"
                 },
                 {
                   "service_method_output_path": [0,"report_name"],
