@@ -284,6 +284,18 @@ class FeatureSetBuilder:
 
         self._validate_upload_featureset_from_diff_expr_params(params)
 
+        diff_expression_set_ref = params.get('diff_expression_ref')
+        diff_expr_set_data = self.ws.get_objects2({'objects':
+                                                  [{'ref': 
+                                                   diff_expression_set_ref}]})['data'][0]['data']
+
+        set_items = diff_expr_set_data['items']
+        if len(set_items) > 1:
+            raise ValueError('Differential Expression Matrix Set has more than 1 item')
+
+        diff_expression_ref = diff_expr_set_data['items'][0]['ref']
+        params['diff_expression_ref'] = diff_expression_ref
+
         result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
         self._mkdir_p(result_directory)
 

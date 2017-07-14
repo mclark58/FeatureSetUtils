@@ -84,9 +84,9 @@ class FeatureSetUtilsTest(unittest.TestCase):
         # upload differetial expression object
         dem_data = {
             'data': {'col_ids': ['log2_fold_change', 'p_value', 'q_value'],
-                     'values': [[3.8118222284877, 0.0, 0.0],
-                                [-1.3914043515407, 2.37877578467726e-68, 1.46401755667962e-64], 
-                                [-1.79258539940901, 1.90129429256391e-59, 7.80101048238973e-56]],
+                     'values': [[3.8118222284877, 0.6, 0.6],
+                                [3.3914043515407, 0.6, 0.6], 
+                                [-4.79258539940901, 0.6, 0.6]],
                      'row_ids': ['AT2G01021.TAIR10', 'AT1G29930.TAIR10', 'AT1G29920.TAIR10']},
             'condition_mapping': {'test_condition_1': 'test_condition_1'},
             'type': 'log2_level',
@@ -99,6 +99,20 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                  'data': dem_data,
                                                  'name': 'test_differetial_expression'}]})[0]
         cls.diff_expression_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
+
+        # upload differetial expression set object
+        dem_set_data = {
+            'items': [{'ref': cls.diff_expression_ref, 
+                       'label': 'global Differential Expression Data'}],
+            'description': 'deseq Diff Exp Matrix Set'
+        }
+        data_type = 'KBaseSets.DifferentialExpressionMatrixSet'
+        res = cls.dfu.save_objects({'id': cls.dfu.ws_name_to_id(cls.wsName),
+                                    'objects': [{'type': data_type,
+                                                 'data': dem_set_data,
+                                                 'name': 'test_differetial_expression_matrix_set'}]
+                                    })[0]
+        cls.diff_expression_set_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
     def getWsClient(self):
         return self.__class__.wsClient
@@ -211,7 +225,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
         feature_set_name = 'MyFeatureSet'
         input_params = {
-            'diff_expression_ref': self.diff_expression_ref,
+            'diff_expression_ref': self.diff_expression_set_ref,
             'feature_set_name': feature_set_name,
             'p_cutoff': 0.05,
             'q_cutoff': 0.05,
