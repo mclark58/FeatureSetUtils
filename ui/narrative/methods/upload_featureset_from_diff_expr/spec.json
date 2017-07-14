@@ -18,7 +18,7 @@
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
-                "valid_ws_types": ["KBaseRNASeq.RNASeqDifferentialExpression"]
+                "valid_ws_types": ["KBaseFeatureValues.DifferentialExpressionMatrix"]
             }
         },
         {
@@ -74,7 +74,7 @@
             "optional" : false,
             "advanced" : false,
             "allow_multiple" : false,
-            "default_values" : [ "1.0" ],    
+            "default_values" : [ "1.5" ],    
             "field_type" : "text",
             "text_options" : {
               "validate_as": "float"
