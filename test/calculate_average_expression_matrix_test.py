@@ -106,30 +106,30 @@ class FeatureSetUtilsTest(unittest.TestCase):
     def getContext(self):
         return self.__class__.ctx
 
-    # def test_bad_calculate_average_expression_matrix_params(self):
-    #     invalidate_input_params = {'missing_expression_matrix_ref': 'expression_matrix_ref',
-    #                                'output_suffix': 'output_suffix',
-    #                                'workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, 
-    #                                  '"expression_matrix_ref" parameter is required, but missing'):
-    #         self.getImpl().calculate_average_expression_matrix(self.getContext(),
-    #                                                            invalidate_input_params)
+    def test_bad_calculate_average_expression_matrix_params(self):
+        invalidate_input_params = {'missing_expression_matrix_ref': 'expression_matrix_ref',
+                                   'output_suffix': 'output_suffix',
+                                   'workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, 
+                                     '"expression_matrix_ref" parameter is required, but missing'):
+            self.getImpl().calculate_average_expression_matrix(self.getContext(),
+                                                               invalidate_input_params)
 
-    #     invalidate_input_params = {'expression_matrix_ref': 'expression_matrix_ref',
-    #                                'missing_output_suffix': 'output_suffix',
-    #                                'workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, 
-    #                                  '"output_suffix" parameter is required, but missing'):
-    #         self.getImpl().calculate_average_expression_matrix(self.getContext(),
-    #                                                            invalidate_input_params)
+        invalidate_input_params = {'expression_matrix_ref': 'expression_matrix_ref',
+                                   'missing_output_suffix': 'output_suffix',
+                                   'workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, 
+                                     '"output_suffix" parameter is required, but missing'):
+            self.getImpl().calculate_average_expression_matrix(self.getContext(),
+                                                               invalidate_input_params)
 
-    #     invalidate_input_params = {'expression_matrix_ref': 'expression_matrix_ref',
-    #                                'output_suffix': 'output_suffix',
-    #                                'missing_workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, 
-    #                                  '"workspace_name" parameter is required, but missing'):
-    #         self.getImpl().calculate_average_expression_matrix(self.getContext(),
-    #                                                            invalidate_input_params)
+        invalidate_input_params = {'expression_matrix_ref': 'expression_matrix_ref',
+                                   'output_suffix': 'output_suffix',
+                                   'missing_workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, 
+                                     '"workspace_name" parameter is required, but missing'):
+            self.getImpl().calculate_average_expression_matrix(self.getContext(),
+                                                               invalidate_input_params)
 
     def test_calculate_average_expression_matrix(self):
 
