@@ -218,6 +218,106 @@ upload_featureset_from_diff_expr: create a FeatureSet object from a RNASeqDiffer
     }
 }
  
+
+
+=head2 calculate_average_expression_matrix
+
+  $returnVal = $obj->calculate_average_expression_matrix($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a FeatureSetUtils.CalAveExpressionMatrixInput
+$returnVal is a FeatureSetUtils.CalAveExpressionMatrixResult
+CalAveExpressionMatrixInput is a reference to a hash where the following keys are defined:
+	expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
+	output_suffix has a value which is a string
+	workspace_name has a value which is a string
+obj_ref is a string
+CalAveExpressionMatrixResult is a reference to a hash where the following keys are defined:
+	average_expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
+	report_name has a value which is a string
+	report_ref has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a FeatureSetUtils.CalAveExpressionMatrixInput
+$returnVal is a FeatureSetUtils.CalAveExpressionMatrixResult
+CalAveExpressionMatrixInput is a reference to a hash where the following keys are defined:
+	expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
+	output_suffix has a value which is a string
+	workspace_name has a value which is a string
+obj_ref is a string
+CalAveExpressionMatrixResult is a reference to a hash where the following keys are defined:
+	average_expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
+	report_name has a value which is a string
+	report_ref has a value which is a string
+
+
+=end text
+
+=item Description
+
+calculate_average_expression_matrix: create an average ExpressionMatrix object from a ExpressionMatrix object
+
+=back
+
+=cut
+
+ sub calculate_average_expression_matrix
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function calculate_average_expression_matrix (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to calculate_average_expression_matrix:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'calculate_average_expression_matrix');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "FeatureSetUtils.calculate_average_expression_matrix",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'calculate_average_expression_matrix',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method calculate_average_expression_matrix",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'calculate_average_expression_matrix',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -261,16 +361,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'upload_featureset_from_diff_expr',
+                method_name => 'calculate_average_expression_matrix',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method upload_featureset_from_diff_expr",
+            error => "Error invoking method calculate_average_expression_matrix",
             status_line => $self->{client}->status_line,
-            method_name => 'upload_featureset_from_diff_expr',
+            method_name => 'calculate_average_expression_matrix',
         );
     }
 }
@@ -461,6 +561,89 @@ a reference to a hash where the following keys are defined:
 result_directory has a value which is a string
 up_feature_set_ref has a value which is a FeatureSetUtils.obj_ref
 down_feature_set_ref has a value which is a FeatureSetUtils.obj_ref
+report_name has a value which is a string
+report_ref has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 CalAveExpressionMatrixInput
+
+=over 4
+
+
+
+=item Description
+
+required params:
+expression_matrix_ref: ExpressionMatrix object reference
+output_suffix: output average ExpressionMatrix name suffix
+workspace_name: the name of the workspace it gets saved to
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
+output_suffix has a value which is a string
+workspace_name has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
+output_suffix has a value which is a string
+workspace_name has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 CalAveExpressionMatrixResult
+
+=over 4
+
+
+
+=item Description
+
+average_expression_matrix_ref: generated average ExpressionMatrix object reference
+report_name: report name generated by KBaseReport
+report_ref: report reference generated by KBaseReport
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+average_expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
+report_name has a value which is a string
+report_ref has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+average_expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
 report_name has a value which is a string
 report_ref has a value which is a string
 

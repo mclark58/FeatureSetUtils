@@ -567,12 +567,18 @@ class DataFileUtil(object):
            a list of object references in the form X/Y/Z, where X is the
            workspace name or id, Y is the object name or id, and Z is the
            (optional) object version. In general, always use ids rather than
-           names if possible to avoid race conditions. Optional parameters:
-           ignore_errors - ignore any errors that occur when fetching an
-           object and instead insert a null into the returned list.) ->
-           structure: parameter "object_refs" of list of String, parameter
-           "ignore_errors" of type "boolean" (A boolean - 0 for false, 1 for
-           true. @range (0, 1))
+           names if possible to avoid race conditions. A reference path may
+           be specified by separating references by a semicolon, e.g.
+           4/5/6;5/7/2;8/9/4 specifies that the user wishes to retrieve the
+           fourth version of the object with id 9 in workspace 8, and that
+           there exists a reference path from the sixth version of the object
+           with id 5 in workspace 4, to which the user has access. The user
+           may or may not have access to workspaces 5 and 8. Optional
+           parameters: ignore_errors - ignore any errors that occur when
+           fetching an object and instead insert a null into the returned
+           list.) -> structure: parameter "object_refs" of list of String,
+           parameter "ignore_errors" of type "boolean" (A boolean - 0 for
+           false, 1 for true. @range (0, 1))
         :returns: instance of type "GetObjectsResults" (Results from the
            get_objects function. list<ObjectData> data - the returned
            objects.) -> structure: parameter "data" of list of type

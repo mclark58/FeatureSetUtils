@@ -337,6 +337,10 @@ class Application(object):
                              name='FeatureSetUtils.upload_featureset_from_diff_expr',
                              types=[dict])
         self.method_authentication['FeatureSetUtils.upload_featureset_from_diff_expr'] = 'required'  # noqa
+        self.rpc_service.add(impl_FeatureSetUtils.calculate_average_expression_matrix,
+                             name='FeatureSetUtils.calculate_average_expression_matrix',
+                             types=[dict])
+        self.method_authentication['FeatureSetUtils.calculate_average_expression_matrix'] = 'required'  # noqa
         self.rpc_service.add(impl_FeatureSetUtils.status,
                              name='FeatureSetUtils.status',
                              types=[dict])
