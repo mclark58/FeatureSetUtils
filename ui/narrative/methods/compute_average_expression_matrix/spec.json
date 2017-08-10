@@ -26,7 +26,7 @@
             "optional" : false,
             "advanced" : true,
             "allow_multiple" : false,
-            "default_values" : [ "" ],
+            "default_values" : [ "_average" ],
             "field_type" : "text",
             "text_options" : {
             }
