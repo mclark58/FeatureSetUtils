@@ -180,6 +180,24 @@ public class FeatureSetUtilsClient {
         return res.get(0);
     }
 
+    /**
+     * <p>Original spec-file function name: calculate_average_expression_matrix</p>
+     * <pre>
+     * calculate_average_expression_matrix: create an average ExpressionMatrix object from a ExpressionMatrix object
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.featuresetutils.CalAveExpressionMatrixInput CalAveExpressionMatrixInput}
+     * @return   parameter "returnVal" of type {@link us.kbase.featuresetutils.CalAveExpressionMatrixResult CalAveExpressionMatrixResult}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public CalAveExpressionMatrixResult calculateAverageExpressionMatrix(CalAveExpressionMatrixInput params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<CalAveExpressionMatrixResult>> retType = new TypeReference<List<CalAveExpressionMatrixResult>>() {};
+        List<CalAveExpressionMatrixResult> res = caller.jsonrpcCall("FeatureSetUtils.calculate_average_expression_matrix", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
     public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};

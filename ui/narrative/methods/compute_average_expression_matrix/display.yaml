@@ -1,0 +1,37 @@
+#
+# define display information
+#
+name: Create Average ExpressionMatrix - v1.0.0
+
+tooltip: |
+    Average ExpressionMatrix values based on conditions
+
+screenshots: []
+
+#
+# define a set of similar methods that might be useful to the user
+#
+method-suggestions :
+    related :
+        []
+    next :
+        []
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+    expression_matrix_ref :
+        ui-name : |
+            Expression Matrix Object
+        short-hint : |
+            Expression Matrix Object
+
+    output_suffix :
+        ui-name : |
+            Average Expression Matrix Name Suffix
+        short-hint : |
+            Average Expression Matrix Name Suffix
+
+description : |
+    <p>Create an average ExpressionMatrix values based on conditions from original ExpressionMatrix<\p>

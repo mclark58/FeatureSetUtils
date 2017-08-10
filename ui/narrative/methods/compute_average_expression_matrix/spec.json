@@ -1,0 +1,80 @@
+{
+    "ver": "1.0.0",
+    "authors": [
+        "tgu2"
+    ],
+    "contact": "help@kbase.us",
+    "categories": ["active"],
+    "widgets" : {
+        "input" : "kbaseNarrativeMethodInput",
+        "output" : "no-display"
+    },
+    "parameters": [ 
+        {
+            "id": "expression_matrix_ref",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "text",
+            "text_options": {
+                "valid_ws_types": ["KBaseFeatureValues.ExpressionMatrix"]
+            }
+        },
+        {
+            "id" : "output_suffix",
+            "optional" : false,
+            "advanced" : true,
+            "allow_multiple" : false,
+            "default_values" : [ "_average" ],
+            "field_type" : "text",
+            "text_options" : {
+            }
+        }
+    ],
+    "behavior": {
+        "service-mapping": {
+            "url": "",
+            "name": "FeatureSetUtils",
+            "method": "calculate_average_expression_matrix",
+            "input_mapping": [
+                {
+                  "narrative_system_variable": "workspace",
+                  "target_property" : "workspace_name"
+                },
+                {
+                  "input_parameter" : "expression_matrix_ref",
+                  "target_type_transform": "resolved-ref",
+                  "target_property" : "expression_matrix_ref"
+                },
+                {
+                  "input_parameter" : "output_suffix",
+                  "target_property" : "output_suffix"
+                }
+            ],
+            "output_mapping": [
+                {
+                  "service_method_output_path": [0,"average_expression_matrix_ref"],
+                  "target_property": "average_expression_matrix_ref"
+                },
+                {
+                  "service_method_output_path": [0,"report_name"],
+                  "target_property": "report_name"
+                },
+                {
+                  "service_method_output_path": [0,"report_ref"],
+                  "target_property": "report_ref"
+                },
+                {
+                  "constant_value": "16",
+                  "target_property": "report_window_line_height"
+                },
+                {
+                  "narrative_system_variable": "workspace",
+                  "target_property": "wsName"
+                }
+            ]
+        }
+    },
+    "job_id_output_field": "docker"
+}
