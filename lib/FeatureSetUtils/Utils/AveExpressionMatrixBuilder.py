@@ -39,7 +39,7 @@ class AveExpressionMatrixBuilder:
                          'workspace_name': workspace_name,
                          'objects_created': objects_created,
                          # 'html_links': output_html_files,
-                         'direct_html_link_index': 0,
+                         # 'direct_html_link_index': 0,
                          'html_window_height': 366,
                          'report_object_name': 'kb_ave_expr_matrix_report_' + str(uuid.uuid4())}
 
