@@ -230,11 +230,12 @@ class FeatureSetBuilder:
                 row_q_value = row['q_value']
                 row_fold_change_cutoff = row['log2_fold_change']
 
-                if 'NA' not in [row_p_value, row_q_value, row_fold_change_cutoff]:
-                    p_value_condition = ((float(row_p_value) >= comp_p_value) and
-                                         (float(row_p_value) <= 1 - comp_p_value))
-                    q_value_condition = ((float(row_q_value) >= comp_q_value) and
-                                         (float(row_q_value) <= 1 - comp_q_value))
+                null_value = set(['NA', 'null', ''])
+                col_value = set([row_p_value, row_q_value, row_fold_change_cutoff])
+
+                if not col_value.intersection(null_value):
+                    p_value_condition = float(row_p_value) >= comp_p_value
+                    q_value_condition = float(row_q_value) >= comp_q_value
                     up_matches_condition = (p_value_condition and q_value_condition and
                                             (float(row_fold_change_cutoff) >=
                                              comp_fold_change_cutoff))
