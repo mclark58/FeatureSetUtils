@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Create Average ExpressionMatrix - v1.0.0
+name: Create Average ExpressionMatrix - v1.1.0
 
 tooltip: |
     Average ExpressionMatrix values based on conditions

@@ -86,8 +86,10 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'data': {'col_ids': ['log2_fold_change', 'p_value', 'q_value'],
                      'values': [[3.8118222284877, 0.6, 0.6],
                                 [3.3914043515407, 0.6, 0.6], 
-                                [-4.79258539940901, 0.6, 0.6]],
-                     'row_ids': ['AT2G01021.TAIR10', 'AT1G29930.TAIR10', 'AT1G29920.TAIR10']},
+                                [-4.79258539940901, 0.6, 0.6],
+                                [0.6, 0.6, 0.6]],
+                     'row_ids': ['AT2G01021.TAIR10', 'AT1G29930.TAIR10', 
+                                 'AT1G29920.TAIR10', 'AT1G29940.TAIR10']},
             'condition_mapping': {'test_condition_1': 'test_condition_1'},
             'type': 'log2_level',
             'scale': '1.0',
@@ -114,6 +116,35 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                     })[0]
         cls.diff_expression_set_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
+        # upload expression matrix object
+        uploaded_file = cls.dfu.file_to_shock({'file_path': genbank_file_path,
+                                               'make_handle': 1
+                                               })
+        file_handle = uploaded_file['handle']
+
+        expression_matrix_data = {
+            'numerical_interpretation': 'FPKM',
+            'genome_id': cls.genome_ref,
+            'mapped_rnaseq_alignment': {},
+            'condition': 'condition',
+            'file': file_handle,
+            'expression_levels': {'AT2G01021.TAIR10': 1, 
+                                  'AT1G29930.TAIR10': 2, 
+                                  'AT1G29920.TAIR10': 3,
+                                  'AT1G29940.TAIR10': 4},
+            'tpm_expression_levels': {'AT2G01021.TAIR10': 0.1, 
+                                      'AT1G29930.TAIR10': 0.2, 
+                                      'AT1G29920.TAIR10': 0.3,
+                                      'AT1G29940.TAIR10': 0.4}
+        }
+        data_type = 'KBaseRNASeq.RNASeqExpression'
+        res = cls.dfu.save_objects({'id': cls.dfu.ws_name_to_id(cls.wsName),
+                                    'objects': [{'type': data_type,
+                                                 'data': expression_matrix_data,
+                                                 'name': 'test_expression_matrix'}]
+                                    })[0]
+        cls.expression_matrix_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
+
     def getWsClient(self):
         return self.__class__.wsClient
 
@@ -128,7 +159,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
     def test_bad_upload_featureset_from_diff_expr_params(self):
         invalidate_input_params = {'missing_diff_expression_ref': 'diff_expression_ref',
-                                   'feature_set_name': 'feature_set_name',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
                                    'fold_scale_type': 'fold_scale_type',
@@ -140,19 +170,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                             invalidate_input_params)
 
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'missing_feature_set_name': 'feature_set_name',
-                                   'p_cutoff': 'p_cutoff',
-                                   'q_cutoff': 'q_cutoff',
-                                   'fold_scale_type': 'fold_scale_type',
-                                   'fold_change_cutoff': 'fold_change_cutoff',
-                                   'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, 
-                                     '"feature_set_name" parameter is required, but missing'):
-            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                            invalidate_input_params)
-
-        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'feature_set_name': 'feature_set_name',
                                    'missing_p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
                                    'fold_scale_type': 'fold_scale_type',
@@ -163,7 +180,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                             invalidate_input_params)
 
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'feature_set_name': 'feature_set_name',
                                    'p_cutoff': 'p_cutoff',
                                    'missing_q_cutoff': 'q_cutoff',
                                    'fold_scale_type': 'fold_scale_type',
@@ -174,7 +190,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                             invalidate_input_params)
 
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'feature_set_name': 'feature_set_name',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
                                    'missing_fold_scale_type': 'fold_scale_type',
@@ -186,7 +201,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                             invalidate_input_params)
 
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'feature_set_name': 'feature_set_name',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
                                    'fold_scale_type': 'fold_scale_type',
@@ -198,7 +212,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                             invalidate_input_params)
 
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'feature_set_name': 'feature_set_name',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
                                    'fold_scale_type': 'fold_scale_type',
@@ -210,7 +223,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                             invalidate_input_params)
 
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'feature_set_name': 'feature_set_name',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
                                    'fold_scale_type': 'invalid',
@@ -226,6 +238,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
         feature_set_name = 'MyFeatureSet'
         input_params = {
             'diff_expression_ref': self.diff_expression_set_ref,
+            'expression_matrix_ref': self.expression_matrix_ref,
             'feature_set_name': feature_set_name,
             'p_cutoff': 0.05,
             'q_cutoff': 0.05,
@@ -244,5 +257,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
         self.assertTrue(all(x in result_files for x in expect_result_files))
         self.assertTrue('up_feature_set_ref' in result)
         self.assertTrue('down_feature_set_ref' in result)
+        self.assertTrue('filtered_expression_matrix_ref' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
