@@ -117,27 +117,27 @@ class FeatureSetUtilsTest(unittest.TestCase):
         cls.diff_expression_set_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
         # upload expression matrix object
-        uploaded_file = cls.dfu.file_to_shock({'file_path': genbank_file_path,
-                                               'make_handle': 1
-                                               })
-        file_handle = uploaded_file['handle']
-
         expression_matrix_data = {
-            'numerical_interpretation': 'FPKM',
             'genome_id': cls.genome_ref,
-            'mapped_rnaseq_alignment': {},
-            'condition': 'condition',
-            'file': file_handle,
-            'expression_levels': {'AT2G01021.TAIR10': 1, 
-                                  'AT1G29930.TAIR10': 2, 
-                                  'AT1G29920.TAIR10': 3,
-                                  'AT1G29940.TAIR10': 4},
-            'tpm_expression_levels': {'AT2G01021.TAIR10': 0.1, 
-                                      'AT1G29930.TAIR10': 0.2, 
-                                      'AT1G29920.TAIR10': 0.3,
-                                      'AT1G29940.TAIR10': 0.4}
+            'scale': 'log2',
+            'type': 'level',
+            'feature_mapping': {'AT2G01021.TAIR10': 'AT2G01021.TAIR10',
+                                'AT1G29930.TAIR10': 'AT1G29930.TAIR10',
+                                'AT1G29920.TAIR10': 'AT1G29920.TAIR10',
+                                'AT1G29940.TAIR10': 'AT1G29940.TAIR10'},
+            'data': {"col_ids": ["test_condition_1",
+                                 "test_condition_2"],
+                     "row_ids": ['AT2G01021.TAIR10',
+                                 'AT1G29930.TAIR10',
+                                 'AT1G29920.TAIR10',
+                                 'AT1G29940.TAIR10'],
+                     "values": [[1, 1],
+                                [2, 2],
+                                [3, 3],
+                                [4, 4]]},
+            'condition_mapping': {'test_replicate': 'test_condition_1'}
         }
-        data_type = 'KBaseRNASeq.RNASeqExpression'
+        data_type = 'KBaseFeatureValues.ExpressionMatrix'
         res = cls.dfu.save_objects({'id': cls.dfu.ws_name_to_id(cls.wsName),
                                     'objects': [{'type': data_type,
                                                  'data': expression_matrix_data,

@@ -273,7 +273,7 @@ class FeatureSetBuilder:
         _filter_expression_matrix: generated filtered expression matrix
         """
 
-        log('start saving KBaseCollections.FeatureSet object')
+        log('start saving KBaseFeatureValues.ExpressionMatrix object')
 
         if isinstance(workspace_name, int) or workspace_name.isdigit():
             workspace_id = workspace_name
@@ -291,23 +291,25 @@ class FeatureSetBuilder:
 
         filtered_expression_matrix_data = expression_matrix_data.copy()
 
-        expression_levels = filtered_expression_matrix_data['expression_levels']
-        tpm_expression_levels = filtered_expression_matrix_data['tpm_expression_levels']
+        data = filtered_expression_matrix_data['data']
 
-        filtered_expression_levels = dict()
-        for gene_id, value in expression_levels.iteritems():
-            if gene_id.split('.')[0] in feature_ids:
-                filtered_expression_levels.update({gene_id: value})
+        row_ids = data['row_ids']
+        values = data['values']
+        filtered_data = data.copy()
 
-        filtered_tpm_expression_levels = dict()
-        for gene_id, value in tpm_expression_levels.iteritems():
-            if gene_id.split('.')[0] in feature_ids:
-                filtered_tpm_expression_levels.update({gene_id: value})
+        filtered_row_ids = list()
+        filtered_values = list()
+        for pos, row_id in enumerate(row_ids):
+            if row_id.split('.')[0] in feature_ids:
+                filtered_row_ids.append(row_id)
+                filtered_values.append(values[pos])
 
-        filtered_expression_matrix_data['expression_levels'] = filtered_expression_levels
-        filtered_expression_matrix_data['tpm_expression_levels'] = filtered_tpm_expression_levels
+        filtered_data['row_ids'] = filtered_row_ids
+        filtered_data['values'] = filtered_values
 
-        object_type = 'KBaseRNASeq.RNASeqExpression'
+        filtered_expression_matrix_data['data'] = filtered_data
+
+        object_type = 'KBaseFeatureValues.ExpressionMatrix'
         save_object_params = {
             'id': workspace_id,
             'objects': [{'type': object_type,
