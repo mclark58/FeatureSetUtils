@@ -4,7 +4,7 @@
         "tgu2"
     ],
     "contact": "help@kbase.us",
-    "categories": ["active"],
+    "categories": ["active","expression","assembly"],
     "widgets" : {
         "input" : "kbaseNarrativeMethodInput",
         "output" : "no-display"

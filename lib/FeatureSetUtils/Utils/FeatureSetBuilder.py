@@ -63,13 +63,13 @@ class FeatureSetBuilder:
 
         output_html_files = self._generate_html_report(up_feature_ids, down_feature_ids, genome_id)
         objects_created = [{'ref': up_feature_set_ref,
-                            'description': 'Upper FeatureSet object'},
+                            'description': 'Upper FeatureSet Object'},
                            {'ref': down_feature_set_ref,
-                            'description': 'Lower FeatureSet object'}]
+                            'description': 'Lower FeatureSet Object'}]
 
         if filtered_expression_matrix_ref:
             objects_created += [{'ref': filtered_expression_matrix_ref,
-                                 'description': 'Filtered ExpressionMatrix object'}]
+                                 'description': 'Filtered ExpressionMatrix Object'}]
 
         report_params = {'message': '',
                          'workspace_name': workspace_name,
