@@ -15,8 +15,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <p>Original spec-file type: UploadFeatureSetFromDiffExprInput</p>
  * <pre>
  * required params:
- * diff_expression_ref: RNASeqDifferetialExpression object reference
- * feature_set_name: result FeatureSet object name
+ * diff_expression_ref: DifferetialExpressionMatrixSet object reference
+ * expression_matrix_ref: ExpressionMatrix object reference
  * p_cutoff: p value cutoff
  * q_cutoff: q value cutoff
  * fold_scale_type: one of ["linear", "log2+1", "log10+1"]
@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "diff_expression_ref",
-    "feature_set_name",
+    "expression_matrix_ref",
     "p_cutoff",
     "q_cutoff",
     "fold_scale_type",
@@ -40,8 +40,8 @@ public class UploadFeatureSetFromDiffExprInput {
 
     @JsonProperty("diff_expression_ref")
     private String diffExpressionRef;
-    @JsonProperty("feature_set_name")
-    private String featureSetName;
+    @JsonProperty("expression_matrix_ref")
+    private String expressionMatrixRef;
     @JsonProperty("p_cutoff")
     private Double pCutoff;
     @JsonProperty("q_cutoff")
@@ -69,18 +69,18 @@ public class UploadFeatureSetFromDiffExprInput {
         return this;
     }
 
-    @JsonProperty("feature_set_name")
-    public String getFeatureSetName() {
-        return featureSetName;
+    @JsonProperty("expression_matrix_ref")
+    public String getExpressionMatrixRef() {
+        return expressionMatrixRef;
     }
 
-    @JsonProperty("feature_set_name")
-    public void setFeatureSetName(String featureSetName) {
-        this.featureSetName = featureSetName;
+    @JsonProperty("expression_matrix_ref")
+    public void setExpressionMatrixRef(String expressionMatrixRef) {
+        this.expressionMatrixRef = expressionMatrixRef;
     }
 
-    public UploadFeatureSetFromDiffExprInput withFeatureSetName(String featureSetName) {
-        this.featureSetName = featureSetName;
+    public UploadFeatureSetFromDiffExprInput withExpressionMatrixRef(String expressionMatrixRef) {
+        this.expressionMatrixRef = expressionMatrixRef;
         return this;
     }
 
@@ -171,7 +171,7 @@ public class UploadFeatureSetFromDiffExprInput {
 
     @Override
     public String toString() {
-        return ((((((((((((((((("UploadFeatureSetFromDiffExprInput"+" [diffExpressionRef=")+ diffExpressionRef)+", featureSetName=")+ featureSetName)+", pCutoff=")+ pCutoff)+", qCutoff=")+ qCutoff)+", foldScaleType=")+ foldScaleType)+", foldChangeCutoff=")+ foldChangeCutoff)+", workspaceName=")+ workspaceName)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((("UploadFeatureSetFromDiffExprInput"+" [diffExpressionRef=")+ diffExpressionRef)+", expressionMatrixRef=")+ expressionMatrixRef)+", pCutoff=")+ pCutoff)+", qCutoff=")+ qCutoff)+", foldScaleType=")+ foldScaleType)+", foldChangeCutoff=")+ foldChangeCutoff)+", workspaceName=")+ workspaceName)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

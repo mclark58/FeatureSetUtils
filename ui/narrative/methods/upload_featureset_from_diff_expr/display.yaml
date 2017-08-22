@@ -1,10 +1,10 @@
 #
 # define display information
 #
-name: Create Feature Set From Differential Expression - v1.0.0
+name: Create Feature Set/Filtered Expression Matrix From Differential Expression - v1.1.0
 
 tooltip: |
-    Create FeatureSet based on given threshold cutoffs
+    Create FeatureSet/Filtered Expression Matrix based on given threshold cutoffs
 
 screenshots: []
 
@@ -23,9 +23,15 @@ method-suggestions :
 parameters :
     diff_expression_ref :
         ui-name : |
-            RNA-Seq Differential Expression
+            Differential Expression Matrix Set
         short-hint : |
-            RNA-Seq Differential Expression
+            Differential Expression Matrix Set
+
+    expression_matrix_ref :
+        ui-name : |
+            Expression Matrix
+        short-hint : |
+            Expression Matrix
 
     p_cutoff :
         ui-name : |
@@ -51,11 +57,5 @@ parameters :
         short-hint : |
             Absolute value of fold change cutoff
 
-    feature_set_name :
-        ui-name : |
-            Feature Set Name
-        short-hint : |
-            Feature Set Name
-
 description : |
-    <p>Create FeatureSet from RNASeqDifferentialExpression based on given threshold cutoffs<\p>
+    <p>Create FeatureSet/Filtered Expression Matrix from RNASeqDifferentialExpression based on given threshold cutoffs<\p>
