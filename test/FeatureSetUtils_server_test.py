@@ -242,8 +242,10 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'feature_set_name': feature_set_name,
             'p_cutoff': 0.05,
             'q_cutoff': 0.05,
-            "fold_scale_type": 'log2+1',
-            "fold_change_cutoff": 1,
+            'fold_scale_type': 'log2+1',
+            'fold_change_cutoff': 1,
+            'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+            'feature_set_suffix': '_feature_set',
             'workspace_name': self.getWsName()
         }
 

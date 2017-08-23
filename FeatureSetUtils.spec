@@ -20,6 +20,8 @@ module FeatureSetUtils {
       q_cutoff: q value cutoff
       fold_scale_type: one of ["linear", "log2+1", "log10+1"]
       fold_change_cutoff: fold change cutoff
+      feature_set_suffix: Result FeatureSet object name suffix
+      filtered_expression_matrix_suffix: Result ExpressionMatrix object name suffix
       workspace_name: the name of the workspace it gets saved to
     */
     typedef structure{
@@ -29,6 +31,8 @@ module FeatureSetUtils {
         float q_cutoff;
         string fold_scale_type;
         float fold_change_cutoff;
+        string feature_set_suffix;
+        string filtered_expression_matrix_suffix;
         string workspace_name;
     } UploadFeatureSetFromDiffExprInput;
 

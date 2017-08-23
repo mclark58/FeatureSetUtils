@@ -90,6 +90,22 @@
             "text_options" : {
               "validate_as": "float"
             }
+        },
+        {
+            "id" : "feature_set_suffix",
+            "optional" : false,
+            "advanced" : true,
+            "allow_multiple" : false,
+            "default_values" : [ "_feature_set" ],
+            "field_type" : "text"
+        },
+        {
+            "id" : "filtered_expression_matrix_suffix",
+            "optional" : false,
+            "advanced" : true,
+            "allow_multiple" : false,
+            "default_values" : [ "_filtered_expression_matrix" ],
+            "field_type" : "text"
         }
     ],
     "behavior": {
@@ -127,6 +143,14 @@
                 {
                   "input_parameter" : "fold_change_cutoff",
                   "target_property" : "fold_change_cutoff"
+                },
+                {
+                  "input_parameter" : "feature_set_suffix",
+                  "target_property" : "feature_set_suffix"
+                },
+                {
+                  "input_parameter" : "filtered_expression_matrix_suffix",
+                  "target_property" : "filtered_expression_matrix_suffix"
                 }
             ],
             "output_mapping": [

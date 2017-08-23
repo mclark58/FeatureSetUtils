@@ -57,5 +57,17 @@ parameters :
         short-hint : |
             Absolute value of fold change cutoff
 
+    feature_set_suffix :
+        ui-name : |
+            FeatureSet Suffix
+        short-hint : |
+            FeatureSet Suffix
+
+    filtered_expression_matrix_suffix :
+        ui-name : |
+            Filtered ExpressionMatrix Suffix
+        short-hint : |
+            Filtered ExpressionMatrix Suffix
+
 description : |
     <p>Create FeatureSet/Filtered Expression Matrix from RNASeqDifferentialExpression based on given threshold cutoffs<\p>
