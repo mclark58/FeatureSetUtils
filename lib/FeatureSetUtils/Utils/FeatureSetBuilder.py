@@ -251,8 +251,8 @@ class FeatureSetBuilder:
                 col_value = set([row_p_value, row_q_value, row_fold_change_cutoff])
 
                 if not col_value.intersection(null_value):
-                    p_value_condition = float(row_p_value) >= comp_p_value
-                    q_value_condition = float(row_q_value) >= comp_q_value
+                    p_value_condition = float(row_p_value) <= comp_p_value
+                    q_value_condition = float(row_q_value) <= comp_q_value
                     up_matches_condition = (p_value_condition and q_value_condition and
                                             (float(row_fold_change_cutoff) >=
                                              comp_fold_change_cutoff))
