@@ -1,10 +1,10 @@
 import time
-import json
 import os
 import errno
 import uuid
 import csv
 import math
+import re
 
 from Workspace.WorkspaceClient import Workspace as Workspace
 from DataFileUtil.DataFileUtilClient import DataFileUtil
@@ -268,7 +268,8 @@ class FeatureSetBuilder:
 
         return list(set(up_feature_ids)), list(set(down_feature_ids))
 
-    def _filter_expression_matrix(self, expression_matrix_ref, feature_ids, workspace_name):
+    def _filter_expression_matrix(self, expression_matrix_ref, feature_ids, 
+                                  workspace_name, filtered_expression_matrix_suffix):
         """
         _filter_expression_matrix: generated filtered expression matrix
         """
@@ -287,7 +288,13 @@ class FeatureSetBuilder:
         expression_matrix_data = expression_matrix_obj['data']
 
         expression_matrix_name = expression_matrix_info[1]
-        filtered_expression_matrix_name = 'filtered_' + expression_matrix_name
+
+        if re.match('.*_*[Ee]xpression_*[Mm]atrix', expression_matrix_name):
+            filtered_expression_matrix_name = re.sub('_*[Ee]xpression_*[Mm]atrix',
+                                                     filtered_expression_matrix_suffix,
+                                                     expression_matrix_name)
+        else:
+            filtered_expression_matrix_name = expression_matrix_name + filtered_expression_matrix_suffix
 
         filtered_expression_matrix_data = expression_matrix_data.copy()
 
@@ -342,6 +349,8 @@ class FeatureSetBuilder:
         q_cutoff: q value cutoff
         fold_scale_type: one of ["linear", "log2+1", "log10+1"]
         fold_change_cutoff: fold change cutoff
+        feature_set_suffix: Result FeatureSet object name suffix
+        filtered_expression_matrix_suffix: Result ExpressionMatrix object name suffix
         workspace_name: the name of the workspace it gets saved to
 
         return:
@@ -376,23 +385,24 @@ class FeatureSetBuilder:
 
         if params.get('expression_matrix_ref'):
             filtered_expression_matrix_ref = self._filter_expression_matrix(
-                                                            params.get('expression_matrix_ref'),
-                                                            up_feature_ids + down_feature_ids,
-                                                            params.get('workspace_name'))
+                                                params.get('expression_matrix_ref'),
+                                                up_feature_ids + down_feature_ids,
+                                                params.get('workspace_name'),
+                                                params.get('filtered_expression_matrix_suffix'))
         else:
             filtered_expression_matrix_ref = None
 
         up_feature_set_ref = self._generate_feature_set(
-                                                    up_feature_ids,
-                                                    genome_id,
-                                                    params.get('workspace_name'),
-                                                    'up_feature_set_' + diff_expression_set_name)
+                            up_feature_ids,
+                            genome_id,
+                            params.get('workspace_name'),
+                            diff_expression_set_name + '_up' + params.get('feature_set_suffix'))
 
         down_feature_set_ref = self._generate_feature_set(
-                                                    down_feature_ids,
-                                                    genome_id,
-                                                    params.get('workspace_name'),
-                                                    'down_feature_set_' + diff_expression_set_name)
+                            down_feature_ids,
+                            genome_id,
+                            params.get('workspace_name'),
+                            diff_expression_set_name + '_down' + params.get('feature_set_suffix'))
 
         returnVal = {'result_directory': result_directory,
                      'up_feature_set_ref': up_feature_set_ref,

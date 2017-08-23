@@ -128,6 +128,8 @@ UploadFeatureSetFromDiffExprInput is a reference to a hash where the following k
 	q_cutoff has a value which is a float
 	fold_scale_type has a value which is a string
 	fold_change_cutoff has a value which is a float
+	feature_set_suffix has a value which is a string
+	filtered_expression_matrix_suffix has a value which is a string
 	workspace_name has a value which is a string
 obj_ref is a string
 UploadFeatureSetFromDiffExprResult is a reference to a hash where the following keys are defined:
@@ -153,6 +155,8 @@ UploadFeatureSetFromDiffExprInput is a reference to a hash where the following k
 	q_cutoff has a value which is a float
 	fold_scale_type has a value which is a string
 	fold_change_cutoff has a value which is a float
+	feature_set_suffix has a value which is a string
+	filtered_expression_matrix_suffix has a value which is a string
 	workspace_name has a value which is a string
 obj_ref is a string
 UploadFeatureSetFromDiffExprResult is a reference to a hash where the following keys are defined:
@@ -487,6 +491,8 @@ p_cutoff: p value cutoff
 q_cutoff: q value cutoff
 fold_scale_type: one of ["linear", "log2+1", "log10+1"]
 fold_change_cutoff: fold change cutoff
+feature_set_suffix: Result FeatureSet object name suffix
+filtered_expression_matrix_suffix: Result ExpressionMatrix object name suffix
 workspace_name: the name of the workspace it gets saved to
 
 
@@ -502,6 +508,8 @@ p_cutoff has a value which is a float
 q_cutoff has a value which is a float
 fold_scale_type has a value which is a string
 fold_change_cutoff has a value which is a float
+feature_set_suffix has a value which is a string
+filtered_expression_matrix_suffix has a value which is a string
 workspace_name has a value which is a string
 
 </pre>
@@ -517,6 +525,8 @@ p_cutoff has a value which is a float
 q_cutoff has a value which is a float
 fold_scale_type has a value which is a string
 fold_change_cutoff has a value which is a float
+feature_set_suffix has a value which is a string
+filtered_expression_matrix_suffix has a value which is a string
 workspace_name has a value which is a string
 
 
