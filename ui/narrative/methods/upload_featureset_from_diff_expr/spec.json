@@ -33,17 +33,6 @@
             }
         },
         {
-            "id" : "p_cutoff",
-            "optional" : false,
-            "advanced" : false,
-            "allow_multiple" : false,
-            "default_values" : [ "0.05" ],    
-            "field_type" : "text",
-            "text_options" : {
-              "validate_as": "float"
-            }
-        },
-        {
             "id" : "q_cutoff",
             "optional" : false,
             "advanced" : false,
@@ -129,7 +118,7 @@
                   "target_property" : "expression_matrix_ref"
                 },
                 {
-                  "input_parameter" : "p_cutoff",
+                  "constant_value"  : 1,
                   "target_property" : "p_cutoff"
                 },
                 {
