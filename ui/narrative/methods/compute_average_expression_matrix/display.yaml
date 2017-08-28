@@ -34,4 +34,10 @@ parameters :
             Average Expression Matrix Name Suffix
 
 description : |
-    <p>Create an average ExpressionMatrix values based on conditions from original ExpressionMatrix<\p>
+    <p>This app creates an average ExpressionMatrix from input ExpressionMatrix</p>
+
+    <p><strong>NOTE:</strong> The average value is computed by averaging values for each condition from ExpressoinMatrix</p>
+
+    <p>This method is one of the steps of the <a href= "http://kbase.us/rna-seq/"> KBase RNA-seq Pipeline </a>, however it can also be run standalone.</p>
+  
+    <p><strong>Team members who developed & deployed algorithm in KBase:</strong> Tianhao Gu</p>
