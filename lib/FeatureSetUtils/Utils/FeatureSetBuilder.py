@@ -47,7 +47,7 @@ class FeatureSetBuilder:
                 raise ValueError('"{}" parameter is required, but missing'.format(p))
 
         fold_scale_type = params.get('fold_scale_type')
-        validate_fold_scale_type = ['linear', 'log2+1', 'log10+1']
+        validate_fold_scale_type = ['linear', 'logarithm']
         if fold_scale_type not in validate_fold_scale_type:
             error_msg = 'Input fold scale type value [{}] is not valid'.format(fold_scale_type)
             raise ValueError(error_msg)
@@ -233,10 +233,10 @@ class FeatureSetBuilder:
         up_feature_ids = []
         down_feature_ids = []
 
-        if fold_scale_type == 'log2+1':
-            comp_fold_change_cutoff = math.log(comp_fold_change_cutoff + 1, 2)
-        elif fold_scale_type == 'log10+1':
-            comp_fold_change_cutoff = math.log10(comp_fold_change_cutoff + 1)
+        # if fold_scale_type == 'log2+1':
+        #     comp_fold_change_cutoff = math.log(comp_fold_change_cutoff + 1, 2)
+        # elif fold_scale_type == 'log10+1':
+        #     comp_fold_change_cutoff = math.log10(comp_fold_change_cutoff + 1)
 
         with open(diff_expr_matrix_file, 'r') as file:
             reader = csv.DictReader(file)
@@ -253,6 +253,11 @@ class FeatureSetBuilder:
                 if not col_value.intersection(null_value):
                     p_value_condition = float(row_p_value) <= comp_p_value
                     q_value_condition = float(row_q_value) <= comp_q_value
+
+                    if fold_scale_type == 'linear':
+                        row_fold_change_cutoff = float(row_fold_change_cutoff)
+                        row_fold_change_cutoff = math.log(row_fold_change_cutoff, 2)
+
                     up_matches_condition = (p_value_condition and q_value_condition and
                                             (float(row_fold_change_cutoff) >=
                                              comp_fold_change_cutoff))

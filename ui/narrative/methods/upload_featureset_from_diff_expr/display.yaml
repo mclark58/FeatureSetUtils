@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Create Feature Set/Filtered Expression Matrix From Differential Expression - v1.1.0
+name: Create Feature Set/Filtered Expression Matrix From Differential Expression - v1.1.1
 
 tooltip: |
     Create FeatureSet/Filtered Expression Matrix based on given threshold cutoffs
@@ -67,9 +67,8 @@ description : |
     <p>This App filters feature ids from DifferentialExpressoinMatrix with input Alpha Cutoff and Fold Change Cutoff. And then produce a subset of ExpressionMatrix only containing those feature ids.</p>
     <p>It also creates FeatureSet containing filtered feature ids</p>
 
-    <p><strong>NOTE:</strong> Fold change value to be compared with is calculated based on Fold Change Cutoff Type and Fold Change Cutoff</p>
-    <p>For instance: If input 'Fold Change Cutoff Type' is [log2+1] and [1] is given as Fold Change Cutoff. The comparing fold change value is log2 (1+1) = 1</p>
-
+    <p>Up and Down features are determined by comparing original fold change values with positive and negative Fold Change Cutoff</p>
+    <p><strong>NOTE:</strong> If 'Fold Change Cutoff Type' is linear, app is calulating the base 2 logarithm of the original fold change value. Then app uses this computed value to compare with positive and negative Fold Change Cutoff</p>
 
     <p>This method is one of the steps of the <a href= "http://kbase.us/rna-seq/"> KBase RNA-seq Pipeline </a>, however it can also be run standalone.</p>
   

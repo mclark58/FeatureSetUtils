@@ -242,8 +242,38 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'feature_set_name': feature_set_name,
             'p_cutoff': 0.05,
             'q_cutoff': 0.05,
-            'fold_scale_type': 'log2+1',
+            'fold_scale_type': 'logarithm',
             'fold_change_cutoff': 1,
+            'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+            'feature_set_suffix': '_feature_set',
+            'workspace_name': self.getWsName()
+        }
+
+        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(), 
+                                                                 input_params)[0]
+
+        self.assertTrue('result_directory' in result)
+        result_files = os.listdir(result['result_directory'])
+        print result_files
+        expect_result_files = ['gene_results.csv']
+        self.assertTrue(all(x in result_files for x in expect_result_files))
+        self.assertTrue('up_feature_set_ref' in result)
+        self.assertTrue('down_feature_set_ref' in result)
+        self.assertTrue('filtered_expression_matrix_ref' in result)
+        self.assertTrue('report_name' in result)
+        self.assertTrue('report_ref' in result)
+
+    def test_upload_featureset_from_diff_expr_linear(self):
+
+        feature_set_name = 'MyFeatureSet'
+        input_params = {
+            'diff_expression_ref': self.diff_expression_set_ref,
+            'expression_matrix_ref': self.expression_matrix_ref,
+            'feature_set_name': feature_set_name,
+            'p_cutoff': 0.05,
+            'q_cutoff': 0.05,
+            'fold_scale_type': 'linear',
+            'fold_change_cutoff': 1.5,
             'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
             'feature_set_suffix': '_feature_set',
             'workspace_name': self.getWsName()
