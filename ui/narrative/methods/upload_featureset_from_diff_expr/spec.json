@@ -48,7 +48,7 @@
             "optional" : false,
             "advanced" : false,
             "allow_multiple" : false,
-            "default_values" : [ "log2+1" ],
+            "default_values" : [ "linear" ],
             "field_type" : "dropdown",
             "dropdown_options": 
             {
@@ -59,12 +59,8 @@
                       "value": "linear"
                     },
                     {
-                      "display": "log2(ratio + 1)",
-                      "value": "log2+1"
-                    },
-                    {
-                      "display": "log10(ratio + 1)",
-                      "value": "log10+1"
+                      "display": "logarithm",
+                      "value": "logarithm"
                     }
                 ]
             }
