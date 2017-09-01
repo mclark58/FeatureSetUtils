@@ -256,6 +256,11 @@ class FeatureSetBuilder:
 
                     if fold_scale_type == 'linear':
                         row_fold_change_cutoff = float(row_fold_change_cutoff)
+                        if row_fold_change_cutoff <= 0:
+                            error_msg = 'Invalid Fold Change value '
+                            error_msg += '[{}] for linear value. \n'.format(row_fold_change_cutoff)
+                            error_msg += 'Available linear FC value should be greater than 0'
+                            raise ValueError(error_msg)
                         row_fold_change_cutoff = math.log(row_fold_change_cutoff, 2)
 
                     up_matches_condition = (p_value_condition and q_value_condition and

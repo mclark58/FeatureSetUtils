@@ -102,6 +102,27 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                  'name': 'test_differetial_expression'}]})[0]
         cls.diff_expression_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
+        #linear
+        dem_data = {
+            'data': {'col_ids': ['log2_fold_change', 'p_value', 'q_value'],
+                     'values': [[1, 0.6, 0.6],
+                                [2, 0.6, 0.6], 
+                                [0.5, 0.6, 0.6],
+                                [0.5, 0.6, 0.6]],
+                     'row_ids': ['AT2G01021.TAIR10', 'AT1G29930.TAIR10', 
+                                 'AT1G29920.TAIR10', 'AT1G29940.TAIR10']},
+            'condition_mapping': {'test_condition_1': 'test_condition_1'},
+            'type': 'linear',
+            'scale': '1.0',
+            'genome_ref': cls.genome_ref
+        }
+        data_type = 'KBaseFeatureValues.DifferentialExpressionMatrix'
+        res = cls.dfu.save_objects({'id': cls.dfu.ws_name_to_id(cls.wsName),
+                                    'objects': [{'type': data_type,
+                                                 'data': dem_data,
+                                                 'name': 'test_differetial_expression'}]})[0]
+        cls.diff_expression_ref_linear = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
+
         # upload differetial expression set object
         dem_set_data = {
             'items': [{'ref': cls.diff_expression_ref, 
@@ -115,6 +136,19 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                  'name': 'test_differetial_expression_matrix_set'}]
                                     })[0]
         cls.diff_expression_set_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
+
+        dem_set_data = {
+            'items': [{'ref': cls.diff_expression_ref_linear, 
+                       'label': 'global Differential Expression Data'}],
+            'description': 'deseq Diff Exp Matrix Set'
+        }
+        data_type = 'KBaseSets.DifferentialExpressionMatrixSet'
+        res = cls.dfu.save_objects({'id': cls.dfu.ws_name_to_id(cls.wsName),
+                                    'objects': [{'type': data_type,
+                                                 'data': dem_set_data,
+                                                 'name': 'test_differetial_expression_matrix_set'}]
+                                    })[0]
+        cls.diff_expression_set_ref_linear = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
         # upload expression matrix object
         expression_matrix_data = {
@@ -267,13 +301,13 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
         feature_set_name = 'MyFeatureSet'
         input_params = {
-            'diff_expression_ref': self.diff_expression_set_ref,
+            'diff_expression_ref': self.diff_expression_set_ref_linear,
             'expression_matrix_ref': self.expression_matrix_ref,
             'feature_set_name': feature_set_name,
             'p_cutoff': 0.05,
             'q_cutoff': 0.05,
             'fold_scale_type': 'linear',
-            'fold_change_cutoff': 1.5,
+            'fold_change_cutoff': 1,
             'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
             'feature_set_suffix': '_feature_set',
             'workspace_name': self.getWsName()
