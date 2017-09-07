@@ -25,7 +25,7 @@ class FeatureSetUtils:
     ######################################### noqa
     VERSION = "1.1.1"
     GIT_URL = "https://github.com/Tianhao-Gu/FeatureSetUtils.git"
-    GIT_COMMIT_HASH = "a28dad0b99234785cd7cd335d569c1fa804b838d"
+    GIT_COMMIT_HASH = "f839bf22cd42effcc1a799124e06006145e68bba"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER

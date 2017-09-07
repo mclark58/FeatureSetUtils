@@ -233,11 +233,6 @@ class FeatureSetBuilder:
         up_feature_ids = []
         down_feature_ids = []
 
-        # if fold_scale_type == 'log2+1':
-        #     comp_fold_change_cutoff = math.log(comp_fold_change_cutoff + 1, 2)
-        # elif fold_scale_type == 'log10+1':
-        #     comp_fold_change_cutoff = math.log10(comp_fold_change_cutoff + 1)
-
         with open(diff_expr_matrix_file, 'r') as file:
             reader = csv.DictReader(file)
 
@@ -271,10 +266,10 @@ class FeatureSetBuilder:
                                               (float(row_fold_change_cutoff) <=
                                                -comp_fold_change_cutoff))
 
-                if up_matches_condition:
-                    up_feature_ids.append(feature_id)
-                elif down_matches_condition:
-                    down_feature_ids.append(feature_id)
+                    if up_matches_condition:
+                        up_feature_ids.append(feature_id)
+                    elif down_matches_condition:
+                        down_feature_ids.append(feature_id)
 
         return list(set(up_feature_ids)), list(set(down_feature_ids))
 
