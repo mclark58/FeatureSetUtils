@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Create Feature Set/Filtered Expression Matrix From Differential Expression - v1.1.1
+name: Create Feature Set/Filtered Expression Matrix From Differential Expression - v1.1.2
 
 tooltip: |
     Create FeatureSet/Filtered Expression Matrix based on given threshold cutoffs
