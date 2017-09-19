@@ -178,7 +178,7 @@ class FeatureSetBuilder:
                 
                 for pos, row_id in enumerate(row_ids):
                     row_value = row_values[pos]
-                    writer.writerow({'gene_id': row_id.split('.')[0],
+                    writer.writerow({'gene_id': row_id,
                                      'log2_fold_change': row_value[0],
                                      'p_value': row_value[1],
                                      'q_value': row_value[2]})
@@ -312,7 +312,7 @@ class FeatureSetBuilder:
         filtered_row_ids = list()
         filtered_values = list()
         for pos, row_id in enumerate(row_ids):
-            if row_id.split('.')[0] in feature_ids:
+            if row_id in feature_ids:
                 filtered_row_ids.append(row_id)
                 filtered_values.append(values[pos])
 
