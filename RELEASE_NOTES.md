@@ -5,3 +5,5 @@
 1.1.0: Add Filtered Expression Matrix From Differential Expression 
 
 1.1.2: Fix all 0 expresion matrix value issue
+
+1.1.3: Remove splitting the gene id
