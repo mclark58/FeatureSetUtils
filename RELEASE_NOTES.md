@@ -7,3 +7,5 @@
 1.1.2: Fix all 0 expresion matrix value issue
 
 1.1.3: Remove splitting the gene id
+
+1.1.4: Update UI version, no code changes involved
