@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Create Feature Set/Filtered Expression Matrix From Differential Expression - v1.1.4
+name: Create Feature Set/Filtered Expression Matrix From Differential Expression - v1.1.5
 
 tooltip: |
     Create FeatureSet/Filtered Expression Matrix based on given threshold cutoffs
@@ -62,6 +62,23 @@ parameters :
             Filtered ExpressionMatrix Suffix
         short-hint : |
             Filtered ExpressionMatrix Suffix
+
+    run_all_combinations:
+        ui-name : |
+          Run All Paired Condition Combinations
+        short-hint : |
+          Run All Paired Condition Combinations
+
+    label_string:
+        ui-name : |
+          Paried Condition
+        short-hint : |
+          Paried Condition (separated by comma)
+
+parameter-groups :
+    condition_pairs :
+        ui-name : Run Partial Paried Condition Combinations
+        short-hint : Select partial paired condition labels to run (Please uncheck 'Run All Paired Condition Combinations')
 
 description : |
     <p>This App filters feature ids from DifferentialExpressoinMatrixSet with input Alpha Cutoff and Fold Change Cutoff. And then produce a subset of ExpressionMatrix only containing those feature ids.</p>
