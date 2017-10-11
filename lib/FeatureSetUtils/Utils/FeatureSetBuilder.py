@@ -139,6 +139,12 @@ class FeatureSetBuilder:
 
         #         result_file.write(report_template)
 
+        with open(result_file_path, 'w') as result_file:
+            with open(os.path.join(os.path.dirname(__file__), 'report_template.html'),
+                      'r') as report_template_file:
+                report_template = report_template_file.read()
+                result_file.write(report_template)
+
         html_report.append({'path': result_file_path,
                             'name': os.path.basename(result_file_path),
                             'label': os.path.basename(result_file_path),
@@ -356,8 +362,11 @@ class FeatureSetBuilder:
         checked = True
         for condition_pair in condition_pairs:
 
-            first_label = condition_pair['condition_label_1'][0].strip()
-            second_label = condition_pair['condition_label_2'][0].strip()
+            label_string = condition_pair['label_string'][0].strip()
+            label_list = map(lambda x: x.strip(), label_string.split(','))
+            first_label = label_list[0]
+            second_label = label_list[1]
+
             if first_label not in available_condition_labels:
                 error_msg = 'Condition: {} is not availalbe. '.format(first_label)
                 error_msg += 'Available conditions: {}'.format(available_condition_labels)
