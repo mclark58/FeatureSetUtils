@@ -2,6 +2,7 @@
 package us.kbase.featuresetutils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -24,6 +25,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * feature_set_suffix: Result FeatureSet object name suffix
  * filtered_expression_matrix_suffix: Result ExpressionMatrix object name suffix
  * workspace_name: the name of the workspace it gets saved to
+ * run_all_combinations: run all paired condition combinations (default true)
+ * or
+ * condition_labels: conditions for expression set object
  * </pre>
  * 
  */
@@ -38,56 +42,62 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "fold_change_cutoff",
     "feature_set_suffix",
     "filtered_expression_matrix_suffix",
-    "workspace_name"
+    "workspace_name",
+    "run_all_combinations",
+    "condition_labels"
 })
 public class UploadFeatureSetFromDiffExprInput {
 
     @JsonProperty("diff_expression_ref")
-    private String diffExpressionRef;
+    private java.lang.String diffExpressionRef;
     @JsonProperty("expression_matrix_ref")
-    private String expressionMatrixRef;
+    private java.lang.String expressionMatrixRef;
     @JsonProperty("p_cutoff")
     private Double pCutoff;
     @JsonProperty("q_cutoff")
     private Double qCutoff;
     @JsonProperty("fold_scale_type")
-    private String foldScaleType;
+    private java.lang.String foldScaleType;
     @JsonProperty("fold_change_cutoff")
     private Double foldChangeCutoff;
     @JsonProperty("feature_set_suffix")
-    private String featureSetSuffix;
+    private java.lang.String featureSetSuffix;
     @JsonProperty("filtered_expression_matrix_suffix")
-    private String filteredExpressionMatrixSuffix;
+    private java.lang.String filteredExpressionMatrixSuffix;
     @JsonProperty("workspace_name")
-    private String workspaceName;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private java.lang.String workspaceName;
+    @JsonProperty("run_all_combinations")
+    private Long runAllCombinations;
+    @JsonProperty("condition_labels")
+    private List<String> conditionLabels;
+    private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
     @JsonProperty("diff_expression_ref")
-    public String getDiffExpressionRef() {
+    public java.lang.String getDiffExpressionRef() {
         return diffExpressionRef;
     }
 
     @JsonProperty("diff_expression_ref")
-    public void setDiffExpressionRef(String diffExpressionRef) {
+    public void setDiffExpressionRef(java.lang.String diffExpressionRef) {
         this.diffExpressionRef = diffExpressionRef;
     }
 
-    public UploadFeatureSetFromDiffExprInput withDiffExpressionRef(String diffExpressionRef) {
+    public UploadFeatureSetFromDiffExprInput withDiffExpressionRef(java.lang.String diffExpressionRef) {
         this.diffExpressionRef = diffExpressionRef;
         return this;
     }
 
     @JsonProperty("expression_matrix_ref")
-    public String getExpressionMatrixRef() {
+    public java.lang.String getExpressionMatrixRef() {
         return expressionMatrixRef;
     }
 
     @JsonProperty("expression_matrix_ref")
-    public void setExpressionMatrixRef(String expressionMatrixRef) {
+    public void setExpressionMatrixRef(java.lang.String expressionMatrixRef) {
         this.expressionMatrixRef = expressionMatrixRef;
     }
 
-    public UploadFeatureSetFromDiffExprInput withExpressionMatrixRef(String expressionMatrixRef) {
+    public UploadFeatureSetFromDiffExprInput withExpressionMatrixRef(java.lang.String expressionMatrixRef) {
         this.expressionMatrixRef = expressionMatrixRef;
         return this;
     }
@@ -123,16 +133,16 @@ public class UploadFeatureSetFromDiffExprInput {
     }
 
     @JsonProperty("fold_scale_type")
-    public String getFoldScaleType() {
+    public java.lang.String getFoldScaleType() {
         return foldScaleType;
     }
 
     @JsonProperty("fold_scale_type")
-    public void setFoldScaleType(String foldScaleType) {
+    public void setFoldScaleType(java.lang.String foldScaleType) {
         this.foldScaleType = foldScaleType;
     }
 
-    public UploadFeatureSetFromDiffExprInput withFoldScaleType(String foldScaleType) {
+    public UploadFeatureSetFromDiffExprInput withFoldScaleType(java.lang.String foldScaleType) {
         this.foldScaleType = foldScaleType;
         return this;
     }
@@ -153,63 +163,93 @@ public class UploadFeatureSetFromDiffExprInput {
     }
 
     @JsonProperty("feature_set_suffix")
-    public String getFeatureSetSuffix() {
+    public java.lang.String getFeatureSetSuffix() {
         return featureSetSuffix;
     }
 
     @JsonProperty("feature_set_suffix")
-    public void setFeatureSetSuffix(String featureSetSuffix) {
+    public void setFeatureSetSuffix(java.lang.String featureSetSuffix) {
         this.featureSetSuffix = featureSetSuffix;
     }
 
-    public UploadFeatureSetFromDiffExprInput withFeatureSetSuffix(String featureSetSuffix) {
+    public UploadFeatureSetFromDiffExprInput withFeatureSetSuffix(java.lang.String featureSetSuffix) {
         this.featureSetSuffix = featureSetSuffix;
         return this;
     }
 
     @JsonProperty("filtered_expression_matrix_suffix")
-    public String getFilteredExpressionMatrixSuffix() {
+    public java.lang.String getFilteredExpressionMatrixSuffix() {
         return filteredExpressionMatrixSuffix;
     }
 
     @JsonProperty("filtered_expression_matrix_suffix")
-    public void setFilteredExpressionMatrixSuffix(String filteredExpressionMatrixSuffix) {
+    public void setFilteredExpressionMatrixSuffix(java.lang.String filteredExpressionMatrixSuffix) {
         this.filteredExpressionMatrixSuffix = filteredExpressionMatrixSuffix;
     }
 
-    public UploadFeatureSetFromDiffExprInput withFilteredExpressionMatrixSuffix(String filteredExpressionMatrixSuffix) {
+    public UploadFeatureSetFromDiffExprInput withFilteredExpressionMatrixSuffix(java.lang.String filteredExpressionMatrixSuffix) {
         this.filteredExpressionMatrixSuffix = filteredExpressionMatrixSuffix;
         return this;
     }
 
     @JsonProperty("workspace_name")
-    public String getWorkspaceName() {
+    public java.lang.String getWorkspaceName() {
         return workspaceName;
     }
 
     @JsonProperty("workspace_name")
-    public void setWorkspaceName(String workspaceName) {
+    public void setWorkspaceName(java.lang.String workspaceName) {
         this.workspaceName = workspaceName;
     }
 
-    public UploadFeatureSetFromDiffExprInput withWorkspaceName(String workspaceName) {
+    public UploadFeatureSetFromDiffExprInput withWorkspaceName(java.lang.String workspaceName) {
         this.workspaceName = workspaceName;
         return this;
     }
 
+    @JsonProperty("run_all_combinations")
+    public Long getRunAllCombinations() {
+        return runAllCombinations;
+    }
+
+    @JsonProperty("run_all_combinations")
+    public void setRunAllCombinations(Long runAllCombinations) {
+        this.runAllCombinations = runAllCombinations;
+    }
+
+    public UploadFeatureSetFromDiffExprInput withRunAllCombinations(Long runAllCombinations) {
+        this.runAllCombinations = runAllCombinations;
+        return this;
+    }
+
+    @JsonProperty("condition_labels")
+    public List<String> getConditionLabels() {
+        return conditionLabels;
+    }
+
+    @JsonProperty("condition_labels")
+    public void setConditionLabels(List<String> conditionLabels) {
+        this.conditionLabels = conditionLabels;
+    }
+
+    public UploadFeatureSetFromDiffExprInput withConditionLabels(List<String> conditionLabels) {
+        this.conditionLabels = conditionLabels;
+        return this;
+    }
+
     @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
+    public Map<java.lang.String, Object> getAdditionalProperties() {
         return this.additionalProperties;
     }
 
     @JsonAnySetter
-    public void setAdditionalProperties(String name, Object value) {
+    public void setAdditionalProperties(java.lang.String name, Object value) {
         this.additionalProperties.put(name, value);
     }
 
     @Override
-    public String toString() {
-        return ((((((((((((((((((((("UploadFeatureSetFromDiffExprInput"+" [diffExpressionRef=")+ diffExpressionRef)+", expressionMatrixRef=")+ expressionMatrixRef)+", pCutoff=")+ pCutoff)+", qCutoff=")+ qCutoff)+", foldScaleType=")+ foldScaleType)+", foldChangeCutoff=")+ foldChangeCutoff)+", featureSetSuffix=")+ featureSetSuffix)+", filteredExpressionMatrixSuffix=")+ filteredExpressionMatrixSuffix)+", workspaceName=")+ workspaceName)+", additionalProperties=")+ additionalProperties)+"]");
+    public java.lang.String toString() {
+        return ((((((((((((((((((((((((("UploadFeatureSetFromDiffExprInput"+" [diffExpressionRef=")+ diffExpressionRef)+", expressionMatrixRef=")+ expressionMatrixRef)+", pCutoff=")+ pCutoff)+", qCutoff=")+ qCutoff)+", foldScaleType=")+ foldScaleType)+", foldChangeCutoff=")+ foldChangeCutoff)+", featureSetSuffix=")+ featureSetSuffix)+", filteredExpressionMatrixSuffix=")+ filteredExpressionMatrixSuffix)+", workspaceName=")+ workspaceName)+", runAllCombinations=")+ runAllCombinations)+", conditionLabels=")+ conditionLabels)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

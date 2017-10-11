@@ -91,6 +91,48 @@
             "allow_multiple" : false,
             "default_values" : [ "_filtered_expression_matrix" ],
             "field_type" : "text"
+        },
+        {
+            "id" : "run_all_combinations",
+            "optional":false,
+            "advanced":false,
+            "allow_multiple":false,
+            "default_values":["1"],
+            "field_type" : "checkbox",
+            "checkbox_options":{
+              "checked_value": 1,
+              "unchecked_value": 0
+            }
+        },
+        {
+          "id": "label_string",
+          "optional": false,
+          "advanced": false,
+          "allow_multiple": false,
+          "default_values": [""],
+          "field_type": "textsubdata",
+          "textsubdata_options" : {
+            "subdata_selection": {
+              "parameter_id" : "diff_expression_ref",
+              "subdata_included" : ["items/[*]/label"],
+              "path_to_subdata": ["items"],
+              "selection_id": "label"
+              },
+              "multiselection":false,
+              "show_src_obj":false,
+              "allow_custom":false
+          }
+        }
+    ],
+      "parameter-groups": [
+        {
+          "id": "condition_pairs",
+          "parameters": [
+            "label_string"
+          ],
+          "optional": true,
+          "allow_multiple": true,
+          "with_border": false
         }
     ],
     "behavior": {
@@ -136,6 +178,18 @@
                 {
                   "input_parameter" : "filtered_expression_matrix_suffix",
                   "target_property" : "filtered_expression_matrix_suffix"
+                },
+                {
+                  "input_parameter" : "condition_pairs",
+                  "target_property" : "condition_pairs"
+                },
+                {
+                  "input_parameter" : "label_string",
+                  "target_property" : "label_string"
+                },
+                {
+                  "input_parameter" : "run_all_combinations",
+                  "target_property" : "run_all_combinations"
                 }
             ],
             "output_mapping": [
@@ -144,16 +198,16 @@
                   "target_property": "result_directory"
                 },
                 {
-                  "service_method_output_path": [0,"up_feature_set_ref"],
-                  "target_property": "up_feature_set_ref"
+                  "service_method_output_path": [0,"up_feature_set_ref_list"],
+                  "target_property": "up_feature_set_ref_list"
                 },
                 {
-                  "service_method_output_path": [0,"down_feature_set_ref"],
-                  "target_property": "down_feature_set_ref"
+                  "service_method_output_path": [0,"down_feature_set_ref_list"],
+                  "target_property": "down_feature_set_ref_list"
                 },
                 {
-                  "service_method_output_path": [0,"filtered_expression_matrix_ref"],
-                  "target_property": "filtered_expression_matrix_ref"
+                  "service_method_output_path": [0,"filtered_expression_matrix_ref_list"],
+                  "target_property": "filtered_expression_matrix_ref_list"
                 },
                 {
                   "service_method_output_path": [0,"report_name"],

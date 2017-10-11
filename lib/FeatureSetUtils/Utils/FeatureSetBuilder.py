@@ -5,6 +5,7 @@ import uuid
 import csv
 import math
 import re
+import itertools
 
 from Workspace.WorkspaceClient import Workspace as Workspace
 from DataFileUtil.DataFileUtilClient import DataFileUtil
@@ -52,22 +53,27 @@ class FeatureSetBuilder:
             error_msg = 'Input fold scale type value [{}] is not valid'.format(fold_scale_type)
             raise ValueError(error_msg)
 
-    def _generate_report(self, up_feature_set_ref, down_feature_set_ref, 
-                         filtered_expression_matrix_ref,
-                         up_feature_ids, down_feature_ids, genome_id, workspace_name):
+    def _generate_report(self, up_feature_set_ref_list, down_feature_set_ref_list, 
+                         filtered_expression_matrix_ref_list, genome_id, workspace_name):
         """
         _generate_report: generate summary report
         """
 
         log('start creating report')
 
-        output_html_files = self._generate_html_report(up_feature_ids, down_feature_ids, genome_id)
-        objects_created = [{'ref': up_feature_set_ref,
-                            'description': 'Upper FeatureSet Object'},
-                           {'ref': down_feature_set_ref,
-                            'description': 'Lower FeatureSet Object'}]
+        output_html_files = self._generate_html_report(up_feature_set_ref_list, 
+                                                       down_feature_set_ref_list, 
+                                                       genome_id)
 
-        if filtered_expression_matrix_ref:
+        objects_created = list()
+        for up_feature_set_ref in up_feature_set_ref_list:
+            objects_created += [{'ref': up_feature_set_ref,
+                                 'description': 'Upper FeatureSet Object'}]
+        for down_feature_set_ref in down_feature_set_ref_list:
+            objects_created += [{'ref': up_feature_set_ref,
+                                 'description': 'Lower FeatureSet Object'}]
+
+        for filtered_expression_matrix_ref in filtered_expression_matrix_ref_list:
             objects_created += [{'ref': filtered_expression_matrix_ref,
                                  'description': 'Filtered ExpressionMatrix Object'}]
 
@@ -86,7 +92,7 @@ class FeatureSetBuilder:
 
         return report_output
 
-    def _generate_html_report(self, up_feature_ids, down_feature_ids, genome_id):
+    def _generate_html_report(self, up_feature_set_ref_list, down_feature_set_ref_list, genome_id):
         """
         _generate_html_report: generate html summary report
         """
@@ -104,34 +110,34 @@ class FeatureSetBuilder:
         reference_genome_info = ''
         reference_genome_info += '{} ({})'.format(genome_name, genome_id)
 
-        uppper_feature_ids_content = ''
-        for feature_id in up_feature_ids:
-            uppper_feature_ids_content += '<tr><td>{}</td><td>'.format(feature_id)
+        # uppper_feature_ids_content = ''
+        # for feature_id in up_feature_ids:
+        #     uppper_feature_ids_content += '<tr><td>{}</td><td>'.format(feature_id)
 
-        lower_feature_ids_content = ''
-        for feature_id in down_feature_ids:
-            lower_feature_ids_content += '<tr><td>{}</td><td>'.format(feature_id)
+        # lower_feature_ids_content = ''
+        # for feature_id in down_feature_ids:
+        #     lower_feature_ids_content += '<tr><td>{}</td><td>'.format(feature_id)
 
-        with open(result_file_path, 'w') as result_file:
-            with open(os.path.join(os.path.dirname(__file__), 'report_template.html'),
-                      'r') as report_template_file:
-                report_template = report_template_file.read()
-                report_template = report_template.replace('Reference_Genome_Info',
-                                                          reference_genome_info)
+        # with open(result_file_path, 'w') as result_file:
+        #     with open(os.path.join(os.path.dirname(__file__), 'report_template.html'),
+        #               'r') as report_template_file:
+        #         report_template = report_template_file.read()
+        #         report_template = report_template.replace('Reference_Genome_Info',
+        #                                                   reference_genome_info)
 
-                report_template = report_template.replace('Upper_Filtered_Features',
-                                                          str(len(up_feature_ids)))
+        #         report_template = report_template.replace('Upper_Filtered_Features',
+        #                                                   str(len(up_feature_ids)))
 
-                report_template = report_template.replace('Lower_Filtered_Features',
-                                                          str(len(down_feature_ids)))
+        #         report_template = report_template.replace('Lower_Filtered_Features',
+        #                                                   str(len(down_feature_ids)))
 
-                report_template = report_template.replace('<tr><td>Upper_Feature_IDs</td><td>',
-                                                          uppper_feature_ids_content)
+        #         report_template = report_template.replace('<tr><td>Upper_Feature_IDs</td><td>',
+        #                                                   uppper_feature_ids_content)
 
-                report_template = report_template.replace('<tr><td>Lower_Feature_IDs</td><td>',
-                                                          lower_feature_ids_content)
+        #         report_template = report_template.replace('<tr><td>Lower_Feature_IDs</td><td>',
+        #                                                   lower_feature_ids_content)
 
-                result_file.write(report_template)
+        #         result_file.write(report_template)
 
         html_report.append({'path': result_file_path,
                             'name': os.path.basename(result_file_path),
@@ -139,7 +145,8 @@ class FeatureSetBuilder:
                             'description': 'HTML summary report'})
         return html_report
 
-    def _process_diff_expression(self, diff_expression_set_ref, result_directory):
+    def _process_diff_expression(self, diff_expression_set_ref, result_directory, 
+                                 condition_label_pair):
         """
         _process_diff_expression: process differential expression object info
         """
@@ -167,21 +174,27 @@ class FeatureSetBuilder:
                                                         [{'ref': 
                                                          diff_expression_ref}]})['data'][0]['data']
 
-            genome_id = diff_expression_data['genome_ref']
-            matrix_data = diff_expression_data['data']
+            label_string = set_item['label']
+            label_list = map(lambda x: x.strip(), label_string.split(','))
+            condition_1 = label_list[0]
+            condition_2 = label_list[1]
 
-            with open(diff_expr_matrix_file, 'ab') as csvfile:
-                
-                row_ids = matrix_data.get('row_ids')
-                row_values = matrix_data.get('values')
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                
-                for pos, row_id in enumerate(row_ids):
-                    row_value = row_values[pos]
-                    writer.writerow({'gene_id': row_id,
-                                     'log2_fold_change': row_value[0],
-                                     'p_value': row_value[1],
-                                     'q_value': row_value[2]})
+            if condition_1 in condition_label_pair and condition_2 in condition_label_pair:
+                genome_id = diff_expression_data['genome_ref']
+                matrix_data = diff_expression_data['data']
+
+                with open(diff_expr_matrix_file, 'ab') as csvfile:
+                    
+                    row_ids = matrix_data.get('row_ids')
+                    row_values = matrix_data.get('values')
+                    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                    
+                    for pos, row_id in enumerate(row_ids):
+                        row_value = row_values[pos]
+                        writer.writerow({'gene_id': row_id,
+                                         'log2_fold_change': row_value[0],
+                                         'p_value': row_value[1],
+                                         'q_value': row_value[2]})
 
         return diff_expr_matrix_file, genome_id
 
@@ -333,6 +346,56 @@ class FeatureSetBuilder:
 
         return filtered_expression_matrix_ref
 
+    def _xor(self, a, b):
+        return bool(a) != bool(b)
+
+    def _check_input_labels(self, condition_pairs, available_condition_labels):
+        """
+        _check_input_labels: check input condition pairs
+        """
+        checked = True
+        for condition_pair in condition_pairs:
+
+            first_label = condition_pair['condition_label_1'][0].strip()
+            second_label = condition_pair['condition_label_2'][0].strip()
+            if first_label not in available_condition_labels:
+                error_msg = 'Condition: {} is not availalbe. '.format(first_label)
+                error_msg += 'Available conditions: {}'.format(available_condition_labels)
+                raise ValueError(error_msg)
+
+            if second_label not in available_condition_labels:
+                error_msg = 'Condition: {} is not availalbe. '.format(second_label)
+                error_msg += 'Available conditions: {}'.format(available_condition_labels)
+                raise ValueError(error_msg)
+
+            if first_label == second_label:
+                raise ValueError('Input conditions are the same')
+
+        return checked
+
+    def _get_condition_labels(self, diff_expression_set_ref):
+        """
+        _get_condition_labels: get all possible condition label pairs
+        """
+        log('getting all possible condition pairs')
+
+        condition_label_pairs = list()
+        available_condition_labels = set()
+        diff_expression_set_obj = self.ws.get_objects2({'objects':
+                                                       [{'ref': diff_expression_set_ref}]
+                                                        })['data'][0]
+        diff_expression_set_data = diff_expression_set_obj['data']
+        items = diff_expression_set_data.get('items')
+        for item in items:
+            label_string = item['label']
+            label_list = map(lambda x: x.strip(), label_string.split(','))
+            condition_label_pairs.append(label_list)
+            map(lambda x: available_condition_labels.add(x), label_list)
+
+        log('all pssible conditon pairs:\n{}'.format(condition_label_pairs))
+
+        return condition_label_pairs, available_condition_labels
+
     def __init__(self, config):
         self.ws_url = config["workspace-url"]
         self.callback_url = config['SDK_CALLBACK_URL']
@@ -360,8 +423,9 @@ class FeatureSetBuilder:
 
         return:
         result_directory: folder path that holds all files generated
-        feature_set_ref: generated FeatureSet object reference
-        filtered_expression_matrix_ref: generated filtered ExpressionMatrix object reference
+        up_feature_set_ref_list: list of generated upper FeatureSet object reference
+        down_feature_set_ref_list: list of generated down FeatureSet object reference
+        filtered_expression_matrix_ref_list: list of generated filtered ExpressionMatrix object reference
         report_name: report name generated by KBaseReport
         report_ref: report reference generated by KBaseReport
         """
@@ -377,46 +441,72 @@ class FeatureSetBuilder:
         result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
         self._mkdir_p(result_directory)
 
-        diff_expr_matrix_file, genome_id = self._process_diff_expression(
-                                                            diff_expression_set_ref,
-                                                            result_directory)
+        (available_condition_label_pairs, 
+         available_condition_labels) = self._get_condition_labels(diff_expression_set_ref)
 
-        up_feature_ids, down_feature_ids = self._process_matrix_file(
+        run_all_combinations = params.get('run_all_combinations')
+        condition_pairs = params.get('condition_pairs')
+        if not self._xor(run_all_combinations, condition_pairs):
+            error_msg = "Invalid input:\nselect 'Run All Paired Condition Combinations' "
+            error_msg += "or provide partial condition pairs. Don't do both or neither"
+            raise ValueError(error_msg)
+
+        if run_all_combinations:
+            condition_label_pairs = available_condition_label_pairs
+        else:
+            if self._check_input_labels(condition_pairs, available_condition_labels):
+                condition_label_pairs = list()
+                for condition_pair in condition_pairs:
+                    condition_labels = [condition_pair.get('condition_label_1')[0].strip(),
+                                        condition_pair.get('condition_label_2')[0].strip()]
+                    condition_label_pairs.append(condition_labels)
+
+        up_feature_set_ref_list = list()
+        down_feature_set_ref_list = list()
+        filtered_expression_matrix_ref_list = list()
+
+        for condition_label_pair in condition_label_pairs:
+            diff_expr_matrix_file, genome_id = self._process_diff_expression(
+                                                                diff_expression_set_ref,
+                                                                result_directory,
+                                                                condition_label_pair)
+
+            up_feature_ids, down_feature_ids = self._process_matrix_file(
                                                                 diff_expr_matrix_file,
                                                                 params.get('p_cutoff'),
                                                                 params.get('q_cutoff'),
                                                                 params.get('fold_scale_type'),
                                                                 params.get('fold_change_cutoff'))
 
-        if params.get('expression_matrix_ref'):
-            filtered_expression_matrix_ref = self._filter_expression_matrix(
+            if params.get('expression_matrix_ref'):
+                filtered_expression_matrix_ref = self._filter_expression_matrix(
                                                 params.get('expression_matrix_ref'),
                                                 up_feature_ids + down_feature_ids,
                                                 params.get('workspace_name'),
                                                 params.get('filtered_expression_matrix_suffix'))
-        else:
-            filtered_expression_matrix_ref = None
+                filtered_expression_matrix_ref_list.append(filtered_expression_matrix_ref)
 
-        up_feature_set_ref = self._generate_feature_set(
-                            up_feature_ids,
-                            genome_id,
-                            params.get('workspace_name'),
-                            diff_expression_set_name + '_up' + params.get('feature_set_suffix'))
+            up_feature_set_ref = self._generate_feature_set(
+                                up_feature_ids,
+                                genome_id,
+                                params.get('workspace_name'),
+                                diff_expression_set_name + '_up' + params.get('feature_set_suffix'))
+            up_feature_set_ref_list.append(up_feature_set_ref)
 
-        down_feature_set_ref = self._generate_feature_set(
-                            down_feature_ids,
-                            genome_id,
-                            params.get('workspace_name'),
-                            diff_expression_set_name + '_down' + params.get('feature_set_suffix'))
+            down_feature_set_ref = self._generate_feature_set(
+                                down_feature_ids,
+                                genome_id,
+                                params.get('workspace_name'),
+                                diff_expression_set_name + '_down' + params.get('feature_set_suffix'))
+            down_feature_set_ref_list.append(down_feature_set_ref)
 
         returnVal = {'result_directory': result_directory,
-                     'up_feature_set_ref': up_feature_set_ref,
-                     'down_feature_set_ref': down_feature_set_ref,
-                     'filtered_expression_matrix_ref': filtered_expression_matrix_ref}
+                     'up_feature_set_ref_list': up_feature_set_ref_list,
+                     'down_feature_set_ref_list': down_feature_set_ref_list,
+                     'filtered_expression_matrix_ref_list': filtered_expression_matrix_ref_list}
 
-        report_output = self._generate_report(up_feature_set_ref, down_feature_set_ref,
-                                              filtered_expression_matrix_ref,
-                                              up_feature_ids, down_feature_ids,
+        report_output = self._generate_report(up_feature_set_ref_list, down_feature_set_ref_list,
+                                              filtered_expression_matrix_ref_list,
                                               genome_id,
                                               params.get('workspace_name'))
         returnVal.update(report_output)
