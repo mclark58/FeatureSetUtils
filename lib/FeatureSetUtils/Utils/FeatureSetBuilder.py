@@ -68,7 +68,7 @@ class FeatureSetBuilder:
             objects_created += [{'ref': up_feature_set_ref,
                                  'description': 'Upper FeatureSet Object'}]
         for down_feature_set_ref in down_feature_set_ref_list:
-            objects_created += [{'ref': up_feature_set_ref,
+            objects_created += [{'ref': down_feature_set_ref,
                                  'description': 'Lower FeatureSet Object'}]
 
         for filtered_expression_matrix_ref in filtered_expression_matrix_ref_list:
@@ -476,7 +476,7 @@ class FeatureSetBuilder:
         filtered_expression_matrix_ref_list = list()
 
         for condition_label_pair in condition_label_pairs:
-            condition_string = '_' + '_'.join(condition_label_pair) + '_'
+            condition_string = '_' + '_'.join(condition_label_pair)
             diff_expr_matrix_file, genome_id = self._process_diff_expression(
                                                                 diff_expression_set_ref,
                                                                 result_directory,
