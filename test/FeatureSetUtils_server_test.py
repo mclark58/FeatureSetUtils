@@ -126,7 +126,9 @@ class FeatureSetUtilsTest(unittest.TestCase):
         # upload differetial expression set object
         dem_set_data = {
             'items': [{'ref': cls.diff_expression_ref, 
-                       'label': 'test_condition_1, test_condition_2'}],
+                       'label': 'test_condition_1, test_condition_2'},
+                      {'ref': cls.diff_expression_ref, 
+                       'label': 'test_condition_3, test_condition_4'}],
             'description': 'deseq Diff Exp Matrix Set'
         }
         data_type = 'KBaseSets.DifferentialExpressionMatrixSet'
@@ -139,7 +141,9 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
         dem_set_data = {
             'items': [{'ref': cls.diff_expression_ref_linear, 
-                       'label': 'test_condition_1, test_condition_2'}],
+                       'label': 'test_condition_1, test_condition_2'},
+                      {'ref': cls.diff_expression_ref_linear, 
+                       'label': 'test_condition_3, test_condition_4'}],
             'description': 'deseq Diff Exp Matrix Set'
         }
         data_type = 'KBaseSets.DifferentialExpressionMatrixSet'
@@ -191,81 +195,81 @@ class FeatureSetUtilsTest(unittest.TestCase):
     def getContext(self):
         return self.__class__.ctx
 
-    # def test_bad_upload_featureset_from_diff_expr_params(self):
-    #     invalidate_input_params = {'missing_diff_expression_ref': 'diff_expression_ref',
-    #                                'p_cutoff': 'p_cutoff',
-    #                                'q_cutoff': 'q_cutoff',
-    #                                'fold_scale_type': 'fold_scale_type',
-    #                                'fold_change_cutoff': 'fold_change_cutoff',
-    #                                'workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, 
-    #                                  '"diff_expression_ref" parameter is required, but missing'):
-    #         self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-    #                                                         invalidate_input_params)
+    def test_bad_upload_featureset_from_diff_expr_params(self):
+        invalidate_input_params = {'missing_diff_expression_ref': 'diff_expression_ref',
+                                   'p_cutoff': 'p_cutoff',
+                                   'q_cutoff': 'q_cutoff',
+                                   'fold_scale_type': 'fold_scale_type',
+                                   'fold_change_cutoff': 'fold_change_cutoff',
+                                   'workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, 
+                                     '"diff_expression_ref" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
 
-    #     invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-    #                                'missing_p_cutoff': 'p_cutoff',
-    #                                'q_cutoff': 'q_cutoff',
-    #                                'fold_scale_type': 'fold_scale_type',
-    #                                'fold_change_cutoff': 'fold_change_cutoff',
-    #                                'workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, '"p_cutoff" parameter is required, but missing'):
-    #         self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-    #                                                         invalidate_input_params)
+        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
+                                   'missing_p_cutoff': 'p_cutoff',
+                                   'q_cutoff': 'q_cutoff',
+                                   'fold_scale_type': 'fold_scale_type',
+                                   'fold_change_cutoff': 'fold_change_cutoff',
+                                   'workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, '"p_cutoff" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
 
-    #     invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-    #                                'p_cutoff': 'p_cutoff',
-    #                                'missing_q_cutoff': 'q_cutoff',
-    #                                'fold_scale_type': 'fold_scale_type',
-    #                                'fold_change_cutoff': 'fold_change_cutoff',
-    #                                'workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, '"q_cutoff" parameter is required, but missing'):
-    #         self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-    #                                                         invalidate_input_params)
+        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
+                                   'p_cutoff': 'p_cutoff',
+                                   'missing_q_cutoff': 'q_cutoff',
+                                   'fold_scale_type': 'fold_scale_type',
+                                   'fold_change_cutoff': 'fold_change_cutoff',
+                                   'workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, '"q_cutoff" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
 
-    #     invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-    #                                'p_cutoff': 'p_cutoff',
-    #                                'q_cutoff': 'q_cutoff',
-    #                                'missing_fold_scale_type': 'fold_scale_type',
-    #                                'fold_change_cutoff': 'fold_change_cutoff',
-    #                                'workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, 
-    #                                  '"fold_scale_type" parameter is required, but missing'):
-    #         self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-    #                                                         invalidate_input_params)
+        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
+                                   'p_cutoff': 'p_cutoff',
+                                   'q_cutoff': 'q_cutoff',
+                                   'missing_fold_scale_type': 'fold_scale_type',
+                                   'fold_change_cutoff': 'fold_change_cutoff',
+                                   'workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, 
+                                     '"fold_scale_type" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
 
-    #     invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-    #                                'p_cutoff': 'p_cutoff',
-    #                                'q_cutoff': 'q_cutoff',
-    #                                'fold_scale_type': 'fold_scale_type',
-    #                                'missing_fold_change_cutoff': 'fold_change_cutoff',
-    #                                'workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, 
-    #                                  '"fold_change_cutoff" parameter is required, but missing'):
-    #         self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-    #                                                         invalidate_input_params)
+        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
+                                   'p_cutoff': 'p_cutoff',
+                                   'q_cutoff': 'q_cutoff',
+                                   'fold_scale_type': 'fold_scale_type',
+                                   'missing_fold_change_cutoff': 'fold_change_cutoff',
+                                   'workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, 
+                                     '"fold_change_cutoff" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
 
-    #     invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-    #                                'p_cutoff': 'p_cutoff',
-    #                                'q_cutoff': 'q_cutoff',
-    #                                'fold_scale_type': 'fold_scale_type',
-    #                                'fold_change_cutoff': 'fold_change_cutoff',
-    #                                'missing_workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, 
-    #                                  '"workspace_name" parameter is required, but missing'):
-    #         self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-    #                                                         invalidate_input_params)
+        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
+                                   'p_cutoff': 'p_cutoff',
+                                   'q_cutoff': 'q_cutoff',
+                                   'fold_scale_type': 'fold_scale_type',
+                                   'fold_change_cutoff': 'fold_change_cutoff',
+                                   'missing_workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, 
+                                     '"workspace_name" parameter is required, but missing'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
 
-    #     invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-    #                                'p_cutoff': 'p_cutoff',
-    #                                'q_cutoff': 'q_cutoff',
-    #                                'fold_scale_type': 'invalid',
-    #                                'fold_change_cutoff': 'fold_change_cutoff',
-    #                                'workspace_name': 'workspace_name'}
-    #     with self.assertRaisesRegexp(ValueError, 
-    #                                  'Input fold scale type value \[invalid\] is not valid'):
-    #         self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-    #                                                         invalidate_input_params)
+        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
+                                   'p_cutoff': 'p_cutoff',
+                                   'q_cutoff': 'q_cutoff',
+                                   'fold_scale_type': 'invalid',
+                                   'fold_change_cutoff': 'fold_change_cutoff',
+                                   'workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, 
+                                     'Input fold scale type value \[invalid\] is not valid'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
 
     def test_upload_featureset_from_diff_expr(self):
 
@@ -298,32 +302,64 @@ class FeatureSetUtilsTest(unittest.TestCase):
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
 
-    # def test_upload_featureset_from_diff_expr_linear(self):
+    def test_upload_featureset_from_diff_expr_partial_conditions(self):
 
-    #     feature_set_name = 'MyFeatureSet'
-    #     input_params = {
-    #         'diff_expression_ref': self.diff_expression_set_ref_linear,
-    #         'expression_matrix_ref': self.expression_matrix_ref,
-    #         'feature_set_name': feature_set_name,
-    #         'p_cutoff': 0.05,
-    #         'q_cutoff': 0.05,
-    #         'fold_scale_type': 'linear',
-    #         'fold_change_cutoff': 1,
-    #         'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
-    #         'feature_set_suffix': '_feature_set',
-    #         'workspace_name': self.getWsName()
-    #     }
+        feature_set_name = 'MyFeatureSet'
+        input_params = {
+            'diff_expression_ref': self.diff_expression_set_ref,
+            'expression_matrix_ref': self.expression_matrix_ref,
+            'feature_set_name': feature_set_name,
+            'p_cutoff': 0.05,
+            'q_cutoff': 0.05,
+            'fold_scale_type': 'logarithm',
+            'fold_change_cutoff': 1,
+            'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+            'feature_set_suffix': '_feature_set',
+            'workspace_name': self.getWsName(),
+            'condition_pairs': [{'label_string': ['test_condition_1, test_condition_2']}]
+        }
 
-    #     result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(), 
-    #                                                              input_params)[0]
+        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(), 
+                                                                 input_params)[0]
 
-    #     self.assertTrue('result_directory' in result)
-    #     result_files = os.listdir(result['result_directory'])
-    #     print result_files
-    #     expect_result_files = ['gene_results.csv']
-    #     self.assertTrue(all(x in result_files for x in expect_result_files))
-    #     self.assertTrue('up_feature_set_ref' in result)
-    #     self.assertTrue('down_feature_set_ref' in result)
-    #     self.assertTrue('filtered_expression_matrix_ref' in result)
-    #     self.assertTrue('report_name' in result)
-    #     self.assertTrue('report_ref' in result)
+        self.assertTrue('result_directory' in result)
+        result_files = os.listdir(result['result_directory'])
+        print result_files
+        expect_result_files = ['gene_results.csv']
+        self.assertTrue(all(x in result_files for x in expect_result_files))
+        self.assertTrue('up_feature_set_ref_list' in result)
+        self.assertTrue('down_feature_set_ref_list' in result)
+        self.assertTrue('filtered_expression_matrix_ref_list' in result)
+        self.assertTrue('report_name' in result)
+        self.assertTrue('report_ref' in result)
+
+    def test_upload_featureset_from_diff_expr_linear(self):
+
+        feature_set_name = 'MyFeatureSet'
+        input_params = {
+            'diff_expression_ref': self.diff_expression_set_ref_linear,
+            'expression_matrix_ref': self.expression_matrix_ref,
+            'feature_set_name': feature_set_name,
+            'p_cutoff': 0.05,
+            'q_cutoff': 0.05,
+            'fold_scale_type': 'linear',
+            'fold_change_cutoff': 1,
+            'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+            'feature_set_suffix': '_feature_set',
+            'workspace_name': self.getWsName(),
+            'run_all_combinations': True
+        }
+
+        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(), 
+                                                                 input_params)[0]
+
+        self.assertTrue('result_directory' in result)
+        result_files = os.listdir(result['result_directory'])
+        print result_files
+        expect_result_files = ['gene_results.csv']
+        self.assertTrue(all(x in result_files for x in expect_result_files))
+        self.assertTrue('up_feature_set_ref_list' in result)
+        self.assertTrue('down_feature_set_ref_list' in result)
+        self.assertTrue('filtered_expression_matrix_ref_list' in result)
+        self.assertTrue('report_name' in result)
+        self.assertTrue('report_ref' in result)
