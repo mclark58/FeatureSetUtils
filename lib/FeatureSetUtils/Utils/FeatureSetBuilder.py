@@ -466,8 +466,8 @@ class FeatureSetBuilder:
             if self._check_input_labels(condition_pairs, available_condition_labels):
                 condition_label_pairs = list()
                 for condition_pair in condition_pairs:
-                    condition_labels = [condition_pair.get('condition_label_1')[0].strip(),
-                                        condition_pair.get('condition_label_2')[0].strip()]
+                    label_string = condition_pair['label_string'][0].strip()
+                    condition_labels = map(lambda x: x.strip(), label_string.split(','))
                     condition_label_pairs.append(condition_labels)
 
         up_feature_set_ref_list = list()
