@@ -77,64 +77,28 @@ tr:nth-child(even) {
 <p></p>
 
 <div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Up Features')" id="defaultOpen">Up Features</button>
-  <button class="tablinks" onclick="openTab(event, 'Down Features')">Down Features</button>
+  <button class="tablinks" onclick="openTab(event, 'Summary')" id="defaultOpen">Summary</button>
 </div>
 
-<div id="Up Features" class="tabcontent">
+<div id="Summary" class="tabcontent">
   <table>
     <tr>
-        <th>Reference Genome</th>
+        <th>Upper FeatureSet</th><th></th>
     </tr>
-    <tr><td>Reference_Genome_Info</td><td>
+    <tr><td>FeatureSet Name</td><td>Feature Count</td></tr>
+    <tr><td>Upper_FeatureSet</td></tr>
   </table>
 
   <p><br/></p>
 
   <table>
     <tr>
-        <th>Filtered Features</th>
+        <th>Lower FeatureSet</th>
     </tr>
-    <tr><td>Upper_Filtered_Features</td><td>
-  </table>
-
-  <p><br/></p>
-
-  <table>
-    <tr>
-        <th onclick="sortTable(0)">Filtered Feature ID</th>
-    </tr>
-    <tr><td>Upper_Feature_IDs</td><td>
+    <tr><td>FeatureSet Name</td><td>Feature Count</td></tr>
+    <tr><td>Lower_FeatureSet</td></tr>
   </table>
 </div>
-
-<div id="Down Features" class="tabcontent">
-  <table>
-    <tr>
-        <th>Reference Genome</th>
-    </tr>
-    <tr><td>Reference_Genome_Info</td><td>
-  </table>
-
-  <p><br/></p>
-
-  <table>
-    <tr>
-        <th>Filtered Features</th>
-    </tr>
-    <tr><td>Lower_Filtered_Features</td><td>
-  </table>
-
-  <p><br/></p>
-
-  <table>
-    <tr>
-        <th onclick="sortTable(0)">Filtered Feature ID</th>
-    </tr>
-    <tr><td>Lower_Feature_IDs</td><td>
-  </table>
-</div>
-
 
 <script>
 function openTab(evt, tabName) {

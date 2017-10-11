@@ -5,7 +5,6 @@ import uuid
 import csv
 import math
 import re
-import itertools
 
 from Workspace.WorkspaceClient import Workspace as Workspace
 from DataFileUtil.DataFileUtilClient import DataFileUtil
@@ -54,7 +53,7 @@ class FeatureSetBuilder:
             raise ValueError(error_msg)
 
     def _generate_report(self, up_feature_set_ref_list, down_feature_set_ref_list, 
-                         filtered_expression_matrix_ref_list, genome_id, workspace_name):
+                         filtered_expression_matrix_ref_list, workspace_name):
         """
         _generate_report: generate summary report
         """
@@ -62,8 +61,7 @@ class FeatureSetBuilder:
         log('start creating report')
 
         output_html_files = self._generate_html_report(up_feature_set_ref_list, 
-                                                       down_feature_set_ref_list, 
-                                                       genome_id)
+                                                       down_feature_set_ref_list)
 
         objects_created = list()
         for up_feature_set_ref in up_feature_set_ref_list:
@@ -92,7 +90,7 @@ class FeatureSetBuilder:
 
         return report_output
 
-    def _generate_html_report(self, up_feature_set_ref_list, down_feature_set_ref_list, genome_id):
+    def _generate_html_report(self, up_feature_set_ref_list, down_feature_set_ref_list):
         """
         _generate_html_report: generate html summary report
         """
@@ -104,45 +102,48 @@ class FeatureSetBuilder:
         self._mkdir_p(output_directory)
         result_file_path = os.path.join(output_directory, 'report.html')
 
-        genome_name = self.ws.get_object_info([{"ref": genome_id}],
-                                              includeMetadata=None)[0][1]
+        uppper_feature_content = ''
+        for up_feature_set_ref in up_feature_set_ref_list:
+            feature_set_obj = self.ws.get_objects2({'objects':
+                                                    [{'ref': 
+                                                     up_feature_set_ref}]})['data'][0]
+            feature_set_data = feature_set_obj['data']
+            feature_set_info = feature_set_obj['info']
 
-        reference_genome_info = ''
-        reference_genome_info += '{} ({})'.format(genome_name, genome_id)
+            feature_set_name = feature_set_info[1]
 
-        # uppper_feature_ids_content = ''
-        # for feature_id in up_feature_ids:
-        #     uppper_feature_ids_content += '<tr><td>{}</td><td>'.format(feature_id)
+            elements = feature_set_data.get('elements')
+            feature_ids = elements.keys()
 
-        # lower_feature_ids_content = ''
-        # for feature_id in down_feature_ids:
-        #     lower_feature_ids_content += '<tr><td>{}</td><td>'.format(feature_id)
+            uppper_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name, 
+                                                                               len(feature_ids))
 
-        # with open(result_file_path, 'w') as result_file:
-        #     with open(os.path.join(os.path.dirname(__file__), 'report_template.html'),
-        #               'r') as report_template_file:
-        #         report_template = report_template_file.read()
-        #         report_template = report_template.replace('Reference_Genome_Info',
-        #                                                   reference_genome_info)
+        lower_feature_content = ''
+        for down_feature_set_ref in down_feature_set_ref_list:
+            feature_set_obj = self.ws.get_objects2({'objects':
+                                                    [{'ref': 
+                                                     down_feature_set_ref}]})['data'][0]
+            feature_set_data = feature_set_obj['data']
+            feature_set_info = feature_set_obj['info']
 
-        #         report_template = report_template.replace('Upper_Filtered_Features',
-        #                                                   str(len(up_feature_ids)))
+            feature_set_name = feature_set_info[1]
 
-        #         report_template = report_template.replace('Lower_Filtered_Features',
-        #                                                   str(len(down_feature_ids)))
+            elements = feature_set_data.get('elements')
+            feature_ids = elements.keys()
 
-        #         report_template = report_template.replace('<tr><td>Upper_Feature_IDs</td><td>',
-        #                                                   uppper_feature_ids_content)
-
-        #         report_template = report_template.replace('<tr><td>Lower_Feature_IDs</td><td>',
-        #                                                   lower_feature_ids_content)
-
-        #         result_file.write(report_template)
+            lower_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name, 
+                                                                              len(feature_ids))
 
         with open(result_file_path, 'w') as result_file:
             with open(os.path.join(os.path.dirname(__file__), 'report_template.html'),
                       'r') as report_template_file:
                 report_template = report_template_file.read()
+                report_template = report_template.replace('<tr><td>Upper_FeatureSet</td></tr>',
+                                                          uppper_feature_content)
+
+                report_template = report_template.replace('<tr><td>Lower_FeatureSet</td></tr>',
+                                                          lower_feature_content)
+
                 result_file.write(report_template)
 
         html_report.append({'path': result_file_path,
@@ -434,7 +435,7 @@ class FeatureSetBuilder:
         result_directory: folder path that holds all files generated
         up_feature_set_ref_list: list of generated upper FeatureSet object reference
         down_feature_set_ref_list: list of generated down FeatureSet object reference
-        filtered_expression_matrix_ref_list: list of generated filtered ExpressionMatrix object reference
+        filtered_expression_matrix_ref_list: list of generated filtered ExpressionMatrix object ref
         report_name: report name generated by KBaseReport
         report_ref: report reference generated by KBaseReport
         """
@@ -475,6 +476,7 @@ class FeatureSetBuilder:
         filtered_expression_matrix_ref_list = list()
 
         for condition_label_pair in condition_label_pairs:
+            condition_string = '_' + '_'.join(condition_label_pair) + '_'
             diff_expr_matrix_file, genome_id = self._process_diff_expression(
                                                                 diff_expression_set_ref,
                                                                 result_directory,
@@ -486,27 +488,28 @@ class FeatureSetBuilder:
                                                                 params.get('q_cutoff'),
                                                                 params.get('fold_scale_type'),
                                                                 params.get('fold_change_cutoff'))
-
+            filtered_expression_matrix_suffix = condition_string + params.get('filtered_expression_matrix_suffix')
             if params.get('expression_matrix_ref'):
                 filtered_expression_matrix_ref = self._filter_expression_matrix(
                                                 params.get('expression_matrix_ref'),
                                                 up_feature_ids + down_feature_ids,
                                                 params.get('workspace_name'),
-                                                params.get('filtered_expression_matrix_suffix'))
+                                                filtered_expression_matrix_suffix)
                 filtered_expression_matrix_ref_list.append(filtered_expression_matrix_ref)
 
-            up_feature_set_ref = self._generate_feature_set(
-                                up_feature_ids,
-                                genome_id,
-                                params.get('workspace_name'),
-                                diff_expression_set_name + '_up' + params.get('feature_set_suffix'))
+            feature_set_suffix = params.get('feature_set_suffix')
+            up_feature_set_name = diff_expression_set_name + condition_string + '_up' + feature_set_suffix
+            up_feature_set_ref = self._generate_feature_set(up_feature_ids,
+                                                            genome_id,
+                                                            params.get('workspace_name'),
+                                                            up_feature_set_name)
             up_feature_set_ref_list.append(up_feature_set_ref)
 
-            down_feature_set_ref = self._generate_feature_set(
-                                down_feature_ids,
-                                genome_id,
-                                params.get('workspace_name'),
-                                diff_expression_set_name + '_down' + params.get('feature_set_suffix'))
+            down_feature_set_name = diff_expression_set_name + condition_string + '_down' + feature_set_suffix
+            down_feature_set_ref = self._generate_feature_set(down_feature_ids,
+                                                              genome_id,
+                                                              params.get('workspace_name'),
+                                                              down_feature_set_name)
             down_feature_set_ref_list.append(down_feature_set_ref)
 
         returnVal = {'result_directory': result_directory,
@@ -516,7 +519,6 @@ class FeatureSetBuilder:
 
         report_output = self._generate_report(up_feature_set_ref_list, down_feature_set_ref_list,
                                               filtered_expression_matrix_ref_list,
-                                              genome_id,
                                               params.get('workspace_name'))
         returnVal.update(report_output)
 

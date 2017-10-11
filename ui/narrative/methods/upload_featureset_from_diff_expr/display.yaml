@@ -73,7 +73,7 @@ parameters :
         ui-name : |
           Paried Condition
         short-hint : |
-          Paried Condition (separated by comma)
+          Paried Condition (conditions are separated by comma)
 
 parameter-groups :
     condition_pairs :
@@ -83,7 +83,6 @@ parameter-groups :
 description : |
     <p>This App filters feature ids from DifferentialExpressoinMatrixSet with input Alpha Cutoff and Fold Change Cutoff. And then produce a subset of ExpressionMatrix only containing those feature ids.</p>
     <p>It also creates FeatureSet containing filtered feature ids</p>
-    <p><strong>NOTE:</strong> Filtered feature ids from each DifferentialExpressoinMatrix are merged. But only unique ids are returned.</p>
 
     <p>Up and Down features are determined by comparing original fold change values with positive and negative Fold Change Cutoff</p>
     <p><strong>NOTE:</strong> If 'Fold Change Cutoff Type' is linear, app is calulating the base 2 logarithm of the original fold change value. Then app uses this computed value to compare with positive and negative Fold Change Cutoff</p>
