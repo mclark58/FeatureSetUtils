@@ -11,3 +11,5 @@
 1.1.4: Update UI version, no code changes involved
 
 1.1.5: includes selective condition pair
+
+1.1.6: added icons for Apps

@@ -23,8 +23,8 @@ class FeatureSetUtils:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "1.1.5"
-    GIT_URL = "https://github.com/Tianhao-Gu/FeatureSetUtils.git"
+    VERSION = "1.1.6"
+    GIT_URL = "https://github.com/kbaseapps/FeatureSetUtils"
     GIT_COMMIT_HASH = "f7782dc7c2dd54b816fc5d0004895ead8c3a3fa2"
 
     #BEGIN_CLASS_HEADER

@@ -6,6 +6,8 @@ name: Create Average ExpressionMatrix - v1.1.5
 tooltip: |
     Average ExpressionMatrix values based on conditions
 
+icon: kb_expr-yellow.png
+
 screenshots: []
 
 #
