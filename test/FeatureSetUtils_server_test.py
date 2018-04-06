@@ -196,6 +196,17 @@ class FeatureSetUtilsTest(unittest.TestCase):
         return self.__class__.ctx
 
     def test_bad_upload_featureset_from_diff_expr_params(self):
+        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
+                                   'p_cutoff': 'p_cutoff',
+                                   'q_cutoff': 'q_cutoff',
+                                   'fold_scale_type': 'fold_scale_type',
+                                   'fold_change_cutoff': 'fold_change_cutoff',
+                                   'workspace_name': 'workspace_name'}
+        with self.assertRaisesRegexp(ValueError, 
+                                     '"fold_scale_type" parameter is no longer used'):
+            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                            invalidate_input_params)
+
         invalidate_input_params = {'missing_diff_expression_ref': 'diff_expression_ref',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
