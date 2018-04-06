@@ -42,17 +42,11 @@ class FeatureSetBuilder:
 
         # check for required parameters
         for p in ['diff_expression_ref', 'workspace_name',
-                  'p_cutoff', 'q_cutoff', 'fold_scale_type', 'fold_change_cutoff']:
+                  'p_cutoff', 'q_cutoff', 'fold_change_cutoff']:
             if p not in params:
                 raise ValueError('"{}" parameter is required, but missing'.format(p))
 
-        fold_scale_type = params.get('fold_scale_type')
-        validate_fold_scale_type = ['linear', 'logarithm']
-        if fold_scale_type not in validate_fold_scale_type:
-            error_msg = 'Input fold scale type value [{}] is not valid'.format(fold_scale_type)
-            raise ValueError(error_msg)
-
-    def _generate_report(self, up_feature_set_ref_list, down_feature_set_ref_list, 
+    def _generate_report(self, up_feature_set_ref_list, down_feature_set_ref_list,
                          filtered_expression_matrix_ref_list, workspace_name):
         """
         _generate_report: generate summary report
@@ -60,7 +54,7 @@ class FeatureSetBuilder:
 
         log('start creating report')
 
-        output_html_files = self._generate_html_report(up_feature_set_ref_list, 
+        output_html_files = self._generate_html_report(up_feature_set_ref_list,
                                                        down_feature_set_ref_list)
 
         objects_created = list()
@@ -105,7 +99,7 @@ class FeatureSetBuilder:
         uppper_feature_content = ''
         for up_feature_set_ref in up_feature_set_ref_list:
             feature_set_obj = self.ws.get_objects2({'objects':
-                                                    [{'ref': 
+                                                    [{'ref':
                                                      up_feature_set_ref}]})['data'][0]
             feature_set_data = feature_set_obj['data']
             feature_set_info = feature_set_obj['info']
@@ -115,13 +109,13 @@ class FeatureSetBuilder:
             elements = feature_set_data.get('elements')
             feature_ids = elements.keys()
 
-            uppper_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name, 
+            uppper_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name,
                                                                                len(feature_ids))
 
         lower_feature_content = ''
         for down_feature_set_ref in down_feature_set_ref_list:
             feature_set_obj = self.ws.get_objects2({'objects':
-                                                    [{'ref': 
+                                                    [{'ref':
                                                      down_feature_set_ref}]})['data'][0]
             feature_set_data = feature_set_obj['data']
             feature_set_info = feature_set_obj['info']
@@ -131,7 +125,7 @@ class FeatureSetBuilder:
             elements = feature_set_data.get('elements')
             feature_ids = elements.keys()
 
-            lower_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name, 
+            lower_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name,
                                                                               len(feature_ids))
 
         with open(result_file_path, 'w') as result_file:
@@ -152,7 +146,7 @@ class FeatureSetBuilder:
                             'description': 'HTML summary report'})
         return html_report
 
-    def _process_diff_expression(self, diff_expression_set_ref, result_directory, 
+    def _process_diff_expression(self, diff_expression_set_ref, result_directory,
                                  condition_label_pair):
         """
         _process_diff_expression: process differential expression object info
@@ -161,7 +155,7 @@ class FeatureSetBuilder:
         log('start processing differential expression object')
 
         diff_expr_set_data = self.ws.get_objects2({'objects':
-                                                  [{'ref': 
+                                                  [{'ref':
                                                    diff_expression_set_ref}]})['data'][0]['data']
 
         set_items = diff_expr_set_data['items']
@@ -177,8 +171,8 @@ class FeatureSetBuilder:
         for set_item in set_items:
             diff_expression_ref = set_item['ref']
 
-            diff_expression_data = self.ws.get_objects2({'objects': 
-                                                        [{'ref': 
+            diff_expression_data = self.ws.get_objects2({'objects':
+                                                        [{'ref':
                                                          diff_expression_ref}]})['data'][0]['data']
 
             label_string = set_item['label']
@@ -191,11 +185,11 @@ class FeatureSetBuilder:
                 matrix_data = diff_expression_data['data']
 
                 with open(diff_expr_matrix_file, 'ab') as csvfile:
-                    
+
                     row_ids = matrix_data.get('row_ids')
                     row_values = matrix_data.get('values')
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-                    
+
                     for pos, row_id in enumerate(row_ids):
                         row_value = row_values[pos]
                         writer.writerow({'gene_id': row_id,
@@ -243,7 +237,7 @@ class FeatureSetBuilder:
         return feature_set_obj_ref
 
     def _process_matrix_file(self, diff_expr_matrix_file, comp_p_value, comp_q_value,
-                             fold_scale_type, comp_fold_change_cutoff):
+                             comp_fold_change_cutoff):
         """
         _process_matrix_file: filter matrix file by given cutoffs
         """
@@ -252,6 +246,9 @@ class FeatureSetBuilder:
 
         up_feature_ids = []
         down_feature_ids = []
+
+        if comp_fold_change_cutoff < 0:
+            comp_fold_change_cutoff = -comp_fold_change_cutoff
 
         with open(diff_expr_matrix_file, 'r') as file:
             reader = csv.DictReader(file)
@@ -269,22 +266,13 @@ class FeatureSetBuilder:
                     p_value_condition = float(row_p_value) <= comp_p_value
                     q_value_condition = float(row_q_value) <= comp_q_value
 
-                    if fold_scale_type == 'linear':
-                        row_fold_change_cutoff = float(row_fold_change_cutoff)
-                        if row_fold_change_cutoff <= 0:
-                            error_msg = 'Invalid Fold Change value '
-                            error_msg += '[{}] for linear value. \n'.format(row_fold_change_cutoff)
-                            error_msg += 'Available linear FC value should be greater than 0'
-                            raise ValueError(error_msg)
-                        row_fold_change_cutoff = math.log(row_fold_change_cutoff, 2)
-
                     up_matches_condition = (p_value_condition and q_value_condition and
-                                            (float(row_fold_change_cutoff) >=
-                                             comp_fold_change_cutoff))
+                                              (float(row_fold_change_cutoff) >=
+                                              comp_fold_change_cutoff))
 
                     down_matches_condition = (p_value_condition and q_value_condition and
                                               (float(row_fold_change_cutoff) <=
-                                               -comp_fold_change_cutoff))
+                                              -comp_fold_change_cutoff))
 
                     if up_matches_condition:
                         up_feature_ids.append(feature_id)
@@ -293,7 +281,7 @@ class FeatureSetBuilder:
 
         return list(set(up_feature_ids)), list(set(down_feature_ids))
 
-    def _filter_expression_matrix(self, expression_matrix_ref, feature_ids, 
+    def _filter_expression_matrix(self, expression_matrix_ref, feature_ids,
                                   workspace_name, filtered_expression_matrix_suffix):
         """
         _filter_expression_matrix: generated filtered expression matrix
@@ -306,7 +294,7 @@ class FeatureSetBuilder:
         else:
             workspace_id = self.dfu.ws_name_to_id(workspace_name)
 
-        expression_matrix_obj = self.dfu.get_objects({'object_refs': 
+        expression_matrix_obj = self.dfu.get_objects({'object_refs':
                                                      [expression_matrix_ref]})['data'][0]
 
         expression_matrix_info = expression_matrix_obj['info']
@@ -319,7 +307,8 @@ class FeatureSetBuilder:
                                                      filtered_expression_matrix_suffix,
                                                      expression_matrix_name)
         else:
-            filtered_expression_matrix_name = expression_matrix_name + filtered_expression_matrix_suffix
+            filtered_expression_matrix_name = expression_matrix_name + \
+                filtered_expression_matrix_suffix
 
         filtered_expression_matrix_data = expression_matrix_data.copy()
 
@@ -349,7 +338,8 @@ class FeatureSetBuilder:
                          'name': filtered_expression_matrix_name}]}
 
         dfu_oi = self.dfu.save_objects(save_object_params)[0]
-        filtered_expression_matrix_ref = str(dfu_oi[6]) + '/' + str(dfu_oi[0]) + '/' + str(dfu_oi[4])
+        filtered_expression_matrix_ref = str(
+            dfu_oi[6]) + '/' + str(dfu_oi[0]) + '/' + str(dfu_oi[4])
 
         return filtered_expression_matrix_ref
 
@@ -443,7 +433,7 @@ class FeatureSetBuilder:
         self._validate_upload_featureset_from_diff_expr_params(params)
 
         diff_expression_set_ref = params.get('diff_expression_ref')
-        diff_expression_set_info = self.ws.get_object_info3({"objects": 
+        diff_expression_set_info = self.ws.get_object_info3({"objects":
                                                             [{"ref": diff_expression_set_ref}]}
                                                             )['infos'][0]
         diff_expression_set_name = diff_expression_set_info[1]
@@ -451,7 +441,7 @@ class FeatureSetBuilder:
         result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
         self._mkdir_p(result_directory)
 
-        (available_condition_label_pairs, 
+        (available_condition_label_pairs,
          available_condition_labels) = self._get_condition_labels(diff_expression_set_ref)
 
         run_all_combinations = params.get('run_all_combinations')
@@ -486,9 +476,9 @@ class FeatureSetBuilder:
                                                                 diff_expr_matrix_file,
                                                                 params.get('p_cutoff'),
                                                                 params.get('q_cutoff'),
-                                                                params.get('fold_scale_type'),
                                                                 params.get('fold_change_cutoff'))
-            filtered_expression_matrix_suffix = condition_string + params.get('filtered_expression_matrix_suffix')
+            filtered_expression_matrix_suffix = condition_string + \
+                params.get('filtered_expression_matrix_suffix')
             if params.get('expression_matrix_ref'):
                 filtered_expression_matrix_ref = self._filter_expression_matrix(
                                                 params.get('expression_matrix_ref'),
@@ -498,14 +488,16 @@ class FeatureSetBuilder:
                 filtered_expression_matrix_ref_list.append(filtered_expression_matrix_ref)
 
             feature_set_suffix = params.get('feature_set_suffix')
-            up_feature_set_name = diff_expression_set_name + condition_string + '_up' + feature_set_suffix
+            up_feature_set_name = diff_expression_set_name + \
+                condition_string + '_up' + feature_set_suffix
             up_feature_set_ref = self._generate_feature_set(up_feature_ids,
                                                             genome_id,
                                                             params.get('workspace_name'),
                                                             up_feature_set_name)
             up_feature_set_ref_list.append(up_feature_set_ref)
 
-            down_feature_set_name = diff_expression_set_name + condition_string + '_down' + feature_set_suffix
+            down_feature_set_name = diff_expression_set_name + \
+                condition_string + '_down' + feature_set_suffix
             down_feature_set_ref = self._generate_feature_set(down_feature_ids,
                                                               genome_id,
                                                               params.get('workspace_name'),

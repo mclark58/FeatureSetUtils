@@ -199,7 +199,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
         invalidate_input_params = {'missing_diff_expression_ref': 'diff_expression_ref',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
-                                   'fold_scale_type': 'fold_scale_type',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
         with self.assertRaisesRegexp(ValueError, 
@@ -210,7 +209,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
                                    'missing_p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
-                                   'fold_scale_type': 'fold_scale_type',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
         with self.assertRaisesRegexp(ValueError, '"p_cutoff" parameter is required, but missing'):
@@ -220,7 +218,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
                                    'p_cutoff': 'p_cutoff',
                                    'missing_q_cutoff': 'q_cutoff',
-                                   'fold_scale_type': 'fold_scale_type',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
         with self.assertRaisesRegexp(ValueError, '"q_cutoff" parameter is required, but missing'):
@@ -230,18 +227,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
-                                   'missing_fold_scale_type': 'fold_scale_type',
-                                   'fold_change_cutoff': 'fold_change_cutoff',
-                                   'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, 
-                                     '"fold_scale_type" parameter is required, but missing'):
-            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                            invalidate_input_params)
-
-        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'p_cutoff': 'p_cutoff',
-                                   'q_cutoff': 'q_cutoff',
-                                   'fold_scale_type': 'fold_scale_type',
                                    'missing_fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
         with self.assertRaisesRegexp(ValueError, 
@@ -252,7 +237,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
-                                   'fold_scale_type': 'fold_scale_type',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'missing_workspace_name': 'workspace_name'}
         with self.assertRaisesRegexp(ValueError, 
@@ -260,16 +244,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
 
-        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'p_cutoff': 'p_cutoff',
-                                   'q_cutoff': 'q_cutoff',
-                                   'fold_scale_type': 'invalid',
-                                   'fold_change_cutoff': 'fold_change_cutoff',
-                                   'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, 
-                                     'Input fold scale type value \[invalid\] is not valid'):
-            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                            invalidate_input_params)
 
     def test_upload_featureset_from_diff_expr(self):
 
@@ -280,7 +254,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'feature_set_name': feature_set_name,
             'p_cutoff': 0.05,
             'q_cutoff': 0.05,
-            'fold_scale_type': 'logarithm',
             'fold_change_cutoff': 1,
             'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
             'feature_set_suffix': '_feature_set',
@@ -311,7 +284,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'feature_set_name': feature_set_name,
             'p_cutoff': 0.05,
             'q_cutoff': 0.05,
-            'fold_scale_type': 'logarithm',
             'fold_change_cutoff': 1,
             'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
             'feature_set_suffix': '_feature_set',
@@ -342,7 +314,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'feature_set_name': feature_set_name,
             'p_cutoff': 0.05,
             'q_cutoff': 0.05,
-            'fold_scale_type': 'linear',
             'fold_change_cutoff': 1,
             'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
             'feature_set_suffix': '_feature_set',

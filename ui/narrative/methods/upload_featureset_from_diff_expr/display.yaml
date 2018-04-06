@@ -41,12 +41,6 @@ parameters :
         short-hint : |
             q-value (corrected p-value) cutoff
 
-    fold_scale_type :
-        ui-name : |
-            Fold Change Cutoff Type
-        short-hint : |
-            Fold Change Cutoff Type
-
     fold_change_cutoff :
         ui-name : |
             Fold Change Cutoff

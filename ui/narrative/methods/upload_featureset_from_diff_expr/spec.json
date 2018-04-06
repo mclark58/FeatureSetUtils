@@ -44,28 +44,6 @@
             }
         },
         {
-            "id" : "fold_scale_type",
-            "optional" : false,
-            "advanced" : false,
-            "allow_multiple" : false,
-            "default_values" : [ "logarithm" ],
-            "field_type" : "dropdown",
-            "dropdown_options": 
-            {
-                "options": 
-                [
-                    {
-                      "display": "linear",
-                      "value": "linear"
-                    },
-                    {
-                      "display": "logarithm",
-                      "value": "logarithm"
-                    }
-                ]
-            }
-        },
-        {
             "id" : "fold_change_cutoff",
             "optional" : false,
             "advanced" : false,
@@ -162,10 +140,6 @@
                 {
                   "input_parameter" : "q_cutoff",
                   "target_property" : "q_cutoff"
-                },
-                {
-                  "input_parameter" : "fold_scale_type",
-                  "target_property" : "fold_scale_type"
                 },
                 {
                   "input_parameter" : "fold_change_cutoff",
