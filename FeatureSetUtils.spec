@@ -18,7 +18,7 @@ module FeatureSetUtils {
       expression_matrix_ref: ExpressionMatrix object reference
       p_cutoff: p value cutoff
       q_cutoff: q value cutoff
-      fold_scale_type: one of ["linear", "log2+1", "log10+1"]
+      fold_scale_type: one of ["linear", "log2+1", "log10+1"]  DEPRICATED NOW
       fold_change_cutoff: fold change cutoff
       feature_set_suffix: Result FeatureSet object name suffix
       filtered_expression_matrix_suffix: Result ExpressionMatrix object name suffix
@@ -32,7 +32,7 @@ module FeatureSetUtils {
         obj_ref expression_matrix_ref;
         float p_cutoff;
         float q_cutoff;
-        string fold_scale_type;
+        string fold_scale_type;    /* This is being depricated now */
         float fold_change_cutoff;
         string feature_set_suffix;
         string filtered_expression_matrix_suffix;
