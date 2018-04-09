@@ -46,8 +46,9 @@ class FeatureSetBuilder:
             if p not in params:
                 raise ValueError('"{}" parameter is required, but missing'.format(p))
 
-        if params.get('fold_scale_type'):
-                raise ValueError('"fold_scale_type" parameter is no longer used')
+        p = params.get('fold_scale_type')
+        if p and p != 'logarithm':
+            raise ValueError('"fold_scale_type" parameter must be set to "logarithm", if used')
 
     def _generate_report(self, up_feature_set_ref_list, down_feature_set_ref_list,
                          filtered_expression_matrix_ref_list, workspace_name):

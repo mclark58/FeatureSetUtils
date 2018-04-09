@@ -199,11 +199,11 @@ class FeatureSetUtilsTest(unittest.TestCase):
         invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
                                    'p_cutoff': 'p_cutoff',
                                    'q_cutoff': 'q_cutoff',
-                                   'fold_scale_type': 'fold_scale_type',
+                                   'fold_scale_type': 'linear',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
         with self.assertRaisesRegexp(ValueError, 
-                                     '"fold_scale_type" parameter is no longer used'):
+                                     '"fold_scale_type" parameter must be set to "logarithm", if used'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
 
@@ -266,6 +266,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'p_cutoff': 0.05,
             'q_cutoff': 0.05,
             'fold_change_cutoff': 1,
+            'fold_scale_type': "logarithm",    # optional, if given this is the required value
             'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
             'feature_set_suffix': '_feature_set',
             'workspace_name': self.getWsName(),
