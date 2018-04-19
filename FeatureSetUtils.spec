@@ -92,4 +92,29 @@ module FeatureSetUtils {
     */
     funcdef calculate_average_expression_matrix(CalAveExpressionMatrixInput params)
         returns (CalAveExpressionMatrixResult returnVal) authentication required;
+
+    typedef structure {
+        string file_path;
+    } FeatureSetTsvFiles;
+
+    typedef structure {
+        string featureset_name;
+        string workspace_name;
+    } FeatureSetToFileParams;
+
+
+    funcdef featureset_to_tsv_file(FeatureSetToFileParams params)
+                returns(FeatureSetTsvFiles files) authentication required;
+
+
+    typedef structure {
+        string input_ref;
+    } ExportParams;
+
+    typedef structure {
+        string shock_id;
+    } ExportOutput;
+
+    funcdef export_featureset_as_tsv_file(ExportParams params)
+                returns (ExportOutput output) authentication required;
 };

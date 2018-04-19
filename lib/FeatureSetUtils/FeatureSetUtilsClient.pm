@@ -330,6 +330,188 @@ calculate_average_expression_matrix: create an average ExpressionMatrix object f
     }
 }
  
+
+
+=head2 featureset_to_tsv_file
+
+  $files = $obj->featureset_to_tsv_file($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a FeatureSetUtils.FeatureSetToFileParams
+$files is a FeatureSetUtils.FeatureSetTsvFiles
+FeatureSetToFileParams is a reference to a hash where the following keys are defined:
+	featureset_name has a value which is a string
+	workspace_name has a value which is a string
+FeatureSetTsvFiles is a reference to a hash where the following keys are defined:
+	file_path has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a FeatureSetUtils.FeatureSetToFileParams
+$files is a FeatureSetUtils.FeatureSetTsvFiles
+FeatureSetToFileParams is a reference to a hash where the following keys are defined:
+	featureset_name has a value which is a string
+	workspace_name has a value which is a string
+FeatureSetTsvFiles is a reference to a hash where the following keys are defined:
+	file_path has a value which is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub featureset_to_tsv_file
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function featureset_to_tsv_file (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to featureset_to_tsv_file:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'featureset_to_tsv_file');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "FeatureSetUtils.featureset_to_tsv_file",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'featureset_to_tsv_file',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method featureset_to_tsv_file",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'featureset_to_tsv_file',
+				       );
+    }
+}
+ 
+
+
+=head2 export_featureset_as_tsv_file
+
+  $output = $obj->export_featureset_as_tsv_file($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a FeatureSetUtils.ExportParams
+$output is a FeatureSetUtils.ExportOutput
+ExportParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a string
+ExportOutput is a reference to a hash where the following keys are defined:
+	shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a FeatureSetUtils.ExportParams
+$output is a FeatureSetUtils.ExportOutput
+ExportParams is a reference to a hash where the following keys are defined:
+	input_ref has a value which is a string
+ExportOutput is a reference to a hash where the following keys are defined:
+	shock_id has a value which is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub export_featureset_as_tsv_file
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function export_featureset_as_tsv_file (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to export_featureset_as_tsv_file:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'export_featureset_as_tsv_file');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "FeatureSetUtils.export_featureset_as_tsv_file",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'export_featureset_as_tsv_file',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method export_featureset_as_tsv_file",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'export_featureset_as_tsv_file',
+				       );
+    }
+}
+ 
   
 sub status
 {
@@ -373,16 +555,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'calculate_average_expression_matrix',
+                method_name => 'export_featureset_as_tsv_file',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method calculate_average_expression_matrix",
+            error => "Error invoking method export_featureset_as_tsv_file",
             status_line => $self->{client}->status_line,
-            method_name => 'calculate_average_expression_matrix',
+            method_name => 'export_featureset_as_tsv_file',
         );
     }
 }
@@ -495,7 +677,7 @@ diff_expression_ref: DifferetialExpressionMatrixSet object reference
 expression_matrix_ref: ExpressionMatrix object reference
 p_cutoff: p value cutoff
 q_cutoff: q value cutoff
-fold_scale_type: one of ["linear", "log2+1", "log10+1"]
+fold_scale_type: one of ["linear", "log2+1", "log10+1"]  DEPRICATED NOW
 fold_change_cutoff: fold change cutoff
 feature_set_suffix: Result FeatureSet object name suffix
 filtered_expression_matrix_suffix: Result ExpressionMatrix object name suffix
@@ -674,6 +856,128 @@ a reference to a hash where the following keys are defined:
 average_expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
 report_name has a value which is a string
 report_ref has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 FeatureSetTsvFiles
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+file_path has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+file_path has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 FeatureSetToFileParams
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+featureset_name has a value which is a string
+workspace_name has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+featureset_name has a value which is a string
+workspace_name has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 ExportParams
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+input_ref has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 ExportOutput
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+shock_id has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+shock_id has a value which is a string
 
 
 =end text

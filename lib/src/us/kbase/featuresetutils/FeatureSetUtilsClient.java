@@ -198,6 +198,40 @@ public class FeatureSetUtilsClient {
         return res.get(0);
     }
 
+    /**
+     * <p>Original spec-file function name: featureset_to_tsv_file</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.featuresetutils.FeatureSetToFileParams FeatureSetToFileParams}
+     * @return   parameter "files" of type {@link us.kbase.featuresetutils.FeatureSetTsvFiles FeatureSetTsvFiles}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public FeatureSetTsvFiles featuresetToTsvFile(FeatureSetToFileParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<FeatureSetTsvFiles>> retType = new TypeReference<List<FeatureSetTsvFiles>>() {};
+        List<FeatureSetTsvFiles> res = caller.jsonrpcCall("FeatureSetUtils.featureset_to_tsv_file", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: export_featureset_as_tsv_file</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.featuresetutils.ExportParams ExportParams}
+     * @return   parameter "output" of type {@link us.kbase.featuresetutils.ExportOutput ExportOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public ExportOutput exportFeaturesetAsTsvFile(ExportParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<ExportOutput>> retType = new TypeReference<List<ExportOutput>>() {};
+        List<ExportOutput> res = caller.jsonrpcCall("FeatureSetUtils.export_featureset_as_tsv_file", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
     public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};

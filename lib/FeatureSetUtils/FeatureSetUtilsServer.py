@@ -341,6 +341,14 @@ class Application(object):
                              name='FeatureSetUtils.calculate_average_expression_matrix',
                              types=[dict])
         self.method_authentication['FeatureSetUtils.calculate_average_expression_matrix'] = 'required'  # noqa
+        self.rpc_service.add(impl_FeatureSetUtils.featureset_to_tsv_file,
+                             name='FeatureSetUtils.featureset_to_tsv_file',
+                             types=[dict])
+        self.method_authentication['FeatureSetUtils.featureset_to_tsv_file'] = 'required'  # noqa
+        self.rpc_service.add(impl_FeatureSetUtils.export_featureset_as_tsv_file,
+                             name='FeatureSetUtils.export_featureset_as_tsv_file',
+                             types=[dict])
+        self.method_authentication['FeatureSetUtils.export_featureset_as_tsv_file'] = 'required'  # noqa
         self.rpc_service.add(impl_FeatureSetUtils.status,
                              name='FeatureSetUtils.status',
                              types=[dict])
