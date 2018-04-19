@@ -5,6 +5,7 @@ import json
 
 from FeatureSetUtils.Utils.FeatureSetBuilder import FeatureSetBuilder
 from FeatureSetUtils.Utils.AveExpressionMatrixBuilder import AveExpressionMatrixBuilder
+from FeatureSetUtils.Utils.download import FeatureSetDownload
 #END_HEADER
 
 
@@ -37,6 +38,7 @@ class FeatureSetUtils:
         self.config = config
         self.config['SDK_CALLBACK_URL'] = os.environ['SDK_CALLBACK_URL']
         self.config['KB_AUTH_TOKEN'] = os.environ['KB_AUTH_TOKEN']
+        self.fsdld = FeatureSetDownload(config)
         #END_CONSTRUCTOR
         pass
 
@@ -128,7 +130,7 @@ class FeatureSetUtils:
         print(json.dumps(params, indent=1))
 
         for key, value in params.iteritems():
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 params[key] = value.strip()
 
         ave_builder = AveExpressionMatrixBuilder(self.config)
@@ -153,6 +155,9 @@ class FeatureSetUtils:
         # ctx is the context object
         # return variables are: files
         #BEGIN featureset_to_tsv_file
+        self.fsdld.validate_params(params)
+        params['featureset_ref'] = params['workspace_name'] + "/" + params['featureset_name']
+        pg_name, files = self.fsdld.to_tsv(params)
         #END featureset_to_tsv_file
 
         # At some point might do deeper type checking...
@@ -172,6 +177,12 @@ class FeatureSetUtils:
         # ctx is the context object
         # return variables are: output
         #BEGIN export_featureset_as_tsv_file
+        print('--->\nRunning FeatureSetUtils.export_featureset_as_tsv_file\nparams:')
+        print(json.dumps(params, indent=1))
+        self.fsdld.validate_params(params, {'input_ref'})
+        params['featureset_ref'] = params['input_ref']
+        fs_name, files = self.fsdld.to_tsv(params)
+        output = self.fsdld.export(list(files.values()), fs_name, params)
         #END export_featureset_as_tsv_file
 
         # At some point might do deeper type checking...
