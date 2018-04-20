@@ -31,8 +31,8 @@ class FeatureSetDownload:
 
         fs_name, fs_dicts = self.make_featureset_dict(params['featureset_ref'])
         files = {'file_path': "{}/{}.tsv".format(working_dir, fs_name)}
-        writer = csv.DictWriter(open(files['file_path'], 'w'), header,
-                                dialect='excel-tab')
+        writer = csv.DictWriter(open(files['file_path'], 'w'), header, delimiter='\t',
+                                lineterminator='\n')
         writer.writeheader()
         for feat in fs_dicts:
             writer.writerow(feat)
