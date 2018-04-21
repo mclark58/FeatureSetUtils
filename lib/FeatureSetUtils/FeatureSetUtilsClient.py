@@ -41,19 +41,19 @@ class FeatureSetUtils(object):
            DifferetialExpressionMatrixSet object reference
            expression_matrix_ref: ExpressionMatrix object reference p_cutoff:
            p value cutoff q_cutoff: q value cutoff fold_scale_type: one of
-           ["linear", "log2+1", "log10+1"] fold_change_cutoff: fold change
-           cutoff feature_set_suffix: Result FeatureSet object name suffix
-           filtered_expression_matrix_suffix: Result ExpressionMatrix object
-           name suffix workspace_name: the name of the workspace it gets
-           saved to run_all_combinations: run all paired condition
-           combinations (default true) or condition_labels: conditions for
-           expression set object) -> structure: parameter
-           "diff_expression_ref" of type "obj_ref" (An X/Y/Z style
-           reference), parameter "expression_matrix_ref" of type "obj_ref"
-           (An X/Y/Z style reference), parameter "p_cutoff" of Double,
-           parameter "q_cutoff" of Double, parameter "fold_scale_type" of
-           String, parameter "fold_change_cutoff" of Double, parameter
-           "feature_set_suffix" of String, parameter
+           ["linear", "log2+1", "log10+1"]  DEPRICATED NOW
+           fold_change_cutoff: fold change cutoff feature_set_suffix: Result
+           FeatureSet object name suffix filtered_expression_matrix_suffix:
+           Result ExpressionMatrix object name suffix workspace_name: the
+           name of the workspace it gets saved to run_all_combinations: run
+           all paired condition combinations (default true) or
+           condition_labels: conditions for expression set object) ->
+           structure: parameter "diff_expression_ref" of type "obj_ref" (An
+           X/Y/Z style reference), parameter "expression_matrix_ref" of type
+           "obj_ref" (An X/Y/Z style reference), parameter "p_cutoff" of
+           Double, parameter "q_cutoff" of Double, parameter
+           "fold_scale_type" of String, parameter "fold_change_cutoff" of
+           Double, parameter "feature_set_suffix" of String, parameter
            "filtered_expression_matrix_suffix" of String, parameter
            "workspace_name" of String, parameter "run_all_combinations" of
            type "boolean" (A boolean - 0 for false, 1 for true. @range (0,
@@ -98,6 +98,29 @@ class FeatureSetUtils(object):
         """
         return self._client.call_method(
             'FeatureSetUtils.calculate_average_expression_matrix',
+            [params], self._service_ver, context)
+
+    def featureset_to_tsv_file(self, params, context=None):
+        """
+        :param params: instance of type "FeatureSetToFileParams" ->
+           structure: parameter "featureset_name" of String, parameter
+           "workspace_name" of String
+        :returns: instance of type "FeatureSetTsvFiles" -> structure:
+           parameter "file_path" of String
+        """
+        return self._client.call_method(
+            'FeatureSetUtils.featureset_to_tsv_file',
+            [params], self._service_ver, context)
+
+    def export_featureset_as_tsv_file(self, params, context=None):
+        """
+        :param params: instance of type "ExportParams" -> structure:
+           parameter "input_ref" of String
+        :returns: instance of type "ExportOutput" -> structure: parameter
+           "shock_id" of String
+        """
+        return self._client.call_method(
+            'FeatureSetUtils.export_featureset_as_tsv_file',
             [params], self._service_ver, context)
 
     def status(self, context=None):
