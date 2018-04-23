@@ -6,6 +6,7 @@ from collections import defaultdict
 
 from DataFileUtil.DataFileUtilClient import DataFileUtil
 from GenomeSearchUtil.GenomeSearchUtilClient import GenomeSearchUtil
+from Workspace.WorkspaceClient import Workspace
 
 
 class FeatureSetDownload:
@@ -14,6 +15,7 @@ class FeatureSetDownload:
         self.scratch = config['scratch']
         self.gsu = GenomeSearchUtil(os.environ['SDK_CALLBACK_URL'])
         self.dfu = DataFileUtil(os.environ['SDK_CALLBACK_URL'])
+        self.ws = Workspace(config["workspace-url"])
 
     @staticmethod
     def validate_params(params, expected={"workspace_name", "featureset_name"}):
@@ -49,6 +51,7 @@ class FeatureSetDownload:
             feat_by_genome[v[0]].append(k)
 
         for genome, fids in feat_by_genome.items():
+            genome_name = self.ws.get_object_info3({'objects': [{'ref': genome}]})['infos'][0][1]
             res = self.gsu.search({'ref': genome,
                                    'structured_query': {'feature_id': fids},
                                    'sort_by': [['contig_id', 1]],
@@ -59,7 +62,7 @@ class FeatureSetDownload:
             for feat in res['features']:
                 features.append({'Feature Id': feat['feature_id'],
                                  'Aliases': ", ".join(feat['aliases'].keys()),
-                                 'Genome': genome,
+                                 'Genome': "{} ({})".format(genome_name, genome),
                                  'Type': feat['feature_type'],
                                  'Function': feat['function']
                                  })
