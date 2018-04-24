@@ -183,6 +183,26 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                     })[0]
         cls.expression_matrix_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
+        # upload expression matrix object
+        featureset_data = {
+            "description": "Generated FeatureSet from DifferentialExpression",
+            "element_ordering": [
+                "b1",
+                "b2",
+            ],
+            "elements": {
+                "b1": [cls.genome_ref],
+                "b2": [cls.genome_ref],
+            }
+        }
+        cls.featureset_name = 'test_featureset'
+        data_type = 'KBaseCollections.FeatureSet'
+        res = cls.dfu.save_objects({'id': cls.dfu.ws_name_to_id(cls.wsName),
+                                    'objects': [{'type': data_type,
+                                                 'data': featureset_data,
+                                                 'name': cls.featureset_name}]
+                                    })[0]
+
     def getWsClient(self):
         return self.__class__.wsClient
 
@@ -278,7 +298,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
         self.assertTrue('result_directory' in result)
         result_files = os.listdir(result['result_directory'])
-        print result_files
+        print(result_files)
         expect_result_files = ['gene_results.csv']
         self.assertTrue(all(x in result_files for x in expect_result_files))
         self.assertTrue('up_feature_set_ref_list' in result)
@@ -334,7 +354,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
         self.assertTrue('result_directory' in result)
         result_files = os.listdir(result['result_directory'])
-        print result_files
+        print(result_files)
         expect_result_files = ['gene_results.csv']
         self.assertTrue(all(x in result_files for x in expect_result_files))
         self.assertTrue('up_feature_set_ref_list' in result)
@@ -366,7 +386,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
         self.assertTrue('result_directory' in result)
         result_files = os.listdir(result['result_directory'])
-        print result_files
+        print(result_files)
         expect_result_files = ['gene_results.csv']
         self.assertTrue(all(x in result_files for x in expect_result_files))
         self.assertTrue('up_feature_set_ref_list' in result)
@@ -374,3 +394,29 @@ class FeatureSetUtilsTest(unittest.TestCase):
         self.assertTrue('filtered_expression_matrix_ref_list' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
+
+    def test_to_tsv(self):
+        res = self.getImpl().featureset_to_tsv_file(self.getContext(), {
+                'featureset_name': self.featureset_name,
+                'workspace_name': self.wsName,
+            })[0]
+        expected = open('data/test_featureset.tsv').read().replace("<genome_ref>", self.genome_ref)
+        self.assertEqual(open(res['file_path']).read(), expected)
+        pprint(res)
+        # test bad input
+        with self.assertRaises(ValueError):
+            self.getImpl().featureset_to_tsv_file(self.getContext(), {
+                'input_ref': self.wsName + '/' + self.featureset_name
+            })
+
+    def test_export_tsv(self):
+        res = self.getImpl().export_featureset_as_tsv_file(self.getContext(), {
+                'input_ref': self.wsName + '/' + self.featureset_name
+            })
+        pprint(res)
+        # test bad input
+        with self.assertRaises(ValueError):
+            self.getImpl().export_featureset_as_tsv_file(self.getContext(), {
+                'featureset_name': self.featureset_name,
+                'workspace_name': self.wsName,
+            })
