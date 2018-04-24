@@ -14,7 +14,7 @@ except:
 
 from pprint import pprint  # noqa: F401
 
-from biokbase.workspace.client import Workspace as workspaceService
+from Workspace.WorkspaceClient import Workspace as workspaceService
 from FeatureSetUtils.FeatureSetUtilsImpl import FeatureSetUtils
 from FeatureSetUtils.FeatureSetUtilsServer import MethodContext
 from FeatureSetUtils.authclient import KBaseAuth as _KBaseAuth
@@ -85,10 +85,10 @@ class FeatureSetUtilsTest(unittest.TestCase):
         dem_data = {
             'data': {'col_ids': ['log2_fold_change', 'p_value', 'q_value'],
                      'values': [[3.8118222284877, 0.6, 0.6],
-                                [3.3914043515407, 0.6, 0.6], 
+                                [3.3914043515407, 0.6, 0.6],
                                 [-4.79258539940901, 0.6, 0.6],
                                 [0.6, 0.6, 0.6]],
-                     'row_ids': ['AT2G01021.TAIR10', 'AT1G29930.TAIR10', 
+                     'row_ids': ['AT2G01021.TAIR10', 'AT1G29930.TAIR10',
                                  'AT1G29920.TAIR10', 'AT1G29940.TAIR10']},
             'condition_mapping': {'test_condition_1': 'test_condition_2'},
             'type': 'log2_level',
@@ -106,10 +106,10 @@ class FeatureSetUtilsTest(unittest.TestCase):
         dem_data = {
             'data': {'col_ids': ['log2_fold_change', 'p_value', 'q_value'],
                      'values': [[1, 0.6, 0.6],
-                                [2, 0.6, 0.6], 
+                                [2, 0.6, 0.6],
                                 [0.5, 0.6, 0.6],
                                 [0.5, 0.6, 0.6]],
-                     'row_ids': ['AT2G01021.TAIR10', 'AT1G29930.TAIR10', 
+                     'row_ids': ['AT2G01021.TAIR10', 'AT1G29930.TAIR10',
                                  'AT1G29920.TAIR10', 'AT1G29940.TAIR10']},
             'condition_mapping': {'test_condition_1': 'test_condition_2'},
             'type': 'linear',
@@ -125,9 +125,9 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
         # upload differetial expression set object
         dem_set_data = {
-            'items': [{'ref': cls.diff_expression_ref, 
+            'items': [{'ref': cls.diff_expression_ref,
                        'label': 'test_condition_1, test_condition_2'},
-                      {'ref': cls.diff_expression_ref, 
+                      {'ref': cls.diff_expression_ref,
                        'label': 'test_condition_3, test_condition_4'}],
             'description': 'deseq Diff Exp Matrix Set'
         }
@@ -140,9 +140,9 @@ class FeatureSetUtilsTest(unittest.TestCase):
         cls.diff_expression_set_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
         dem_set_data = {
-            'items': [{'ref': cls.diff_expression_ref_linear, 
+            'items': [{'ref': cls.diff_expression_ref_linear,
                        'label': 'test_condition_1, test_condition_2'},
-                      {'ref': cls.diff_expression_ref_linear, 
+                      {'ref': cls.diff_expression_ref_linear,
                        'label': 'test_condition_3, test_condition_4'}],
             'description': 'deseq Diff Exp Matrix Set'
         }
@@ -202,7 +202,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'fold_scale_type': 'linear',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, 
+        with self.assertRaisesRegexp(ValueError,
                                      '"fold_scale_type" parameter must be set to "logarithm", if used'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
@@ -212,7 +212,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'q_cutoff': 'q_cutoff',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, 
+        with self.assertRaisesRegexp(ValueError,
                                      '"diff_expression_ref" parameter is required, but missing'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
@@ -240,7 +240,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'q_cutoff': 'q_cutoff',
                                    'missing_fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, 
+        with self.assertRaisesRegexp(ValueError,
                                      '"fold_change_cutoff" parameter is required, but missing'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
@@ -250,7 +250,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'q_cutoff': 'q_cutoff',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'missing_workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, 
+        with self.assertRaisesRegexp(ValueError,
                                      '"workspace_name" parameter is required, but missing'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
@@ -273,7 +273,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'run_all_combinations': True
         }
 
-        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(), 
+        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                                  input_params)[0]
 
         self.assertTrue('result_directory' in result)
@@ -286,6 +286,32 @@ class FeatureSetUtilsTest(unittest.TestCase):
         self.assertTrue('filtered_expression_matrix_ref_list' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
+
+        # adding in one test here to make sure that that the filtered expression
+        # matrices each have a proper link in the provenance back to the differential
+        # expression matrix (individual matrix, not set) that was used to create it
+
+        obj = self.wsClient.get_objects([{'ref': self.diff_expression_set_ref}])[0]
+        dl = obj.get('data').get('items')
+        dms = map((lambda r: r.get('ref')),dl)
+
+        # check each filtered expression matrix in the set:
+
+        for fem in result.get('filtered_expression_matrix_ref_list'):
+            prov = self.wsClient.get_object_provenance([{'ref': fem}])[0].get('provenance')[0]
+            self.assertTrue(prov.get( 'input_ws_objects'))
+            dem_list = prov.get('input_ws_objects')
+            self.assertTrue(isinstance(dem_list, list))
+            self.assertTrue(len( dem_list ) == 1)    # should be a list of one
+            self.assertTrue(dem_list[0] in dms)      # and in the diff. expr. set list
+            dem_info = self.wsClient.get_object_info3({"objects":
+                                                            [{"ref": dem_list[0] }]}
+                                                            )['infos'][0]
+
+            # ensure that this is really a differential expression matrix
+
+            self.assertTrue( dem_info[2].startswith('KBaseFeatureValues.DifferentialExpressionMatrix'))
+
 
     def test_upload_featureset_from_diff_expr_partial_conditions(self):
 
@@ -303,7 +329,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'condition_pairs': [{'label_string': ['test_condition_1, test_condition_2']}]
         }
 
-        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(), 
+        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                                  input_params)[0]
 
         self.assertTrue('result_directory' in result)
@@ -316,6 +342,8 @@ class FeatureSetUtilsTest(unittest.TestCase):
         self.assertTrue('filtered_expression_matrix_ref_list' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
+
+
 
     def test_upload_featureset_from_diff_expr_linear(self):
 
@@ -333,7 +361,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
             'run_all_combinations': True
         }
 
-        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(), 
+        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                                  input_params)[0]
 
         self.assertTrue('result_directory' in result)

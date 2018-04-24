@@ -187,9 +187,9 @@ class FeatureSetBuilder:
             if condition_1 in condition_label_pair and condition_2 in condition_label_pair:
                 genome_id = diff_expression_data['genome_ref']
                 matrix_data = diff_expression_data['data']
+                selected_diff_expression_ref = diff_expression_ref
 
                 with open(diff_expr_matrix_file, 'ab') as csvfile:
-
                     row_ids = matrix_data.get('row_ids')
                     row_values = matrix_data.get('values')
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -201,7 +201,7 @@ class FeatureSetBuilder:
                                          'p_value': row_value[1],
                                          'q_value': row_value[2]})
 
-        return diff_expr_matrix_file, genome_id
+        return diff_expr_matrix_file, genome_id, selected_diff_expression_ref
 
     def _generate_feature_set(self, feature_ids, genome_id, workspace_name, feature_set_name):
         """
@@ -271,12 +271,12 @@ class FeatureSetBuilder:
                     q_value_condition = float(row_q_value) <= comp_q_value
 
                     up_matches_condition = (p_value_condition and q_value_condition and
-                                              (float(row_fold_change_cutoff) >=
-                                              comp_fold_change_cutoff))
+                                                         (float(row_fold_change_cutoff) >=
+                                                         comp_fold_change_cutoff))
 
                     down_matches_condition = (p_value_condition and q_value_condition and
-                                              (float(row_fold_change_cutoff) <=
-                                              -comp_fold_change_cutoff))
+                                             (float(row_fold_change_cutoff) <=
+                                             -comp_fold_change_cutoff))
 
                     if up_matches_condition:
                         up_feature_ids.append(feature_id)
@@ -286,7 +286,8 @@ class FeatureSetBuilder:
         return list(set(up_feature_ids)), list(set(down_feature_ids))
 
     def _filter_expression_matrix(self, expression_matrix_ref, feature_ids,
-                                  workspace_name, filtered_expression_matrix_suffix):
+                                  workspace_name, filtered_expression_matrix_suffix,
+                                  diff_expression_matrix_ref):
         """
         _filter_expression_matrix: generated filtered expression matrix
         """
@@ -339,7 +340,8 @@ class FeatureSetBuilder:
             'id': workspace_id,
             'objects': [{'type': object_type,
                          'data': filtered_expression_matrix_data,
-                         'name': filtered_expression_matrix_name}]}
+                         'name': filtered_expression_matrix_name,
+                         'extra_provenance_input_refs': [diff_expression_matrix_ref]}]}
 
         dfu_oi = self.dfu.save_objects(save_object_params)[0]
         filtered_expression_matrix_ref = str(
@@ -471,11 +473,10 @@ class FeatureSetBuilder:
 
         for condition_label_pair in condition_label_pairs:
             condition_string = '_' + '_'.join(condition_label_pair)
-            diff_expr_matrix_file, genome_id = self._process_diff_expression(
+            diff_expr_matrix_file, genome_id, diff_expr_matrix_ref = self._process_diff_expression(
                                                                 diff_expression_set_ref,
                                                                 result_directory,
                                                                 condition_label_pair)
-
             up_feature_ids, down_feature_ids = self._process_matrix_file(
                                                                 diff_expr_matrix_file,
                                                                 params.get('p_cutoff'),
@@ -488,7 +489,8 @@ class FeatureSetBuilder:
                                                 params.get('expression_matrix_ref'),
                                                 up_feature_ids + down_feature_ids,
                                                 params.get('workspace_name'),
-                                                filtered_expression_matrix_suffix)
+                                                filtered_expression_matrix_suffix,
+                                                diff_expr_matrix_ref)
                 filtered_expression_matrix_ref_list.append(filtered_expression_matrix_ref)
 
             feature_set_suffix = params.get('feature_set_suffix')
