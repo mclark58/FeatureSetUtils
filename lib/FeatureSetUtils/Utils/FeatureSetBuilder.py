@@ -333,6 +333,8 @@ class FeatureSetBuilder:
         filtered_data['row_ids'] = filtered_row_ids
         filtered_data['values'] = filtered_values
 
+        # we now save the filtering DEM in a EM field added for this purpose
+        filtered_expression_matrix_data['diff_expr_matrix_ref'] = diff_expression_matrix_ref
         filtered_expression_matrix_data['data'] = filtered_data
 
         object_type = 'KBaseFeatureValues.ExpressionMatrix'

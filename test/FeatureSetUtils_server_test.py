@@ -12,7 +12,7 @@ try:
 except:
     from configparser import ConfigParser  # py3
 
-from pprint import pprint  # noqa: F401
+from pprint import pprint, pformat  # noqa: F401
 
 from Workspace.WorkspaceClient import Workspace as workspaceService
 from FeatureSetUtils.FeatureSetUtilsImpl import FeatureSetUtils
@@ -78,7 +78,9 @@ class FeatureSetUtilsTest(unittest.TestCase):
         genome_object_name = 'test_Genome'
         cls.genome_ref = cls.gfu.genbank_to_genome({'file': {'path': genbank_file_path},
                                                     'workspace_name': cls.wsName,
-                                                    'genome_name': genome_object_name
+                                                    'genome_name': genome_object_name,
+                                                    'generate_ids_if_needed': "yes",
+                                                    'generate_missing_genes': "yes"
                                                     })['genome_ref']
 
         # upload differetial expression object
@@ -309,7 +311,9 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
         # adding in one test here to make sure that that the filtered expression
         # matrices each have a proper link in the provenance back to the differential
-        # expression matrix (individual matrix, not set) that was used to create it
+        # expression matrix (individual matrix, not set) that was used to create it.
+        # Also adding in a check to make sure the FEM object also has a proper 
+        # diff_expr_matrix_ref field 
 
         obj = self.wsClient.get_objects([{'ref': self.diff_expression_set_ref}])[0]
         dl = obj.get('data').get('items')
@@ -331,6 +335,12 @@ class FeatureSetUtilsTest(unittest.TestCase):
             # ensure that this is really a differential expression matrix
 
             self.assertTrue( dem_info[2].startswith('KBaseFeatureValues.DifferentialExpressionMatrix'))
+
+            # and make sure it matches fem['diff_expr_matrix_ref']
+
+            fem_obj = self.wsClient.get_objects([{'ref': fem}] )[0].get('data')
+            self.assertTrue( 'diff_expr_matrix_ref' in fem_obj.keys() )
+            self.assertTrue( fem_obj.get('diff_expr_matrix_ref') == dem_list[0] )
 
 
     def test_upload_featureset_from_diff_expr_partial_conditions(self):
