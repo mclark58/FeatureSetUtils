@@ -17,3 +17,5 @@
 - 1.1.6: added icons for Apps
 
 - 1.2.0: add tsv conversion method and download
+
+- 1.2.1: Add link to Differential Expression Matrix for Filtered Differential Expression Matrices
