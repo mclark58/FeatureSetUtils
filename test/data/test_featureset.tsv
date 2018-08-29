@@ -1,3 +1,3 @@
 Feature Id	Aliases	Genome	Type	Function
-b1	AXL2, dah, AAA98666.1, something:1, blah, b1, GI:1293615, Madeup:ref1	test_Genome (<genome_ref>)	gene	Axl2p
-b2	Madeup:ref2, blah2, AAA98667.1, something:2, b2, GI:1293616, dah2, REV7	test_Genome (<genome_ref>)	gene	Rev7p
+b1	blah; dah;, AXL2, b1, AAA98666.1	test_Genome (<genome_ref>)	gene	Axl2p
+b2	REV7, AAA98667.1, b2, blah2; dah2;	test_Genome (<genome_ref>)	gene	Rev7p

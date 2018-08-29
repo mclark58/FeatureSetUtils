@@ -185,6 +185,16 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                     })[0]
         cls.expression_matrix_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
+        del expression_matrix_data['type']
+        del expression_matrix_data['condition_mapping']
+        data_type = 'KBaseMatrices.ExpressionMatrix'
+        res = cls.dfu.save_objects({'id': cls.dfu.ws_name_to_id(cls.wsName),
+                                    'objects': [{'type': data_type,
+                                                 'data': expression_matrix_data,
+                                                 'name': 'test_generic_expression_matrix'}]
+                                    })[0]
+        cls.generic_expression_matrix_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
+
         # upload expression matrix object
         featureset_data = {
             "description": "Generated FeatureSet from DifferentialExpression",
@@ -341,6 +351,37 @@ class FeatureSetUtilsTest(unittest.TestCase):
             fem_obj = self.wsClient.get_objects([{'ref': fem}] )[0].get('data')
             self.assertTrue( 'diff_expr_matrix_ref' in fem_obj.keys() )
             self.assertTrue( fem_obj.get('diff_expr_matrix_ref') == dem_list[0] )
+
+    def test_upload_featureset_from_diff_expr_generic(self):
+
+        feature_set_name = 'MyFeatureSet'
+        input_params = {
+            'diff_expression_ref': self.diff_expression_set_ref,
+            'expression_matrix_ref': self.generic_expression_matrix_ref,
+            'feature_set_name': feature_set_name,
+            'p_cutoff': 0.05,
+            'q_cutoff': 0.05,
+            'fold_change_cutoff': 1,
+            'fold_scale_type': "logarithm",    # optional, if given this is the required value
+            'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+            'feature_set_suffix': '_feature_set',
+            'workspace_name': self.getWsName(),
+            'run_all_combinations': True
+        }
+
+        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
+                                                                 input_params)[0]
+
+        self.assertTrue('result_directory' in result)
+        result_files = os.listdir(result['result_directory'])
+        print(result_files)
+        expect_result_files = ['gene_results.csv']
+        self.assertTrue(all(x in result_files for x in expect_result_files))
+        self.assertTrue('up_feature_set_ref_list' in result)
+        self.assertTrue('down_feature_set_ref_list' in result)
+        self.assertTrue('filtered_expression_matrix_ref_list' in result)
+        self.assertTrue('report_name' in result)
+        self.assertTrue('report_ref' in result)
 
 
     def test_upload_featureset_from_diff_expr_partial_conditions(self):
