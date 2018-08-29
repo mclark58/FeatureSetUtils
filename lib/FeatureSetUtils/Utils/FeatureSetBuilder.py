@@ -292,7 +292,7 @@ class FeatureSetBuilder:
         _filter_expression_matrix: generated filtered expression matrix
         """
 
-        log('start saving KBaseFeatureValues.ExpressionMatrix object')
+        log('start saving ExpressionMatrix object')
 
         if isinstance(workspace_name, int) or workspace_name.isdigit():
             workspace_id = workspace_name
@@ -337,7 +337,7 @@ class FeatureSetBuilder:
         filtered_expression_matrix_data['diff_expr_matrix_ref'] = diff_expression_matrix_ref
         filtered_expression_matrix_data['data'] = filtered_data
 
-        object_type = 'KBaseFeatureValues.ExpressionMatrix'
+        object_type = expression_matrix_info[2]
         save_object_params = {
             'id': workspace_id,
             'objects': [{'type': object_type,

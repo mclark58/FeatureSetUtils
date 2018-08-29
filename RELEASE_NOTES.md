@@ -19,3 +19,5 @@
 - 1.2.0: add tsv conversion method and download
 
 - 1.2.1: Add link to Differential Expression Matrix for Filtered Differential Expression Matrices
+
+- 1.2.2: Allow filtering app to work on KBaseMatrices
