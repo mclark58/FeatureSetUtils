@@ -1,0 +1,90 @@
+{
+    "ver": "1.0.0",
+    "authors": [
+        "jjeffryes"
+    ],
+    "contact": "help@kbase.us",
+    "categories": ["active","expression"],
+    "widgets" : {
+        "input" : "kbaseNarrativeMethodInput",
+        "output" : "no-display"
+    },
+    "parameters": [
+        {
+            "id": "expression_matrix_ref",
+            "optional": true,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "text",
+            "text_options": {
+                "valid_ws_types": ["KBaseFeatureValues.ExpressionMatrix", "KBaseMatrices.ExpressionMatrix"]
+            }
+        },
+        {
+            "id": "feature_set_ref",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "text",
+            "text_options": {
+                "valid_ws_types": ["KBaseCollections.FeatureSet"]
+            }
+        },
+        {
+            "id" : "filtered_expression_matrix_suffix",
+            "optional" : false,
+            "advanced" : true,
+            "allow_multiple" : false,
+            "default_values" : [ "_filtered_expression_matrix" ],
+            "field_type" : "text"
+        }
+    ],
+    "behavior": {
+        "service-mapping": {
+            "url": "",
+            "name": "FeatureSetUtils",
+            "method": "filter_expression_matrix_with_feature_set",
+            "input_mapping": [
+                {
+                  "narrative_system_variable": "workspace",
+                  "target_property" : "workspace_name"
+                },
+                {
+                  "input_parameter" : "feature_set_ref",
+                  "target_type_transform": "resolved-ref",
+                  "target_property" : "feature_set_ref"
+                },
+                {
+                  "input_parameter" : "expression_matrix_ref",
+                  "target_type_transform": "resolved-ref",
+                  "target_property" : "expression_matrix_ref"
+                },
+                {
+                  "input_parameter" : "filtered_expression_matrix_suffix",
+                  "target_property" : "filtered_expression_matrix_suffix"
+                }
+            ],
+            "output_mapping": [
+                {
+                  "service_method_output_path": [0,"filtered_expression_matrix_ref_list"],
+                  "target_property": "filtered_expression_matrix_ref_list"
+                },
+                {
+                  "service_method_output_path": [0,"report_name"],
+                  "target_property": "report_name"
+                },
+                {
+                  "service_method_output_path": [0,"report_ref"],
+                  "target_property": "report_ref"
+                },
+                {
+                  "narrative_system_variable": "workspace",
+                  "target_property": "wsName"
+                }
+            ]
+        }
+    },
+    "job_id_output_field": "docker"
+}
