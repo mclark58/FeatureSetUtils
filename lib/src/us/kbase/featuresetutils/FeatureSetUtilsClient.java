@@ -199,6 +199,23 @@ public class FeatureSetUtilsClient {
     }
 
     /**
+     * <p>Original spec-file function name: filter_expression_matrix_with_feature_set</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.featuresetutils.FilterExpressionMatrixWithFeatureSetParams FilterExpressionMatrixWithFeatureSetParams}
+     * @return   parameter "returnVal" of type {@link us.kbase.featuresetutils.FilterExpressionMatrixWithFeatureSetResult FilterExpressionMatrixWithFeatureSetResult}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public FilterExpressionMatrixWithFeatureSetResult filterExpressionMatrixWithFeatureSet(FilterExpressionMatrixWithFeatureSetParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<FilterExpressionMatrixWithFeatureSetResult>> retType = new TypeReference<List<FilterExpressionMatrixWithFeatureSetResult>>() {};
+        List<FilterExpressionMatrixWithFeatureSetResult> res = caller.jsonrpcCall("FeatureSetUtils.filter_expression_matrix_with_feature_set", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
      * <p>Original spec-file function name: featureset_to_tsv_file</p>
      * <pre>
      * </pre>

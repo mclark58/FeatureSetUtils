@@ -3,8 +3,8 @@ import os
 import errno
 import uuid
 import csv
-import math
 import re
+import logging
 
 from Workspace.WorkspaceClient import Workspace as Workspace
 from DataFileUtil.DataFileUtilClient import DataFileUtil
@@ -49,6 +49,20 @@ class FeatureSetBuilder:
         p = params.get('fold_scale_type')
         if p and p != 'logarithm':
             raise ValueError('"fold_scale_type" parameter must be set to "logarithm", if used')
+
+    @staticmethod
+    def validate_params(params, expected, opt_param=set()):
+        """Validates that required parameters are present. Warns if unexpected parameters appear"""
+        expected = set(expected)
+        opt_param = set(opt_param)
+        pkeys = set(params)
+        if expected - pkeys:
+            raise ValueError("Required keys {} not in supplied parameters"
+                             .format(", ".join(expected - pkeys)))
+        defined_param = expected | opt_param
+        for param in params:
+            if param not in defined_param:
+                logging.warning("Unexpected parameter {} supplied".format(param))
 
     def _generate_report(self, up_feature_set_ref_list, down_feature_set_ref_list,
                          filtered_expression_matrix_ref_list, workspace_name):
@@ -287,7 +301,7 @@ class FeatureSetBuilder:
 
     def _filter_expression_matrix(self, expression_matrix_ref, feature_ids,
                                   workspace_name, filtered_expression_matrix_suffix,
-                                  diff_expression_matrix_ref):
+                                  diff_expression_matrix_ref=None):
         """
         _filter_expression_matrix: generated filtered expression matrix
         """
@@ -334,7 +348,8 @@ class FeatureSetBuilder:
         filtered_data['values'] = filtered_values
 
         # we now save the filtering DEM in a EM field added for this purpose
-        filtered_expression_matrix_data['diff_expr_matrix_ref'] = diff_expression_matrix_ref
+        if diff_expression_matrix_ref:
+            filtered_expression_matrix_data['diff_expr_matrix_ref'] = diff_expression_matrix_ref
         filtered_expression_matrix_data['data'] = filtered_data
 
         object_type = expression_matrix_info[2]
@@ -342,8 +357,8 @@ class FeatureSetBuilder:
             'id': workspace_id,
             'objects': [{'type': object_type,
                          'data': filtered_expression_matrix_data,
-                         'name': filtered_expression_matrix_name,
-                         'extra_provenance_input_refs': [diff_expression_matrix_ref]}]}
+                         'name': filtered_expression_matrix_name
+                         }]}
 
         dfu_oi = self.dfu.save_objects(save_object_params)[0]
         filtered_expression_matrix_ref = str(
@@ -523,3 +538,30 @@ class FeatureSetBuilder:
         returnVal.update(report_output)
 
         return returnVal
+
+    def filter_matrix_with_fs(self, params):
+        self.validate_params(params, ('feature_set_ref', 'workspace_name',
+                                      'expression_matrix_ref', 'filtered_expression_matrix_suffix'))
+        feature_set = self.dfu.get_objects(
+            {'object_refs': [params['feature_set_ref']]}
+        )['data'][0]['data']
+        feature_ids = set(feature_set['elements'].keys())
+        filtered_matrix_ref = self._filter_expression_matrix(
+            params['expression_matrix_ref'], feature_ids, params['workspace_name'],
+            params['filtered_expression_matrix_suffix'])
+
+        objects_created = [{'ref': filtered_matrix_ref,
+                            'description': 'Filtered ExpressionMatrix Object'}]
+        message = "Filtered Expression Matrix {} based of the {} feature ids present in {}"\
+            .format(params['expression_matrix_ref'], len(feature_ids), params['feature_set_ref'])
+
+        report_params = {'message': message,
+                         'workspace_name': params['workspace_name'],
+                         'objects_created': objects_created,
+                         'report_object_name': 'kb_FeatureSetUtils_report_' + str(uuid.uuid4())}
+
+        kbase_report_client = KBaseReport(self.callback_url)
+        output = kbase_report_client.create_extended_report(report_params)
+
+        return {'filtered_expression_matrix_ref': filtered_matrix_ref,
+                'report_name': output['name'], 'report_ref': output['ref']}

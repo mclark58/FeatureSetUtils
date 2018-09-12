@@ -199,12 +199,12 @@ class FeatureSetUtilsTest(unittest.TestCase):
         featureset_data = {
             "description": "Generated FeatureSet from DifferentialExpression",
             "element_ordering": [
-                "b1",
-                "b2",
+                "AT1G29930.TAIR10",
+                "AT1G29940.TAIR10",
             ],
             "elements": {
-                "b1": [cls.genome_ref],
-                "b2": [cls.genome_ref],
+                "AT1G29930.TAIR10": [cls.genome_ref],
+                "AT1G29940.TAIR10": [cls.genome_ref],
             }
         }
         cls.featureset_name = 'test_featureset'
@@ -214,6 +214,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                  'data': featureset_data,
                                                  'name': cls.featureset_name}]
                                     })[0]
+        cls.feature_set_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
     def getWsClient(self):
         return self.__class__.wsClient
@@ -267,184 +268,79 @@ class FeatureSetUtilsTest(unittest.TestCase):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
 
-        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'p_cutoff': 'p_cutoff',
-                                   'q_cutoff': 'q_cutoff',
-                                   'missing_fold_change_cutoff': 'fold_change_cutoff',
-                                   'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError,
-                                     '"fold_change_cutoff" parameter is required, but missing'):
-            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                            invalidate_input_params)
+    def test_filter_expression_matrix_with_feature_set_invalid(self):
+        with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
+            input_params = {
+                'expression_matrix_ref': self.expression_matrix_ref,
+                'feature_set_ref': self.feature_set_ref,
+                'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+            }
+            self.getImpl().filter_expression_matrix_with_feature_set(
+                self.getContext(), input_params)[0]
+        with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
+            input_params = {
+                'expression_matrix_ref': self.expression_matrix_ref,
+                'feature_set_ref': self.feature_set_ref,
+                'workspace_name': self.getWsName(),
+            }
+            self.getImpl().filter_expression_matrix_with_feature_set(
+                self.getContext(), input_params)[0]
+        with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
+            input_params = {
+                'expression_matrix_ref': self.expression_matrix_ref,
+                'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+                'workspace_name': self.getWsName(),
+            }
+            self.getImpl().filter_expression_matrix_with_feature_set(
+                self.getContext(), input_params)[0]
+        with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
+            input_params = {
+                'feature_set_ref': self.feature_set_ref,
+                'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+                'workspace_name': self.getWsName(),
+            }
+            self.getImpl().filter_expression_matrix_with_feature_set(
+                self.getContext(), input_params)[0]
 
-        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'p_cutoff': 'p_cutoff',
-                                   'q_cutoff': 'q_cutoff',
-                                   'fold_change_cutoff': 'fold_change_cutoff',
-                                   'missing_workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError,
-                                     '"workspace_name" parameter is required, but missing'):
-            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                            invalidate_input_params)
-
-
-    def test_upload_featureset_from_diff_expr(self):
-
-        feature_set_name = 'MyFeatureSet'
+    def test_filter_expression_matrix_with_feature_set(self):
         input_params = {
-            'diff_expression_ref': self.diff_expression_set_ref,
             'expression_matrix_ref': self.expression_matrix_ref,
-            'feature_set_name': feature_set_name,
-            'p_cutoff': 0.05,
-            'q_cutoff': 0.05,
-            'fold_change_cutoff': 1,
-            'fold_scale_type': "logarithm",    # optional, if given this is the required value
+            'feature_set_ref': self.feature_set_ref,
             'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
-            'feature_set_suffix': '_feature_set',
             'workspace_name': self.getWsName(),
-            'run_all_combinations': True
         }
 
-        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                                 input_params)[0]
-
-        self.assertTrue('result_directory' in result)
-        result_files = os.listdir(result['result_directory'])
-        print(result_files)
-        expect_result_files = ['gene_results.csv']
-        self.assertTrue(all(x in result_files for x in expect_result_files))
-        self.assertTrue('up_feature_set_ref_list' in result)
-        self.assertTrue('down_feature_set_ref_list' in result)
-        self.assertTrue('filtered_expression_matrix_ref_list' in result)
+        result = self.getImpl().filter_expression_matrix_with_feature_set(
+            self.getContext(), input_params)[0]
+        self.assertTrue('filtered_expression_matrix_ref' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
 
-        # adding in one test here to make sure that that the filtered expression
-        # matrices each have a proper link in the provenance back to the differential
-        # expression matrix (individual matrix, not set) that was used to create it.
-        # Also adding in a check to make sure the FEM object also has a proper 
-        # diff_expr_matrix_ref field 
+        exp_matrix = self.dfu.get_objects(
+            {'object_refs': [result["filtered_expression_matrix_ref"]]}
+        )['data'][0]['data']
+        self.assertEqual(len(exp_matrix['data']['col_ids']), 2)
+        self.assertEqual(len(exp_matrix['data']['row_ids']), 2)
 
-        obj = self.wsClient.get_objects([{'ref': self.diff_expression_set_ref}])[0]
-        dl = obj.get('data').get('items')
-        dms = map((lambda r: r.get('ref')),dl)
-
-        # check each filtered expression matrix in the set:
-
-        for fem in result.get('filtered_expression_matrix_ref_list'):
-            prov = self.wsClient.get_object_provenance([{'ref': fem}])[0].get('provenance')[0]
-            self.assertTrue(prov.get( 'input_ws_objects'))
-            dem_list = prov.get('input_ws_objects')
-            self.assertTrue(isinstance(dem_list, list))
-            self.assertTrue(len( dem_list ) == 1)    # should be a list of one
-            self.assertTrue(dem_list[0] in dms)      # and in the diff. expr. set list
-            dem_info = self.wsClient.get_object_info3({"objects":
-                                                            [{"ref": dem_list[0] }]}
-                                                            )['infos'][0]
-
-            # ensure that this is really a differential expression matrix
-
-            self.assertTrue( dem_info[2].startswith('KBaseFeatureValues.DifferentialExpressionMatrix'))
-
-            # and make sure it matches fem['diff_expr_matrix_ref']
-
-            fem_obj = self.wsClient.get_objects([{'ref': fem}] )[0].get('data')
-            self.assertTrue( 'diff_expr_matrix_ref' in fem_obj.keys() )
-            self.assertTrue( fem_obj.get('diff_expr_matrix_ref') == dem_list[0] )
-
-    def test_upload_featureset_from_diff_expr_generic(self):
-
-        feature_set_name = 'MyFeatureSet'
+    def test_invalid_filter_expression_matrix_with_feature_set_generic(self):
         input_params = {
-            'diff_expression_ref': self.diff_expression_set_ref,
             'expression_matrix_ref': self.generic_expression_matrix_ref,
-            'feature_set_name': feature_set_name,
-            'p_cutoff': 0.05,
-            'q_cutoff': 0.05,
-            'fold_change_cutoff': 1,
-            'fold_scale_type': "logarithm",    # optional, if given this is the required value
+            'feature_set_ref': self.feature_set_ref,
             'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
-            'feature_set_suffix': '_feature_set',
             'workspace_name': self.getWsName(),
-            'run_all_combinations': True
         }
 
-        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                                 input_params)[0]
-
-        self.assertTrue('result_directory' in result)
-        result_files = os.listdir(result['result_directory'])
-        print(result_files)
-        expect_result_files = ['gene_results.csv']
-        self.assertTrue(all(x in result_files for x in expect_result_files))
-        self.assertTrue('up_feature_set_ref_list' in result)
-        self.assertTrue('down_feature_set_ref_list' in result)
-        self.assertTrue('filtered_expression_matrix_ref_list' in result)
+        result = self.getImpl().filter_expression_matrix_with_feature_set(
+            self.getContext(), input_params)[0]
+        self.assertTrue('filtered_expression_matrix_ref' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
 
-
-    def test_upload_featureset_from_diff_expr_partial_conditions(self):
-
-        feature_set_name = 'MyFeatureSet'
-        input_params = {
-            'diff_expression_ref': self.diff_expression_set_ref,
-            'expression_matrix_ref': self.expression_matrix_ref,
-            'feature_set_name': feature_set_name,
-            'p_cutoff': 0.05,
-            'q_cutoff': 0.05,
-            'fold_change_cutoff': 1,
-            'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
-            'feature_set_suffix': '_feature_set',
-            'workspace_name': self.getWsName(),
-            'condition_pairs': [{'label_string': ['test_condition_1, test_condition_2']}]
-        }
-
-        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                                 input_params)[0]
-
-        self.assertTrue('result_directory' in result)
-        result_files = os.listdir(result['result_directory'])
-        print(result_files)
-        expect_result_files = ['gene_results.csv']
-        self.assertTrue(all(x in result_files for x in expect_result_files))
-        self.assertTrue('up_feature_set_ref_list' in result)
-        self.assertTrue('down_feature_set_ref_list' in result)
-        self.assertTrue('filtered_expression_matrix_ref_list' in result)
-        self.assertTrue('report_name' in result)
-        self.assertTrue('report_ref' in result)
-
-
-
-    def test_upload_featureset_from_diff_expr_linear(self):
-
-        feature_set_name = 'MyFeatureSet'
-        input_params = {
-            'diff_expression_ref': self.diff_expression_set_ref_linear,
-            'expression_matrix_ref': self.expression_matrix_ref,
-            'feature_set_name': feature_set_name,
-            'p_cutoff': 0.05,
-            'q_cutoff': 0.05,
-            'fold_change_cutoff': 1,
-            'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
-            'feature_set_suffix': '_feature_set',
-            'workspace_name': self.getWsName(),
-            'run_all_combinations': True
-        }
-
-        result = self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                                 input_params)[0]
-
-        self.assertTrue('result_directory' in result)
-        result_files = os.listdir(result['result_directory'])
-        print(result_files)
-        expect_result_files = ['gene_results.csv']
-        self.assertTrue(all(x in result_files for x in expect_result_files))
-        self.assertTrue('up_feature_set_ref_list' in result)
-        self.assertTrue('down_feature_set_ref_list' in result)
-        self.assertTrue('filtered_expression_matrix_ref_list' in result)
-        self.assertTrue('report_name' in result)
-        self.assertTrue('report_ref' in result)
+        exp_matrix = self.dfu.get_objects(
+            {'object_refs': [result["filtered_expression_matrix_ref"]]}
+        )['data'][0]['data']
+        self.assertEqual(len(exp_matrix['data']['col_ids']), 2)
+        self.assertEqual(len(exp_matrix['data']['row_ids']), 2)
 
     def test_to_tsv(self):
         res = self.getImpl().featureset_to_tsv_file(self.getContext(), {

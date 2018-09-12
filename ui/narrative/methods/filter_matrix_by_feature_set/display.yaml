@@ -1,0 +1,48 @@
+#
+# define display information
+#
+name: Filter Expression Matrix With Feature Set
+
+tooltip: |
+    Create a Filtered Expression Matrix matching a provided Feature Set
+
+icon: data-yellow.png
+
+screenshots: []
+
+#
+# define a set of similar methods that might be useful to the user
+#
+method-suggestions :
+    related :
+        []
+    next :
+        []
+
+#
+# Configure the display and description of parameters
+#
+parameters :
+
+    expression_matrix_ref :
+        ui-name : |
+            Expression Matrix
+        short-hint : |
+            Expression Matrix
+
+    feature_set_ref :
+        ui-name : |
+            Feature Set
+        short-hint : |
+            The Feature Set which will be used to filter the Expression Matrix
+
+    filtered_expression_matrix_suffix :
+        ui-name : |
+            Filtered ExpressionMatrix Suffix
+        short-hint : |
+            Filtered ExpressionMatrix Suffix
+
+description : |
+    <p>This App filters Expression Matrix to contain only the rows present in the supplied Feature Set.</p>
+
+    <p><strong>Team members who developed & deployed algorithm in KBase:</strong> Tianhao Gu</p>
