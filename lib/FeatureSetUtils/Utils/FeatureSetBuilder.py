@@ -1,14 +1,15 @@
-import time
-import os
-import errno
-import uuid
 import csv
-import re
+import errno
 import logging
+import os
+import re
+import time
+import uuid
 
-from Workspace.WorkspaceClient import Workspace as Workspace
 from DataFileUtil.DataFileUtilClient import DataFileUtil
+from GenomeSearchUtil.GenomeSearchUtilClient import GenomeSearchUtil
 from KBaseReport.KBaseReportClient import KBaseReport
+from Workspace.WorkspaceClient import Workspace as Workspace
 
 
 def log(message, prefix_newline=False):
@@ -250,7 +251,7 @@ class FeatureSetBuilder:
                          'name': feature_set_name}]}
 
         dfu_oi = self.dfu.save_objects(save_object_params)[0]
-        feature_set_obj_ref = str(dfu_oi[6]) + '/' + str(dfu_oi[0]) + '/' + str(dfu_oi[4])
+        feature_set_obj_ref = "{}/{}/{}".format(dfu_oi[6], dfu_oi[0], dfu_oi[4])
 
         return feature_set_obj_ref
 
@@ -361,8 +362,7 @@ class FeatureSetBuilder:
                          }]}
 
         dfu_oi = self.dfu.save_objects(save_object_params)[0]
-        filtered_expression_matrix_ref = str(
-            dfu_oi[6]) + '/' + str(dfu_oi[0]) + '/' + str(dfu_oi[4])
+        filtered_expression_matrix_ref = "{}/{}/{}".format(dfu_oi[6], dfu_oi[0], dfu_oi[4])
 
         return filtered_expression_matrix_ref
 
@@ -426,6 +426,7 @@ class FeatureSetBuilder:
         self.shock_url = config['shock-url']
         self.ws = Workspace(self.ws_url, token=self.token)
         self.dfu = DataFileUtil(self.callback_url)
+        self.gsu = GenomeSearchUtil(self.callback_url)
         self.scratch = config['scratch']
 
     def upload_featureset_from_diff_expr(self, params):
@@ -565,3 +566,101 @@ class FeatureSetBuilder:
 
         return {'filtered_expression_matrix_ref': filtered_matrix_ref,
                 'report_name': output['name'], 'report_ref': output['ref']}
+
+    def build_feature_set(self, params):
+        self.validate_params(params, {'output_feature_set', 'workspace_name', },
+                             {'genome', 'feature_ids', 'feature_ids_custom', 'base_feature_sets',
+                              'description'})
+        feature_sources = ('feature_ids', 'feature_ids_custom', 'base_feature_sets')
+        if not any([params.get(x) for x in feature_sources]):
+            raise ValueError("You must supply at least one feature source: {}".format(
+                ", ".join(feature_sources)))
+        workspace_id = self.dfu.ws_name_to_id(params['workspace_name'])
+
+        new_feature_set = self._build_fs_obj(params)
+        save_object_params = {
+            'id': workspace_id,
+            'objects': [{'type': 'KBaseCollections.FeatureSet',
+                         'data': new_feature_set,
+                         'name': params['output_feature_set']}]}
+
+        dfu_oi = self.dfu.save_objects(save_object_params)[0]
+        feature_set_obj_ref = '{}/{}/{}'.format(dfu_oi[6], dfu_oi[0], dfu_oi[4])
+
+        objects_created = [{'ref': feature_set_obj_ref,
+                            'description': 'Filtered ExpressionMatrix Object'}]
+        message = 'A new feature set containing {} features was created.'.format(
+            len(new_feature_set['elements']))
+
+        report_params = {'message': message,
+                         'workspace_name': params['workspace_name'],
+                         'objects_created': objects_created,
+                         'report_object_name': 'kb_FeatureSetUtils_report_' + str(uuid.uuid4())}
+
+        kbase_report_client = KBaseReport(self.callback_url)
+        output = kbase_report_client.create_extended_report(report_params)
+
+        return {'feature_set_ref': feature_set_obj_ref,
+                'report_name': output['name'], 'report_ref': output['ref']}
+
+    def _get_feature_ids(self, genome_ref):
+        """
+        _get_feature_ids: get feature ids from genome
+        """
+
+        feature_num = self.gsu.search({'ref': genome_ref})['num_found']
+
+        genome_features = self.gsu.search({'ref': genome_ref,
+                                           'limit': feature_num,
+                                           'sort_by': [['feature_id', True]]})['features']
+
+        features_ids = set((feature.get('feature_id') for feature in genome_features))
+
+        return features_ids
+
+    def _build_fs_obj(self, params):
+        new_feature_set = {
+            'description': '',
+            'element_ordering': [],
+            'elements': {}
+        }
+        genome_ref = params['genome']
+        if params.get('base_feature_sets'):
+            base_feature_sets = self.dfu.get_objects(
+                {'object_refs': params['base_feature_sets']}
+            )['data']
+            for ret in base_feature_sets:
+                base_set = ret['data']
+                base_set_name = ret['info'][1]
+
+                new_feature_set['element_ordering'] += [x for x in base_set['element_ordering']
+                                                        if x not in new_feature_set['elements']]
+                for element, genome_refs in base_set['elements'].iteritems():
+                    if element in new_feature_set['elements']:
+                        new_feature_set['elements'][element] += [x for x in genome_refs if x not in
+                                                                 new_feature_set['elements'][
+                                                                     element]]
+                    else:
+                        new_feature_set['elements'][element] = genome_refs
+                new_feature_set['description'] += 'From FeatureSet {}: {}\n'.format(
+                    base_set_name, base_set.get('description'))
+        new_feature_ids = params.get('feature_ids', [])
+        if params.get('feature_ids_custom'):
+            new_feature_ids += params['feature_ids_custom'].split(',')
+        genome_feature_ids = self._get_feature_ids(genome_ref)
+        for new_feature in new_feature_ids:
+            if new_feature not in genome_feature_ids:
+                raise ValueError('Feature ID {} does not exist in the supplied genome {}'.format(
+                    new_feature, genome_ref))
+            if new_feature in new_feature_set['elements']:
+                if genome_ref not in new_feature_set['elements'][new_feature]:
+                    new_feature_set['elements'][new_feature].append(genome_ref)
+            else:
+                new_feature_set['elements'][new_feature] = [genome_ref]
+                new_feature_set['element_ordering'].append(new_feature)
+
+        if params.get('description'):
+            new_feature_set['description'] = params['description']
+
+        return new_feature_set
+

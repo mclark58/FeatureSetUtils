@@ -82,6 +82,13 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                     'generate_ids_if_needed': "yes",
                                                     'generate_missing_genes': "yes"
                                                     })['genome_ref']
+        genome_object_name = 'test_Genome_2'
+        cls.genome_ref_2 = cls.gfu.genbank_to_genome({'file': {'path': genbank_file_path},
+                                                    'workspace_name': cls.wsName,
+                                                    'genome_name': genome_object_name,
+                                                    'generate_ids_if_needed': "yes",
+                                                    'generate_missing_genes': "yes"
+                                                    })['genome_ref']
 
         # upload differetial expression object
         dem_data = {
@@ -201,10 +208,12 @@ class FeatureSetUtilsTest(unittest.TestCase):
             "element_ordering": [
                 "AT1G29930.TAIR10",
                 "AT1G29940.TAIR10",
+                "b1"
             ],
             "elements": {
                 "AT1G29930.TAIR10": [cls.genome_ref],
                 "AT1G29940.TAIR10": [cls.genome_ref],
+                "b1": [cls.genome_ref],
             }
         }
         cls.featureset_name = 'test_featureset'
@@ -215,6 +224,25 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                  'name': cls.featureset_name}]
                                     })[0]
         cls.feature_set_ref = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
+
+        cls.featureset_name = 'test_featureset_2'
+        featureset_data = {
+            "description": "Generated FeatureSet from DifferentialExpression",
+            "element_ordering": [
+                "b1_CDS_1",
+                "b1",
+            ],
+            "elements": {
+                "b1": [cls.genome_ref_2],
+                "b1_CDS_1": [cls.genome_ref],
+            }
+        }
+        res = cls.dfu.save_objects({'id': cls.dfu.ws_name_to_id(cls.wsName),
+                                    'objects': [{'type': data_type,
+                                                 'data': featureset_data,
+                                                 'name': cls.featureset_name}]
+                                    })[0]
+        cls.feature_set_ref_2 = str(res[6]) + '/' + str(res[0]) + '/' + str(res[4])
 
     def getWsClient(self):
         return self.__class__.wsClient
@@ -228,142 +256,56 @@ class FeatureSetUtilsTest(unittest.TestCase):
     def getContext(self):
         return self.__class__.ctx
 
-    def test_bad_upload_featureset_from_diff_expr_params(self):
-        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'p_cutoff': 'p_cutoff',
-                                   'q_cutoff': 'q_cutoff',
-                                   'fold_scale_type': 'linear',
-                                   'fold_change_cutoff': 'fold_change_cutoff',
-                                   'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError,
-                                     '"fold_scale_type" parameter must be set to "logarithm", if used'):
-            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                            invalidate_input_params)
 
-        invalidate_input_params = {'missing_diff_expression_ref': 'diff_expression_ref',
-                                   'p_cutoff': 'p_cutoff',
-                                   'q_cutoff': 'q_cutoff',
-                                   'fold_change_cutoff': 'fold_change_cutoff',
-                                   'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError,
-                                     '"diff_expression_ref" parameter is required, but missing'):
-            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                            invalidate_input_params)
-
-        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'missing_p_cutoff': 'p_cutoff',
-                                   'q_cutoff': 'q_cutoff',
-                                   'fold_change_cutoff': 'fold_change_cutoff',
-                                   'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, '"p_cutoff" parameter is required, but missing'):
-            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                            invalidate_input_params)
-
-        invalidate_input_params = {'diff_expression_ref': 'diff_expression_ref',
-                                   'p_cutoff': 'p_cutoff',
-                                   'missing_q_cutoff': 'q_cutoff',
-                                   'fold_change_cutoff': 'fold_change_cutoff',
-                                   'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, '"q_cutoff" parameter is required, but missing'):
-            self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
-                                                            invalidate_input_params)
-
-    def test_filter_expression_matrix_with_feature_set_invalid(self):
+    def test_build_feature_set_invalid(self):
         with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
             input_params = {
-                'expression_matrix_ref': self.expression_matrix_ref,
-                'feature_set_ref': self.feature_set_ref,
-                'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+                'output_feature_set': 'new_feature_set',
             }
-            self.getImpl().filter_expression_matrix_with_feature_set(
-                self.getContext(), input_params)[0]
+            self.getImpl().build_feature_set(self.getContext(), input_params)[0]
         with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
             input_params = {
-                'expression_matrix_ref': self.expression_matrix_ref,
-                'feature_set_ref': self.feature_set_ref,
                 'workspace_name': self.getWsName(),
             }
-            self.getImpl().filter_expression_matrix_with_feature_set(
-                self.getContext(), input_params)[0]
-        with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
+            self.getImpl().build_feature_set(self.getContext(), input_params)[0]
+        with self.assertRaisesRegexp(ValueError, "at least one feature source"):
             input_params = {
-                'expression_matrix_ref': self.expression_matrix_ref,
-                'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
                 'workspace_name': self.getWsName(),
+                'output_feature_set': 'new_feature_set',
             }
-            self.getImpl().filter_expression_matrix_with_feature_set(
-                self.getContext(), input_params)[0]
-        with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
+            self.getImpl().build_feature_set(self.getContext(), input_params)[0]
+        with self.assertRaisesRegexp(ValueError, "does not exist in the supplied genome"):
             input_params = {
-                'feature_set_ref': self.feature_set_ref,
-                'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+                'genome': self.genome_ref_2,
+                'feature_ids': ["AT2G01021.TAIR10"],
                 'workspace_name': self.getWsName(),
+                'output_feature_set': 'new_feature_set',
             }
-            self.getImpl().filter_expression_matrix_with_feature_set(
-                self.getContext(), input_params)[0]
+            self.getImpl().build_feature_set(self.getContext(), input_params)[0]
 
-    def test_filter_expression_matrix_with_feature_set(self):
+    def test_build_feature_set(self):
         input_params = {
-            'expression_matrix_ref': self.expression_matrix_ref,
-            'feature_set_ref': self.feature_set_ref,
-            'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
+            'genome': self.genome_ref_2,
+            'feature_ids': ["b1"],
+            "feature_ids_custom": "b2,b1_CDS_1",
+            "base_feature_sets": [self.feature_set_ref, self.feature_set_ref_2],
             'workspace_name': self.getWsName(),
+            'output_feature_set': 'new_feature_set',
         }
-
-        result = self.getImpl().filter_expression_matrix_with_feature_set(
-            self.getContext(), input_params)[0]
-        self.assertTrue('filtered_expression_matrix_ref' in result)
+        result = self.getImpl().build_feature_set(self.getContext(), input_params)[0]
+        self.assertTrue('feature_set_ref' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
 
-        exp_matrix = self.dfu.get_objects(
-            {'object_refs': [result["filtered_expression_matrix_ref"]]}
+        feature_set = self.dfu.get_objects(
+            {'object_refs': [result["feature_set_ref"]]}
         )['data'][0]['data']
-        self.assertEqual(len(exp_matrix['data']['col_ids']), 2)
-        self.assertEqual(len(exp_matrix['data']['row_ids']), 2)
+        pprint(feature_set)
+        expected_elements = [u'AT1G29930.TAIR10', u'AT1G29940.TAIR10', u'b1', u'b1_CDS_1', 'b2']
+        self.assertItemsEqual(feature_set['element_ordering'], expected_elements)
+        self.assertItemsEqual(feature_set['elements'].keys(), expected_elements)
+        two_genomes = (u'b1', u'b1_CDS_1')
+        for key in two_genomes:
+            self.assertEqual(len(feature_set['elements'][key]), 2)
 
-    def test_invalid_filter_expression_matrix_with_feature_set_generic(self):
-        input_params = {
-            'expression_matrix_ref': self.generic_expression_matrix_ref,
-            'feature_set_ref': self.feature_set_ref,
-            'filtered_expression_matrix_suffix': '_filtered_expression_matrix',
-            'workspace_name': self.getWsName(),
-        }
 
-        result = self.getImpl().filter_expression_matrix_with_feature_set(
-            self.getContext(), input_params)[0]
-        self.assertTrue('filtered_expression_matrix_ref' in result)
-        self.assertTrue('report_name' in result)
-        self.assertTrue('report_ref' in result)
-
-        exp_matrix = self.dfu.get_objects(
-            {'object_refs': [result["filtered_expression_matrix_ref"]]}
-        )['data'][0]['data']
-        self.assertEqual(len(exp_matrix['data']['col_ids']), 2)
-        self.assertEqual(len(exp_matrix['data']['row_ids']), 2)
-
-    def test_to_tsv(self):
-        res = self.getImpl().featureset_to_tsv_file(self.getContext(), {
-                'featureset_name': self.featureset_name,
-                'workspace_name': self.wsName,
-            })[0]
-        expected = open('data/test_featureset.tsv').read().replace("<genome_ref>", self.genome_ref)
-        self.assertEqual(open(res['file_path']).read(), expected)
-        pprint(res)
-        # test bad input
-        with self.assertRaises(ValueError):
-            self.getImpl().featureset_to_tsv_file(self.getContext(), {
-                'input_ref': self.wsName + '/' + self.featureset_name
-            })
-
-    def test_export_tsv(self):
-        res = self.getImpl().export_featureset_as_tsv_file(self.getContext(), {
-                'input_ref': self.wsName + '/' + self.featureset_name
-            })
-        pprint(res)
-        # test bad input
-        with self.assertRaises(ValueError):
-            self.getImpl().export_featureset_as_tsv_file(self.getContext(), {
-                'featureset_name': self.featureset_name,
-                'workspace_name': self.wsName,
-            })

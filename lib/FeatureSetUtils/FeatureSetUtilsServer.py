@@ -351,6 +351,10 @@ class Application(object):
                              name='FeatureSetUtils.filter_expression_matrix_with_feature_set',
                              types=[dict])
         self.method_authentication['FeatureSetUtils.filter_expression_matrix_with_feature_set'] = 'required'  # noqa
+        self.rpc_service.add(impl_FeatureSetUtils.build_feature_set,
+                             name='FeatureSetUtils.build_feature_set',
+                             types=[dict])
+        self.method_authentication['FeatureSetUtils.build_feature_set'] = 'required'  # noqa
         self.rpc_service.add(impl_FeatureSetUtils.featureset_to_tsv_file,
                              name='FeatureSetUtils.featureset_to_tsv_file',
                              types=[dict])
