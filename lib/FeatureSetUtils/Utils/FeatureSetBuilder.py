@@ -347,19 +347,18 @@ class FeatureSetBuilder:
 
         filtered_data['row_ids'] = filtered_row_ids
         filtered_data['values'] = filtered_values
-
-        # we now save the filtering DEM in a EM field added for this purpose
-        if diff_expression_matrix_ref:
-            filtered_expression_matrix_data['diff_expr_matrix_ref'] = diff_expression_matrix_ref
         filtered_expression_matrix_data['data'] = filtered_data
 
-        object_type = expression_matrix_info[2]
+        expression_obj = {'type': expression_matrix_info[2], 'data': filtered_expression_matrix_data,
+                          'name': filtered_expression_matrix_name}
+        # we now save the filtering DEM in a EM field added for this purpose
+        if diff_expression_matrix_ref:
+            expression_obj['data']['diff_expr_matrix_ref'] = diff_expression_matrix_ref
+            expression_obj['extra_provenance_input_refs'] = [diff_expression_matrix_ref]
+
         save_object_params = {
             'id': workspace_id,
-            'objects': [{'type': object_type,
-                         'data': filtered_expression_matrix_data,
-                         'name': filtered_expression_matrix_name
-                         }]}
+            'objects': [expression_obj]}
 
         dfu_oi = self.dfu.save_objects(save_object_params)[0]
         filtered_expression_matrix_ref = "{}/{}/{}".format(dfu_oi[6], dfu_oi[0], dfu_oi[4])
@@ -418,6 +417,67 @@ class FeatureSetBuilder:
         log('all pssible conditon pairs:\n{}'.format(condition_label_pairs))
 
         return condition_label_pairs, available_condition_labels
+
+    def _get_feature_ids(self, genome_ref, ids):
+        """
+        _get_feature_ids: get feature ids from genome
+        """
+
+        genome_features = self.gsu.search({'ref': genome_ref,
+                                           'limit': len(ids),
+                                           'structured_query': {"$or": [{"feature_id": x}
+                                                                        for x in ids]},
+                                           'sort_by': [['feature_id', True]]})['features']
+
+        features_ids = set((feature.get('feature_id') for feature in genome_features))
+
+        return features_ids
+
+    def _build_fs_obj(self, params):
+        new_feature_set = {
+            'description': '',
+            'element_ordering': [],
+            'elements': {}
+        }
+        genome_ref = params['genome']
+        if params.get('base_feature_sets'):
+            base_feature_sets = self.dfu.get_objects(
+                {'object_refs': params['base_feature_sets']}
+            )['data']
+            for ret in base_feature_sets:
+                base_set = ret['data']
+                base_set_name = ret['info'][1]
+
+                new_feature_set['element_ordering'] += [x for x in base_set['element_ordering']
+                                                        if x not in new_feature_set['elements']]
+                for element, genome_refs in base_set['elements'].iteritems():
+                    if element in new_feature_set['elements']:
+                        new_feature_set['elements'][element] += [x for x in genome_refs if x not in
+                                                                 new_feature_set['elements'][
+                                                                     element]]
+                    else:
+                        new_feature_set['elements'][element] = genome_refs
+                new_feature_set['description'] += 'From FeatureSet {}: {}\n'.format(
+                    base_set_name, base_set.get('description'))
+        new_feature_ids = params.get('feature_ids', [])
+        if params.get('feature_ids_custom'):
+            new_feature_ids += params['feature_ids_custom'].split(',')
+        genome_feature_ids = self._get_feature_ids(genome_ref, new_feature_ids)
+        for new_feature in new_feature_ids:
+            if new_feature not in genome_feature_ids:
+                raise ValueError('Feature ID {} does not exist in the supplied genome {}'.format(
+                    new_feature, genome_ref))
+            if new_feature in new_feature_set['elements']:
+                if genome_ref not in new_feature_set['elements'][new_feature]:
+                    new_feature_set['elements'][new_feature].append(genome_ref)
+            else:
+                new_feature_set['elements'][new_feature] = [genome_ref]
+                new_feature_set['element_ordering'].append(new_feature)
+
+        if params.get('description'):
+            new_feature_set['description'] = params['description']
+
+        return new_feature_set
 
     def __init__(self, config):
         self.ws_url = config["workspace-url"]
@@ -555,8 +615,8 @@ class FeatureSetBuilder:
 
         objects_created = [{'ref': filtered_matrix_ref,
                             'description': 'Filtered ExpressionMatrix Object'}]
-        message = "Filtered Expression Matrix based of the feature ids present in {}"\
-            .format(feature_set_name)
+        message = "Filtered Expression Matrix based of the {} feature ids present in {}"\
+            .format(len(feature_ids), feature_set_name)
 
         report_params = {'message': message,
                          'workspace_name': params['workspace_name'],
@@ -604,65 +664,3 @@ class FeatureSetBuilder:
 
         return {'feature_set_ref': feature_set_obj_ref,
                 'report_name': output['name'], 'report_ref': output['ref']}
-
-    def _get_feature_ids(self, genome_ref):
-        """
-        _get_feature_ids: get feature ids from genome
-        """
-
-        feature_num = self.gsu.search({'ref': genome_ref})['num_found']
-
-        genome_features = self.gsu.search({'ref': genome_ref,
-                                           'limit': feature_num,
-                                           'sort_by': [['feature_id', True]]})['features']
-
-        features_ids = set((feature.get('feature_id') for feature in genome_features))
-
-        return features_ids
-
-    def _build_fs_obj(self, params):
-        new_feature_set = {
-            'description': '',
-            'element_ordering': [],
-            'elements': {}
-        }
-        genome_ref = params['genome']
-        if params.get('base_feature_sets'):
-            base_feature_sets = self.dfu.get_objects(
-                {'object_refs': params['base_feature_sets']}
-            )['data']
-            for ret in base_feature_sets:
-                base_set = ret['data']
-                base_set_name = ret['info'][1]
-
-                new_feature_set['element_ordering'] += [x for x in base_set['element_ordering']
-                                                        if x not in new_feature_set['elements']]
-                for element, genome_refs in base_set['elements'].iteritems():
-                    if element in new_feature_set['elements']:
-                        new_feature_set['elements'][element] += [x for x in genome_refs if x not in
-                                                                 new_feature_set['elements'][
-                                                                     element]]
-                    else:
-                        new_feature_set['elements'][element] = genome_refs
-                new_feature_set['description'] += 'From FeatureSet {}: {}\n'.format(
-                    base_set_name, base_set.get('description'))
-        new_feature_ids = params.get('feature_ids', [])
-        if params.get('feature_ids_custom'):
-            new_feature_ids += params['feature_ids_custom'].split(',')
-        genome_feature_ids = self._get_feature_ids(genome_ref)
-        for new_feature in new_feature_ids:
-            if new_feature not in genome_feature_ids:
-                raise ValueError('Feature ID {} does not exist in the supplied genome {}'.format(
-                    new_feature, genome_ref))
-            if new_feature in new_feature_set['elements']:
-                if genome_ref not in new_feature_set['elements'][new_feature]:
-                    new_feature_set['elements'][new_feature].append(genome_ref)
-            else:
-                new_feature_set['elements'][new_feature] = [genome_ref]
-                new_feature_set['element_ordering'].append(new_feature)
-
-        if params.get('description'):
-            new_feature_set['description'] = params['description']
-
-        return new_feature_set
-
