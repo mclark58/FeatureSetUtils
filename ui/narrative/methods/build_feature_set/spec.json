@@ -106,7 +106,7 @@
         },
         {
           "narrative_system_variable": "workspace",
-          "target_property": "out_workspace"
+          "target_property": "workspace_name"
         },
         {
           "input_parameter": "base_feature_sets",

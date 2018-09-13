@@ -543,9 +543,11 @@ class FeatureSetBuilder:
     def filter_matrix_with_fs(self, params):
         self.validate_params(params, ('feature_set_ref', 'workspace_name',
                                       'expression_matrix_ref', 'filtered_expression_matrix_suffix'))
-        feature_set = self.dfu.get_objects(
+        ret = self.dfu.get_objects(
             {'object_refs': [params['feature_set_ref']]}
         )['data'][0]['data']
+        feature_set = ret['data']
+        feature_set_name = ret['info'][1]
         feature_ids = set(feature_set['elements'].keys())
         filtered_matrix_ref = self._filter_expression_matrix(
             params['expression_matrix_ref'], feature_ids, params['workspace_name'],
@@ -553,8 +555,8 @@ class FeatureSetBuilder:
 
         objects_created = [{'ref': filtered_matrix_ref,
                             'description': 'Filtered ExpressionMatrix Object'}]
-        message = "Filtered Expression Matrix {} based of the {} feature ids present in {}"\
-            .format(params['expression_matrix_ref'], len(feature_ids), params['feature_set_ref'])
+        message = "Filtered Expression Matrix based of the feature ids present in {}"\
+            .format(feature_set_name)
 
         report_params = {'message': message,
                          'workspace_name': params['workspace_name'],
