@@ -348,7 +348,7 @@ $returnVal is a FeatureSetUtils.FilterExpressionMatrixWithFeatureSetResult
 FilterExpressionMatrixWithFeatureSetParams is a reference to a hash where the following keys are defined:
 	feature_set_ref has a value which is a FeatureSetUtils.obj_ref
 	expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
-	output_suffix has a value which is a string
+	filtered_expression_matrix_suffix has a value which is a string
 	workspace_name has a value which is a string
 obj_ref is a string
 FilterExpressionMatrixWithFeatureSetResult is a reference to a hash where the following keys are defined:
@@ -367,7 +367,7 @@ $returnVal is a FeatureSetUtils.FilterExpressionMatrixWithFeatureSetResult
 FilterExpressionMatrixWithFeatureSetParams is a reference to a hash where the following keys are defined:
 	feature_set_ref has a value which is a FeatureSetUtils.obj_ref
 	expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
-	output_suffix has a value which is a string
+	filtered_expression_matrix_suffix has a value which is a string
 	workspace_name has a value which is a string
 obj_ref is a string
 FilterExpressionMatrixWithFeatureSetResult is a reference to a hash where the following keys are defined:
@@ -428,6 +428,114 @@ FilterExpressionMatrixWithFeatureSetResult is a reference to a hash where the fo
         Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method filter_expression_matrix_with_feature_set",
 					    status_line => $self->{client}->status_line,
 					    method_name => 'filter_expression_matrix_with_feature_set',
+				       );
+    }
+}
+ 
+
+
+=head2 build_feature_set
+
+  $returnVal = $obj->build_feature_set($params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$params is a FeatureSetUtils.BuildFeatureSetParams
+$returnVal is a FeatureSetUtils.BuildFeatureSetResult
+BuildFeatureSetParams is a reference to a hash where the following keys are defined:
+	genome has a value which is a FeatureSetUtils.obj_ref
+	feature_ids has a value which is a reference to a list where each element is a string
+	feature_ids_custom has a value which is a string
+	base_feature_sets has a value which is a reference to a list where each element is a FeatureSetUtils.obj_ref
+	description has a value which is a string
+	workspace_name has a value which is a string
+	output_feature_set has a value which is a string
+obj_ref is a string
+BuildFeatureSetResult is a reference to a hash where the following keys are defined:
+	feature_set_ref has a value which is a FeatureSetUtils.obj_ref
+	report_name has a value which is a string
+	report_ref has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$params is a FeatureSetUtils.BuildFeatureSetParams
+$returnVal is a FeatureSetUtils.BuildFeatureSetResult
+BuildFeatureSetParams is a reference to a hash where the following keys are defined:
+	genome has a value which is a FeatureSetUtils.obj_ref
+	feature_ids has a value which is a reference to a list where each element is a string
+	feature_ids_custom has a value which is a string
+	base_feature_sets has a value which is a reference to a list where each element is a FeatureSetUtils.obj_ref
+	description has a value which is a string
+	workspace_name has a value which is a string
+	output_feature_set has a value which is a string
+obj_ref is a string
+BuildFeatureSetResult is a reference to a hash where the following keys are defined:
+	feature_set_ref has a value which is a FeatureSetUtils.obj_ref
+	report_name has a value which is a string
+	report_ref has a value which is a string
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+ sub build_feature_set
+{
+    my($self, @args) = @_;
+
+# Authentication: required
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function build_feature_set (received $n, expecting 1)");
+    }
+    {
+	my($params) = @args;
+
+	my @_bad_arguments;
+        (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument 1 \"params\" (value was \"$params\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to build_feature_set:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'build_feature_set');
+	}
+    }
+
+    my $url = $self->{url};
+    my $result = $self->{client}->call($url, $self->{headers}, {
+	    method => "FeatureSetUtils.build_feature_set",
+	    params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'build_feature_set',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method build_feature_set",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'build_feature_set',
 				       );
     }
 }
@@ -744,6 +852,7 @@ an int
 =item Description
 
 An X/Y/Z style reference
+@id ws
 
 
 =item Definition
@@ -988,7 +1097,7 @@ workspace_name: the name of the workspace it gets saved to
 a reference to a hash where the following keys are defined:
 feature_set_ref has a value which is a FeatureSetUtils.obj_ref
 expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
-output_suffix has a value which is a string
+filtered_expression_matrix_suffix has a value which is a string
 workspace_name has a value which is a string
 
 </pre>
@@ -1000,7 +1109,7 @@ workspace_name has a value which is a string
 a reference to a hash where the following keys are defined:
 feature_set_ref has a value which is a FeatureSetUtils.obj_ref
 expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
-output_suffix has a value which is a string
+filtered_expression_matrix_suffix has a value which is a string
 workspace_name has a value which is a string
 
 
@@ -1041,6 +1150,88 @@ report_ref has a value which is a string
 
 a reference to a hash where the following keys are defined:
 filtered_expression_matrix_ref has a value which is a FeatureSetUtils.obj_ref
+report_name has a value which is a string
+report_ref has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 BuildFeatureSetParams
+
+=over 4
+
+
+
+=item Description
+
+base_feature_sets - optional
+description - optional
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+genome has a value which is a FeatureSetUtils.obj_ref
+feature_ids has a value which is a reference to a list where each element is a string
+feature_ids_custom has a value which is a string
+base_feature_sets has a value which is a reference to a list where each element is a FeatureSetUtils.obj_ref
+description has a value which is a string
+workspace_name has a value which is a string
+output_feature_set has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+genome has a value which is a FeatureSetUtils.obj_ref
+feature_ids has a value which is a reference to a list where each element is a string
+feature_ids_custom has a value which is a string
+base_feature_sets has a value which is a reference to a list where each element is a FeatureSetUtils.obj_ref
+description has a value which is a string
+workspace_name has a value which is a string
+output_feature_set has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 BuildFeatureSetResult
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+feature_set_ref has a value which is a FeatureSetUtils.obj_ref
+report_name has a value which is a string
+report_ref has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+feature_set_ref has a value which is a FeatureSetUtils.obj_ref
 report_name has a value which is a string
 report_ref has a value which is a string
 

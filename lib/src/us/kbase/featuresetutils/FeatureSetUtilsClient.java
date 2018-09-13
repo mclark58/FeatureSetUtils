@@ -216,6 +216,23 @@ public class FeatureSetUtilsClient {
     }
 
     /**
+     * <p>Original spec-file function name: build_feature_set</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link us.kbase.featuresetutils.BuildFeatureSetParams BuildFeatureSetParams}
+     * @return   parameter "returnVal" of type {@link us.kbase.featuresetutils.BuildFeatureSetResult BuildFeatureSetResult}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public BuildFeatureSetResult buildFeatureSet(BuildFeatureSetParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<BuildFeatureSetResult>> retType = new TypeReference<List<BuildFeatureSetResult>>() {};
+        List<BuildFeatureSetResult> res = caller.jsonrpcCall("FeatureSetUtils.build_feature_set", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        return res.get(0);
+    }
+
+    /**
      * <p>Original spec-file function name: featureset_to_tsv_file</p>
      * <pre>
      * </pre>

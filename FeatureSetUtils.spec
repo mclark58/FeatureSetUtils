@@ -9,6 +9,7 @@ module FeatureSetUtils {
     typedef int boolean;
 
     /* An X/Y/Z style reference
+        @id ws
     */
     typedef string obj_ref;
 
@@ -120,6 +121,29 @@ module FeatureSetUtils {
     funcdef filter_expression_matrix_with_feature_set(FilterExpressionMatrixWithFeatureSetParams params)
         returns (FilterExpressionMatrixWithFeatureSetResult returnVal) authentication required;
 
+    /*
+        base_feature_sets - optional
+        description - optional
+    */
+    typedef structure {
+        obj_ref genome;
+        list<string> feature_ids;
+        string feature_ids_custom;
+        list<obj_ref> base_feature_sets;
+        string description;
+        string workspace_name;
+        string output_feature_set;
+    } BuildFeatureSetParams;
+
+    typedef structure{
+        obj_ref feature_set_ref;
+        string report_name;
+        string report_ref;
+    } BuildFeatureSetResult;
+
+    funcdef build_feature_set(BuildFeatureSetParams params)
+        returns (BuildFeatureSetResult returnVal) authentication required;
+
     typedef structure {
         string file_path;
     } FeatureSetTsvFiles;
@@ -128,7 +152,6 @@ module FeatureSetUtils {
         string featureset_name;
         string workspace_name;
     } FeatureSetToFileParams;
-
 
     funcdef featureset_to_tsv_file(FeatureSetToFileParams params)
                 returns(FeatureSetTsvFiles files) authentication required;
