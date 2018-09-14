@@ -462,7 +462,8 @@ class FeatureSetBuilder:
         new_feature_ids = params.get('feature_ids', [])
         if params.get('feature_ids_custom'):
             new_feature_ids += params['feature_ids_custom'].split(',')
-        genome_feature_ids = self._get_feature_ids(genome_ref, new_feature_ids)
+        if new_feature_ids:
+            genome_feature_ids = self._get_feature_ids(genome_ref, new_feature_ids)
         for new_feature in new_feature_ids:
             if new_feature not in genome_feature_ids:
                 raise ValueError('Feature ID {} does not exist in the supplied genome {}'.format(
@@ -605,7 +606,7 @@ class FeatureSetBuilder:
                                       'expression_matrix_ref', 'filtered_expression_matrix_suffix'))
         ret = self.dfu.get_objects(
             {'object_refs': [params['feature_set_ref']]}
-        )['data'][0]['data']
+        )['data'][0]
         feature_set = ret['data']
         feature_set_name = ret['info'][1]
         feature_ids = set(feature_set['elements'].keys())
