@@ -492,7 +492,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
         with self.assertRaisesRegexp(ValueError, "does not exist in the supplied genome"):
             input_params = {
                 'genome': self.genome_ref_2,
-                'feature_ids': ["AT2G01021.TAIR10"],
+                'feature_ids': "AT2G01021.TAIR10",
                 'workspace_name': self.getWsName(),
                 'output_feature_set': 'new_feature_set',
             }
@@ -501,7 +501,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
     def test_build_feature_set(self):
         input_params = {
             'genome': self.genome_ref,
-            'feature_ids': ["b2_CDS_1"],
+            'feature_ids': "b2_CDS_1",
             "feature_ids_custom": "b2,b1_CDS_1",
             "base_feature_sets": [self.feature_set_ref, self.feature_set_ref_2],
             'workspace_name': self.getWsName(),

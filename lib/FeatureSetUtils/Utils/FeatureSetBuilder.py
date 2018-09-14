@@ -459,7 +459,9 @@ class FeatureSetBuilder:
                         new_feature_set['elements'][element] = genome_refs
                 new_feature_set['description'] += 'From FeatureSet {}: {}\n'.format(
                     base_set_name, base_set.get('description'))
-        new_feature_ids = params.get('feature_ids', [])
+        new_feature_ids = []
+        if params.get('feature_ids'):
+            new_feature_ids += params['feature_ids'].split(',')
         if params.get('feature_ids_custom'):
             new_feature_ids += params['feature_ids_custom'].split(',')
         if new_feature_ids:
