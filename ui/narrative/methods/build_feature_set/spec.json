@@ -10,7 +10,7 @@
   },
   "parameters" : [ {
     "id" : "input_genome",
-    "optional" : false,
+    "optional" : true,
     "advanced" : false,
     "allow_multiple" : false,
     "default_values" : [ "" ],
@@ -20,7 +20,7 @@
     }
   },{
     "id" : "input_feature_ids",
-    "optional" : false,
+    "optional" : true,
     "advanced" : false,
     "allow_multiple" : false,
     "default_values" : [ "" ],
@@ -106,7 +106,7 @@
         },
         {
           "narrative_system_variable": "workspace",
-          "target_property": "out_workspace"
+          "target_property": "workspace_name"
         },
         {
           "input_parameter": "base_feature_sets",
