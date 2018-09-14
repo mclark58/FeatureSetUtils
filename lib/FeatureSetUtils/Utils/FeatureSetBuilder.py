@@ -653,7 +653,7 @@ class FeatureSetBuilder:
         feature_set_obj_ref = '{}/{}/{}'.format(dfu_oi[6], dfu_oi[0], dfu_oi[4])
 
         objects_created = [{'ref': feature_set_obj_ref,
-                            'description': 'Filtered ExpressionMatrix Object'}]
+                            'description': 'Feature Set'}]
         message = 'A new feature set containing {} features was created.'.format(
             len(new_feature_set['elements']))
 
