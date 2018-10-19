@@ -84,5 +84,11 @@ description : |
     <p><strong>NOTE:</strong> If 'Fold Change Cutoff Type' is linear, app is calulating the base 2 logarithm of the original fold change value. Then app uses this computed value to compare with positive and negative Fold Change Cutoff</p>
 
     <p>This method is one of the steps of the <a href= "http://kbase.us/rna-seq/"> KBase RNA-seq Pipeline </a>, however it can also be run standalone.</p>
-    
+
     <p><strong>Team members who developed & deployed algorithm in KBase:</strong> Tianhao Gu</p>
+
+publications :
+    -
+        display-text: |
+            Arkin AP, Cottingham RW, Henry CS, Harris NL, Stevens RL, Maslov S, et al. KBase: The United States Department of Energy Systems Biology Knowledgebase. Nature Biotechnology. 2018;36: 566. doi: 10.1038/nbt.4163
+        link: https://www.nature.com/articles/nbt.4163
