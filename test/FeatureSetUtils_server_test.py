@@ -313,7 +313,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
 
-
     def test_upload_featureset_from_diff_expr(self):
 
         feature_set_name = 'MyFeatureSet'
@@ -409,7 +408,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
 
-
     def test_upload_featureset_from_diff_expr_partial_conditions(self):
 
         feature_set_name = 'MyFeatureSet'
@@ -439,8 +437,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
         self.assertTrue('filtered_expression_matrix_ref_list' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
-
-
 
     def test_upload_featureset_from_diff_expr_linear(self):
 
