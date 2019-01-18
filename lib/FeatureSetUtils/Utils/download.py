@@ -4,9 +4,9 @@ import shutil
 import uuid
 from collections import defaultdict
 
-from DataFileUtil.DataFileUtilClient import DataFileUtil
-from GenomeSearchUtil.GenomeSearchUtilClient import GenomeSearchUtil
-from Workspace.WorkspaceClient import Workspace
+from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.GenomeSearchUtilClient import GenomeSearchUtil
+from installed_clients.WorkspaceClient import Workspace
 
 
 class FeatureSetDownload:

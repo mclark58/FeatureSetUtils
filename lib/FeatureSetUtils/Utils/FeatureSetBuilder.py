@@ -6,10 +6,10 @@ import re
 import time
 import uuid
 
-from DataFileUtil.DataFileUtilClient import DataFileUtil
-from GenomeSearchUtil.GenomeSearchUtilClient import GenomeSearchUtil
-from KBaseReport.KBaseReportClient import KBaseReport
-from Workspace.WorkspaceClient import Workspace as Workspace
+from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.GenomeSearchUtilClient import GenomeSearchUtil
+from installed_clients.KBaseReportClient import KBaseReport
+from installed_clients.WorkspaceClient import Workspace as Workspace
 
 
 def log(message, prefix_newline=False):
@@ -126,7 +126,7 @@ class FeatureSetBuilder:
             feature_set_name = feature_set_info[1]
 
             elements = feature_set_data.get('elements')
-            feature_ids = elements.keys()
+            feature_ids = list(elements.keys())
 
             uppper_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name,
                                                                                len(feature_ids))
@@ -142,7 +142,7 @@ class FeatureSetBuilder:
             feature_set_name = feature_set_info[1]
 
             elements = feature_set_data.get('elements')
-            feature_ids = elements.keys()
+            feature_ids = list(elements.keys())
 
             lower_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name,
                                                                               len(feature_ids))
@@ -195,7 +195,7 @@ class FeatureSetBuilder:
                                                          diff_expression_ref}]})['data'][0]['data']
 
             label_string = set_item['label']
-            label_list = map(lambda x: x.strip(), label_string.split(','))
+            label_list = [x.strip() for x in label_string.split(',')]
             condition_1 = label_list[0]
             condition_2 = label_list[1]
 
@@ -204,7 +204,7 @@ class FeatureSetBuilder:
                 matrix_data = diff_expression_data['data']
                 selected_diff_expression_ref = diff_expression_ref
 
-                with open(diff_expr_matrix_file, 'ab') as csvfile:
+                with open(diff_expr_matrix_file, 'a') as csvfile:
                     row_ids = matrix_data.get('row_ids')
                     row_values = matrix_data.get('values')
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -237,8 +237,7 @@ class FeatureSetBuilder:
         else:
             workspace_id = self.dfu.ws_name_to_id(workspace_name)
 
-        elements = {}
-        map(lambda feature_id: elements.update({feature_id: [genome_id]}), feature_ids)
+        elements = {feature_id: [genome_id] for feature_id in feature_ids}
         feature_set_data = {'description': 'Generated FeatureSet from DifferentialExpression',
                             'element_ordering': feature_ids,
                             'elements': elements}
@@ -278,8 +277,8 @@ class FeatureSetBuilder:
                 row_q_value = row['q_value']
                 row_fold_change_cutoff = row['log2_fold_change']
 
-                null_value = set(['NA', 'null', ''])
-                col_value = set([row_p_value, row_q_value, row_fold_change_cutoff])
+                null_value = {'NA', 'null', ''}
+                col_value = {row_p_value, row_q_value, row_fold_change_cutoff}
 
                 if not col_value.intersection(null_value):
                     p_value_condition = float(row_p_value) <= comp_p_value
@@ -378,7 +377,7 @@ class FeatureSetBuilder:
         for condition_pair in condition_pairs:
 
             label_string = condition_pair['label_string'][0].strip()
-            label_list = map(lambda x: x.strip(), label_string.split(','))
+            label_list = [x.strip() for x in label_string.split(',')]
             first_label = label_list[0]
             second_label = label_list[1]
 
@@ -412,9 +411,9 @@ class FeatureSetBuilder:
         items = diff_expression_set_data.get('items')
         for item in items:
             label_string = item['label']
-            label_list = map(lambda x: x.strip(), label_string.split(','))
+            label_list = [x.strip() for x in label_string.split(',')]
             condition_label_pairs.append(label_list)
-            map(lambda x: available_condition_labels.add(x), label_list)
+            available_condition_labels |= set(label_list)
 
         log('all pssible conditon pairs:\n{}'.format(condition_label_pairs))
 
@@ -452,7 +451,7 @@ class FeatureSetBuilder:
 
                 new_feature_set['element_ordering'] += [x for x in base_set['element_ordering']
                                                         if x not in new_feature_set['elements']]
-                for element, genome_refs in base_set['elements'].iteritems():
+                for element, genome_refs in base_set['elements'].items():
                     if element in new_feature_set['elements']:
                         new_feature_set['elements'][element] += [x for x in genome_refs if x not in
                                                                  new_feature_set['elements'][
@@ -547,7 +546,7 @@ class FeatureSetBuilder:
                 condition_label_pairs = list()
                 for condition_pair in condition_pairs:
                     label_string = condition_pair['label_string'][0].strip()
-                    condition_labels = map(lambda x: x.strip(), label_string.split(','))
+                    condition_labels = [x.strip() for x in label_string.split(',')]
                     condition_label_pairs.append(condition_labels)
 
         up_feature_set_ref_list = list()

@@ -1,25 +1,18 @@
 # -*- coding: utf-8 -*-
-import unittest
-import os  # noqa: F401
-import json  # noqa: F401
-import time
-import requests  # noqa: F401
+import os
 import shutil
-
+import time
+import unittest
+from configparser import ConfigParser  # py3
 from os import environ
-try:
-    from ConfigParser import ConfigParser  # py2
-except:
-    from configparser import ConfigParser  # py3
+from pprint import pprint  # noqa: F401
 
-from pprint import pprint, pformat  # noqa: F401
-
-from Workspace.WorkspaceClient import Workspace as workspaceService
 from FeatureSetUtils.FeatureSetUtilsImpl import FeatureSetUtils
 from FeatureSetUtils.FeatureSetUtilsServer import MethodContext
 from FeatureSetUtils.authclient import KBaseAuth as _KBaseAuth
-from GenomeFileUtil.GenomeFileUtilClient import GenomeFileUtil
-from DataFileUtil.DataFileUtilClient import DataFileUtil
+from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.GenomeFileUtilClient import GenomeFileUtil
+from installed_clients.WorkspaceClient import Workspace as workspaceService
 
 
 class FeatureSetUtilsTest(unittest.TestCase):
@@ -260,7 +253,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'fold_scale_type': 'linear',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError,
+        with self.assertRaisesRegex(ValueError,
                                      '"fold_scale_type" parameter must be set to "logarithm", if used'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
@@ -270,7 +263,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'q_cutoff': 'q_cutoff',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError,
+        with self.assertRaisesRegex(ValueError,
                                      '"diff_expression_ref" parameter is required, but missing'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
@@ -280,7 +273,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'q_cutoff': 'q_cutoff',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, '"p_cutoff" parameter is required, but missing'):
+        with self.assertRaisesRegex(ValueError, '"p_cutoff" parameter is required, but missing'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
 
@@ -289,7 +282,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'missing_q_cutoff': 'q_cutoff',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError, '"q_cutoff" parameter is required, but missing'):
+        with self.assertRaisesRegex(ValueError, '"q_cutoff" parameter is required, but missing'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
 
@@ -298,7 +291,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'q_cutoff': 'q_cutoff',
                                    'missing_fold_change_cutoff': 'fold_change_cutoff',
                                    'workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError,
+        with self.assertRaisesRegex(ValueError,
                                      '"fold_change_cutoff" parameter is required, but missing'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
@@ -308,7 +301,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                    'q_cutoff': 'q_cutoff',
                                    'fold_change_cutoff': 'fold_change_cutoff',
                                    'missing_workspace_name': 'workspace_name'}
-        with self.assertRaisesRegexp(ValueError,
+        with self.assertRaisesRegex(ValueError,
                                      '"workspace_name" parameter is required, but missing'):
             self.getImpl().upload_featureset_from_diff_expr(self.getContext(),
                                                             invalidate_input_params)
@@ -352,7 +345,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
 
         obj = self.wsClient.get_objects([{'ref': self.diff_expression_set_ref}])[0]
         dl = obj.get('data').get('items')
-        dms = map((lambda r: r.get('ref')),dl)
+        dms = [r.get('ref') for r in dl]
 
         # check each filtered expression matrix in the set:
 
@@ -374,7 +367,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
             # and make sure it matches fem['diff_expr_matrix_ref']
 
             fem_obj = self.wsClient.get_objects([{'ref': fem}] )[0].get('data')
-            self.assertTrue( 'diff_expr_matrix_ref' in fem_obj.keys() )
+            self.assertTrue( 'diff_expr_matrix_ref' in list(fem_obj.keys()) )
             self.assertTrue( fem_obj.get('diff_expr_matrix_ref') == dem_list[0] )
 
     def test_upload_featureset_from_diff_expr_generic(self):
@@ -469,23 +462,23 @@ class FeatureSetUtilsTest(unittest.TestCase):
         self.assertTrue('report_ref' in result)
 
     def test_build_feature_set_invalid(self):
-        with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
+        with self.assertRaisesRegex(ValueError, "not in supplied parameters"):
             input_params = {
                 'output_feature_set': 'new_feature_set',
             }
             self.getImpl().build_feature_set(self.getContext(), input_params)[0]
-        with self.assertRaisesRegexp(ValueError, "not in supplied parameters"):
+        with self.assertRaisesRegex(ValueError, "not in supplied parameters"):
             input_params = {
                 'workspace_name': self.getWsName(),
             }
             self.getImpl().build_feature_set(self.getContext(), input_params)[0]
-        with self.assertRaisesRegexp(ValueError, "at least one feature source"):
+        with self.assertRaisesRegex(ValueError, "at least one feature source"):
             input_params = {
                 'workspace_name': self.getWsName(),
                 'output_feature_set': 'new_feature_set',
             }
             self.getImpl().build_feature_set(self.getContext(), input_params)[0]
-        with self.assertRaisesRegexp(ValueError, "does not exist in the supplied genome"):
+        with self.assertRaisesRegex(ValueError, "does not exist in the supplied genome"):
             input_params = {
                 'genome': self.genome_ref_2,
                 'feature_ids': "AT2G01021.TAIR10",
@@ -512,11 +505,11 @@ class FeatureSetUtilsTest(unittest.TestCase):
             {'object_refs': [result["feature_set_ref"]]}
         )['data'][0]['data']
         pprint(feature_set)
-        expected_elements = [u'AT1G29930.TAIR10', u'AT1G29940.TAIR10', u'b1', u'b1_CDS_1',
+        expected_elements = ['AT1G29930.TAIR10', 'AT1G29940.TAIR10', 'b1', 'b1_CDS_1',
                              'b2_CDS_1', 'b2']
-        self.assertItemsEqual(feature_set['element_ordering'], expected_elements)
-        self.assertItemsEqual(feature_set['elements'].keys(), expected_elements)
-        two_genomes = (u'b1', u'b1_CDS_1')
+        self.assertCountEqual(feature_set['element_ordering'], expected_elements)
+        self.assertCountEqual(list(feature_set['elements'].keys()), expected_elements)
+        two_genomes = ('b1', 'b1_CDS_1')
         for key in two_genomes:
             self.assertEqual(len(feature_set['elements'][key]), 2)
 
@@ -526,7 +519,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                 'workspace_name': self.wsName,
             })[0]
         expected = open('data/test_featureset.tsv').read().replace("<genome_ref>", self.genome_ref_2)
-        self.assertItemsEqual(open(res['file_path']).read().split('\n'), expected.split('\n'))
+        self.assertCountEqual(open(res['file_path']).read().split('\n'), expected.split('\n'))
         pprint(res)
         # test bad input
         with self.assertRaises(ValueError):

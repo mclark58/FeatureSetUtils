@@ -1,10 +1,10 @@
-import time
 import json
+import time
 import uuid
 
-from Workspace.WorkspaceClient import Workspace as Workspace
-from DataFileUtil.DataFileUtilClient import DataFileUtil
-from KBaseReport.KBaseReportClient import KBaseReport
+from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.KBaseReportClient import KBaseReport
+from installed_clients.WorkspaceClient import Workspace as Workspace
 
 
 def log(message, prefix_newline=False):
@@ -116,7 +116,7 @@ class AveExpressionMatrixBuilder:
         ori_row_ids = ori_data['row_ids']
         ori_values = ori_data['values']
 
-        labels = condition_map.keys()
+        labels = list(condition_map.keys())
 
         if set(labels) != set(ori_col_ids):
             error_msg = 'available labels: {}\n'.format(ori_col_ids)
@@ -125,7 +125,7 @@ class AveExpressionMatrixBuilder:
 
         condition_pos = {}
 
-        for label, condition in condition_map.iteritems():
+        for label, condition in condition_map.items():
             if condition not in condition_pos:
                 condition_pos.update({condition: [ori_col_ids.index(label)]})
             else:
@@ -133,12 +133,12 @@ class AveExpressionMatrixBuilder:
                 condition_list.append(ori_col_ids.index(label))
                 condition_pos.update({condition: condition_list})
 
-        conditions = condition_pos.keys()
+        conditions = list(condition_pos.keys())
 
         ave_values = []
         for ori_value in ori_values:
             ave_value = [None] * len(conditions)
-            for condition, poss in condition_pos.iteritems():
+            for condition, poss in condition_pos.items():
                 ave_pos = conditions.index(condition)
                 sum_value = 0.0
                 for pos in poss:
