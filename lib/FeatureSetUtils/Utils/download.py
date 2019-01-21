@@ -61,7 +61,7 @@ class FeatureSetDownload:
 
             for feat in res['features']:
                 features.append({'Feature Id': feat['feature_id'],
-                                 'Aliases': ", ".join(feat['aliases'].keys()),
+                                 'Aliases': ", ".join(sorted(feat['aliases'].keys())),
                                  'Genome': "{} ({})".format(genome_name, genome),
                                  'Type': feat['feature_type'],
                                  'Function': feat['function']

@@ -74,13 +74,6 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                                     'generate_ids_if_needed': "yes",
                                                     'generate_missing_genes': "yes"
                                                     })['genome_ref']
-        cls.genome_ref_2 = cls.gfu.genbank_to_genome({'file': {'path': genbank_file_path},
-                                                    'workspace_name': cls.wsName,
-                                                    'genome_name': 'test_Genome_2',
-                                                    'generate_ids_if_needed': "yes",
-                                                    'generate_missing_genes': "yes"
-                                                    })['genome_ref']
-
         # upload differetial expression object
         dem_data = {
             'data': {'col_ids': ['log2_fold_change', 'p_value', 'q_value'],
@@ -223,8 +216,8 @@ class FeatureSetUtilsTest(unittest.TestCase):
                 "b1",
             ],
             "elements": {
-                "b1": [cls.genome_ref_2],
-                "b1_CDS_1": [cls.genome_ref_2],
+                "b1": [cls.genome_ref],
+                "b1_CDS_1": [cls.genome_ref],
             }
         }
         res = cls.dfu.save_objects({'id': cls.dfu.ws_name_to_id(cls.wsName),
@@ -480,7 +473,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
             self.getImpl().build_feature_set(self.getContext(), input_params)[0]
         with self.assertRaisesRegex(ValueError, "does not exist in the supplied genome"):
             input_params = {
-                'genome': self.genome_ref_2,
+                'genome': self.genome_ref,
                 'feature_ids': "AT2G01021.TAIR10",
                 'workspace_name': self.getWsName(),
                 'output_feature_set': 'new_feature_set',
@@ -509,16 +502,13 @@ class FeatureSetUtilsTest(unittest.TestCase):
                              'b2_CDS_1', 'b2']
         self.assertCountEqual(feature_set['element_ordering'], expected_elements)
         self.assertCountEqual(list(feature_set['elements'].keys()), expected_elements)
-        two_genomes = ('b1', 'b1_CDS_1')
-        for key in two_genomes:
-            self.assertEqual(len(feature_set['elements'][key]), 2)
 
     def test_to_tsv(self):
         res = self.getImpl().featureset_to_tsv_file(self.getContext(), {
                 'featureset_name': self.featureset_name,
                 'workspace_name': self.wsName,
             })[0]
-        expected = open('data/test_featureset.tsv').read().replace("<genome_ref>", self.genome_ref_2)
+        expected = open('data/test_featureset.tsv').read().replace("<genome_ref>", self.genome_ref)
         self.assertCountEqual(open(res['file_path']).read().split('\n'), expected.split('\n'))
         pprint(res)
         # test bad input

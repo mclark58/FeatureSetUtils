@@ -1,24 +1,15 @@
 # -*- coding: utf-8 -*-
-import unittest
 import os  # noqa: F401
-import json  # noqa: F401
 import time
-import requests  # noqa: F401
-import shutil
-
+import unittest
+from configparser import ConfigParser  # py3
 from os import environ
-try:
-    from ConfigParser import ConfigParser  # py2
-except:
-    from configparser import ConfigParser  # py3
 
-from pprint import pprint  # noqa: F401
-
-from biokbase.workspace.client import Workspace as workspaceService
 from FeatureSetUtils.FeatureSetUtilsImpl import FeatureSetUtils
 from FeatureSetUtils.FeatureSetUtilsServer import MethodContext
 from FeatureSetUtils.authclient import KBaseAuth as _KBaseAuth
-from DataFileUtil.DataFileUtilClient import DataFileUtil
+from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.WorkspaceClient import Workspace as workspaceService
 
 
 class FeatureSetUtilsTest(unittest.TestCase):
@@ -147,7 +138,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
         data = self.dfu.get_objects({'object_refs':
                                     [average_expression_matrix_ref]})['data'][0]['data']
 
-        print data
+        print(data)
 
         self.assertTrue('condition_mapping' in data)
         self.assertTrue('data' in data)
@@ -163,9 +154,9 @@ class FeatureSetUtilsTest(unittest.TestCase):
         expected_row_ids = ['gene_1', 'gene_2', 'gene_3']
         expected_values = [[2.0, 3.0], [0.2, 0.3], [0.3, 0.2]]
 
-        self.assertItemsEqual(col_ids, expected_col_ids)
-        self.assertItemsEqual(row_ids, expected_row_ids)
-        self.assertItemsEqual(values, expected_values)
+        self.assertCountEqual(col_ids, expected_col_ids)
+        self.assertCountEqual(row_ids, expected_row_ids)
+        self.assertCountEqual(values, expected_values)
 
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
