@@ -441,7 +441,7 @@ class FeatureSetBuilder:
             'elements': {}
         }
         genome_ref = params['genome']
-        if params.get('base_feature_sets'):
+        if params.get('base_feature_sets', []) and None not in params['base_feature_sets']:
             base_feature_sets = self.dfu.get_objects(
                 {'object_refs': params['base_feature_sets']}
             )['data']
