@@ -24,9 +24,9 @@ class FeatureSetUtils:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "1.2.2"
+    VERSION = "1.2.5"
     GIT_URL = "https://github.com/kbaseapps/FeatureSetUtils.git"
-    GIT_COMMIT_HASH = "03ae93744d6a3abd6cf317974c8bd26811126f05"
+    GIT_COMMIT_HASH = "e2f0a6b1af993103b9d217c61ee10512ef23b412"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
@@ -91,7 +91,7 @@ class FeatureSetUtils:
         print('--->\nRunning FeatureSetUtils.upload_featureset_from_diff_expr\nparams:')
         print(json.dumps(params, indent=1))
 
-        for key, value in params.iteritems():
+        for key, value in params.items():
             if isinstance(value, str):
                 params[key] = value.strip()
 
@@ -130,7 +130,7 @@ class FeatureSetUtils:
         print('--->\nRunning FeatureSetUtils.calculate_average_expression_matrix\nparams:')
         print(json.dumps(params, indent=1))
 
-        for key, value in params.iteritems():
+        for key, value in params.items():
             if isinstance(value, str):
                 params[key] = value.strip()
 

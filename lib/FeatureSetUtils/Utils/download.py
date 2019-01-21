@@ -4,9 +4,9 @@ import shutil
 import uuid
 from collections import defaultdict
 
-from DataFileUtil.DataFileUtilClient import DataFileUtil
-from GenomeSearchUtil.GenomeSearchUtilClient import GenomeSearchUtil
-from Workspace.WorkspaceClient import Workspace
+from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.GenomeSearchUtilClient import GenomeSearchUtil
+from installed_clients.WorkspaceClient import Workspace
 
 
 class FeatureSetDownload:
@@ -61,7 +61,7 @@ class FeatureSetDownload:
 
             for feat in res['features']:
                 features.append({'Feature Id': feat['feature_id'],
-                                 'Aliases': ", ".join(feat['aliases'].keys()),
+                                 'Aliases': ", ".join(sorted(feat['aliases'].keys())),
                                  'Genome': "{} ({})".format(genome_name, genome),
                                  'Type': feat['feature_type'],
                                  'Function': feat['function']

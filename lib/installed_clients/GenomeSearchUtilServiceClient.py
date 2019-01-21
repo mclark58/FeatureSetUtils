@@ -6,15 +6,15 @@
 #
 ############################################################
 
-from __future__ import print_function
+
 # the following is a hack to get the baseclient to import whether we're in a
 # package or not. This makes pep8 unhappy hence the annotations.
 try:
     # baseclient and this client are in a package
     from .baseclient import BaseClient as _BaseClient  # @UnusedImport
-except:
+except ImportError:
     # no they aren't
-    from baseclient import BaseClient as _BaseClient  # @Reimport
+    from .baseclient import BaseClient as _BaseClient  # @Reimport
 
 
 class GenomeSearchUtil(object):
@@ -23,7 +23,7 @@ class GenomeSearchUtil(object):
             self, url=None, timeout=30 * 60, user_id=None,
             password=None, token=None, ignore_authrc=False,
             trust_all_ssl_certificates=False,
-            auth_svc='https://kbase.us/services/authorization/Sessions/Login',
+            auth_svc='https://ci.kbase.us/services/auth/api/legacy/KBase/Sessions/Login',
             service_ver='release'):
         if url is None:
             url = 'https://kbase.us/services/service_wizard'
@@ -75,9 +75,8 @@ class GenomeSearchUtil(object):
            Long, parameter "ontology_terms" of mapping from String to String,
            parameter "num_found" of Long
         """
-        return self._client.call_method(
-            'GenomeSearchUtil.search',
-            [params], self._service_ver, context)
+        return self._client.call_method('GenomeSearchUtil.search',
+                                        [params], self._service_ver, context)
 
     def search_region(self, params, context=None):
         """
@@ -116,9 +115,8 @@ class GenomeSearchUtil(object):
            parameter "ontology_terms" of mapping from String to String,
            parameter "num_found" of Long
         """
-        return self._client.call_method(
-            'GenomeSearchUtil.search_region',
-            [params], self._service_ver, context)
+        return self._client.call_method('GenomeSearchUtil.search_region',
+                                        [params], self._service_ver, context)
 
     def search_contigs(self, params, context=None):
         """
@@ -144,9 +142,8 @@ class GenomeSearchUtil(object):
            parameter "contig_id" of String, parameter "length" of Long,
            parameter "feature_count" of Long, parameter "num_found" of Long
         """
-        return self._client.call_method(
-            'GenomeSearchUtil.search_contigs',
-            [params], self._service_ver, context)
+        return self._client.call_method('GenomeSearchUtil.search_contigs',
+                                        [params], self._service_ver, context)
 
     def status(self, context=None):
         return self._client.call_method('GenomeSearchUtil.status',
