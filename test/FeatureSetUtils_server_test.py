@@ -483,7 +483,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
     def test_build_feature_set(self):
         input_params = {
             'genome': self.genome_ref,
-            'feature_ids': "b2_CDS_1",
+            'feature_ids': ["b2_CDS_1"],
             "feature_ids_custom": "b2,b1_CDS_1",
             "base_feature_sets": [self.feature_set_ref, self.feature_set_ref_2],
             'workspace_name': self.getWsName(),
