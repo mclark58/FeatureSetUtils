@@ -462,7 +462,10 @@ class FeatureSetBuilder:
                     base_set_name, base_set.get('description'))
         new_feature_ids = []
         if params.get('feature_ids'):
-            new_feature_ids += params['feature_ids']
+            if isinstance(params['feature_ids'], str):
+                new_feature_ids += params['feature_ids'].split(',')
+            else:
+                new_feature_ids += params['feature_ids']
         if params.get('feature_ids_custom'):
             new_feature_ids += params['feature_ids_custom'].split(',')
         if new_feature_ids:
