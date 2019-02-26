@@ -83,7 +83,7 @@ class FeatureSetUtilsTest(unittest.TestCase):
                                 [0.6, 0.6, 0.6]],
                      'row_ids': ['AT2G01021.TAIR10', 'AT1G29930.TAIR10',
                                  'AT1G29920.TAIR10', 'AT1G29940.TAIR10']},
-            'condition_mapping': {'test_condition_1': 'test_condition_2'},
+            'condition_mapping': {'test condition 1!': 'test condition 2!'},
             'type': 'log2_level',
             'scale': '1.0',
             'genome_ref': cls.genome_ref
