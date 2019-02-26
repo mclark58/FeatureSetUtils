@@ -3,6 +3,7 @@ import errno
 import logging
 import os
 import re
+import string
 import time
 import uuid
 
@@ -15,6 +16,13 @@ from installed_clients.WorkspaceClient import Workspace as Workspace
 def log(message, prefix_newline=False):
     """Logging function, provides a hook to suppress or redirect log messages."""
     print(('\n' if prefix_newline else '') + '{0:.2f}'.format(time.time()) + ': ' + str(message))
+
+
+def _sanitize_name(ws_name):
+    """Translates some invalid characters when we can,  strips the rest"""
+    trans_dict = str.maketrans({"\t": "_", " ": "_", "/": "|"})
+    permited_char = set(string.ascii_letters + string.digits + "_-.|")
+    return "".join((x for x in ws_name.translate(trans_dict) if x in permited_char))
 
 
 class FeatureSetBuilder:
@@ -415,7 +423,7 @@ class FeatureSetBuilder:
             condition_label_pairs.append(label_list)
             available_condition_labels |= set(label_list)
 
-        log('all pssible conditon pairs:\n{}'.format(condition_label_pairs))
+        log('all possible condition pairs:\n{}'.format(condition_label_pairs))
 
         return condition_label_pairs, available_condition_labels
 
@@ -578,7 +586,7 @@ class FeatureSetBuilder:
 
             feature_set_suffix = params.get('feature_set_suffix', "")
             up_feature_set_name = "{}_{}_up{}".format(
-                diff_expression_set_name, condition_string, feature_set_suffix)
+                diff_expression_set_name, _sanitize_name(condition_string), feature_set_suffix)
             up_feature_set_ref = self._generate_feature_set(up_feature_ids,
                                                             genome_id,
                                                             params.get('workspace_name'),
@@ -586,7 +594,7 @@ class FeatureSetBuilder:
             up_feature_set_ref_list.append(up_feature_set_ref)
 
             down_feature_set_name = "{}_{}_down{}".format(
-                diff_expression_set_name, condition_string, feature_set_suffix)
+                diff_expression_set_name, _sanitize_name(condition_string), feature_set_suffix)
             down_feature_set_ref = self._generate_feature_set(down_feature_ids,
                                                               genome_id,
                                                               params.get('workspace_name'),
