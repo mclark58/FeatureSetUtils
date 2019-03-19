@@ -575,7 +575,7 @@ class FeatureSetBuilder:
                                                                 params.get('p_cutoff'),
                                                                 params.get('q_cutoff'),
                                                                 params.get('fold_change_cutoff'))
-            filtered_em_name = condition_string + params.get('filtered_expression_matrix_suffix')
+            filtered_em_name = _sanitize_name(condition_string) + params.get('filtered_expression_matrix_suffix')
             if params.get('expression_matrix_ref'):
                 filtered_expression_matrix_ref = self._filter_expression_matrix(
                                                 params.get('expression_matrix_ref'),
