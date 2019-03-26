@@ -43,9 +43,9 @@ parameters :
 
     fold_change_cutoff :
         ui-name : |
-            Fold Change Cutoff
+            Log2 Fold Change Cutoff
         short-hint : |
-            Absolute value of fold change cutoff
+            Fold change cutoff on log2 scale
 
     feature_set_suffix :
         ui-name : |
