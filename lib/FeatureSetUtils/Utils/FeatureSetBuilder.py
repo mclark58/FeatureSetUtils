@@ -3,18 +3,26 @@ import errno
 import logging
 import os
 import re
+import string
 import time
 import uuid
 
-from DataFileUtil.DataFileUtilClient import DataFileUtil
-from GenomeSearchUtil.GenomeSearchUtilClient import GenomeSearchUtil
-from KBaseReport.KBaseReportClient import KBaseReport
-from Workspace.WorkspaceClient import Workspace as Workspace
+from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.GenomeSearchUtilClient import GenomeSearchUtil
+from installed_clients.KBaseReportClient import KBaseReport
+from installed_clients.WorkspaceClient import Workspace as Workspace
 
 
 def log(message, prefix_newline=False):
     """Logging function, provides a hook to suppress or redirect log messages."""
     print(('\n' if prefix_newline else '') + '{0:.2f}'.format(time.time()) + ': ' + str(message))
+
+
+def _sanitize_name(ws_name):
+    """Translates some invalid characters when we can,  strips the rest"""
+    trans_dict = str.maketrans({"\t": "_", " ": "_", "/": "|"})
+    permited_char = set(string.ascii_letters + string.digits + "_-.|")
+    return "".join((x for x in ws_name.translate(trans_dict) if x in permited_char))
 
 
 class FeatureSetBuilder:
@@ -126,7 +134,7 @@ class FeatureSetBuilder:
             feature_set_name = feature_set_info[1]
 
             elements = feature_set_data.get('elements')
-            feature_ids = elements.keys()
+            feature_ids = list(elements.keys())
 
             uppper_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name,
                                                                                len(feature_ids))
@@ -142,7 +150,7 @@ class FeatureSetBuilder:
             feature_set_name = feature_set_info[1]
 
             elements = feature_set_data.get('elements')
-            feature_ids = elements.keys()
+            feature_ids = list(elements.keys())
 
             lower_feature_content += '<tr><td>{}</td><td>{}</td></tr>'.format(feature_set_name,
                                                                               len(feature_ids))
@@ -195,7 +203,7 @@ class FeatureSetBuilder:
                                                          diff_expression_ref}]})['data'][0]['data']
 
             label_string = set_item['label']
-            label_list = map(lambda x: x.strip(), label_string.split(','))
+            label_list = [x.strip() for x in label_string.split(',')]
             condition_1 = label_list[0]
             condition_2 = label_list[1]
 
@@ -204,7 +212,7 @@ class FeatureSetBuilder:
                 matrix_data = diff_expression_data['data']
                 selected_diff_expression_ref = diff_expression_ref
 
-                with open(diff_expr_matrix_file, 'ab') as csvfile:
+                with open(diff_expr_matrix_file, 'a') as csvfile:
                     row_ids = matrix_data.get('row_ids')
                     row_values = matrix_data.get('values')
                     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -237,8 +245,7 @@ class FeatureSetBuilder:
         else:
             workspace_id = self.dfu.ws_name_to_id(workspace_name)
 
-        elements = {}
-        map(lambda feature_id: elements.update({feature_id: [genome_id]}), feature_ids)
+        elements = {feature_id: [genome_id] for feature_id in feature_ids}
         feature_set_data = {'description': 'Generated FeatureSet from DifferentialExpression',
                             'element_ordering': feature_ids,
                             'elements': elements}
@@ -278,8 +285,8 @@ class FeatureSetBuilder:
                 row_q_value = row['q_value']
                 row_fold_change_cutoff = row['log2_fold_change']
 
-                null_value = set(['NA', 'null', ''])
-                col_value = set([row_p_value, row_q_value, row_fold_change_cutoff])
+                null_value = {'NA', 'null', ''}
+                col_value = {row_p_value, row_q_value, row_fold_change_cutoff}
 
                 if not col_value.intersection(null_value):
                     p_value_condition = float(row_p_value) <= comp_p_value
@@ -301,8 +308,9 @@ class FeatureSetBuilder:
         return list(set(up_feature_ids)), list(set(down_feature_ids))
 
     def _filter_expression_matrix(self, expression_matrix_ref, feature_ids,
-                                  workspace_name, filtered_expression_matrix_suffix,
-                                  diff_expression_matrix_ref=None):
+                                  workspace_name, filtered_expression_matrix_suffix="",
+                                  diff_expression_matrix_ref=None,
+                                  filtered_expression_matrix_name=None):
         """
         _filter_expression_matrix: generated filtered expression matrix
         """
@@ -322,13 +330,14 @@ class FeatureSetBuilder:
 
         expression_matrix_name = expression_matrix_info[1]
 
-        if re.match('.*_*[Ee]xpression_*[Mm]atrix', expression_matrix_name):
-            filtered_expression_matrix_name = re.sub('_*[Ee]xpression_*[Mm]atrix',
-                                                     filtered_expression_matrix_suffix,
-                                                     expression_matrix_name)
-        else:
-            filtered_expression_matrix_name = expression_matrix_name + \
-                filtered_expression_matrix_suffix
+        if not filtered_expression_matrix_name:
+            if re.match('.*_*[Ee]xpression_*[Mm]atrix', expression_matrix_name):
+                filtered_expression_matrix_name = re.sub('_*[Ee]xpression_*[Mm]atrix',
+                                                         filtered_expression_matrix_suffix,
+                                                         expression_matrix_name)
+            else:
+                filtered_expression_matrix_name = expression_matrix_name + \
+                    filtered_expression_matrix_suffix
 
         filtered_expression_matrix_data = expression_matrix_data.copy()
 
@@ -376,7 +385,7 @@ class FeatureSetBuilder:
         for condition_pair in condition_pairs:
 
             label_string = condition_pair['label_string'][0].strip()
-            label_list = map(lambda x: x.strip(), label_string.split(','))
+            label_list = [x.strip() for x in label_string.split(',')]
             first_label = label_list[0]
             second_label = label_list[1]
 
@@ -410,11 +419,11 @@ class FeatureSetBuilder:
         items = diff_expression_set_data.get('items')
         for item in items:
             label_string = item['label']
-            label_list = map(lambda x: x.strip(), label_string.split(','))
+            label_list = [x.strip() for x in label_string.split(',')]
             condition_label_pairs.append(label_list)
-            map(lambda x: available_condition_labels.add(x), label_list)
+            available_condition_labels |= set(label_list)
 
-        log('all pssible conditon pairs:\n{}'.format(condition_label_pairs))
+        log('all possible condition pairs:\n{}'.format(condition_label_pairs))
 
         return condition_label_pairs, available_condition_labels
 
@@ -440,7 +449,7 @@ class FeatureSetBuilder:
             'elements': {}
         }
         genome_ref = params['genome']
-        if params.get('base_feature_sets'):
+        if params.get('base_feature_sets', []) and None not in params['base_feature_sets']:
             base_feature_sets = self.dfu.get_objects(
                 {'object_refs': params['base_feature_sets']}
             )['data']
@@ -450,7 +459,7 @@ class FeatureSetBuilder:
 
                 new_feature_set['element_ordering'] += [x for x in base_set['element_ordering']
                                                         if x not in new_feature_set['elements']]
-                for element, genome_refs in base_set['elements'].iteritems():
+                for element, genome_refs in base_set['elements'].items():
                     if element in new_feature_set['elements']:
                         new_feature_set['elements'][element] += [x for x in genome_refs if x not in
                                                                  new_feature_set['elements'][
@@ -461,7 +470,10 @@ class FeatureSetBuilder:
                     base_set_name, base_set.get('description'))
         new_feature_ids = []
         if params.get('feature_ids'):
-            new_feature_ids += params['feature_ids'].split(',')
+            if isinstance(params['feature_ids'], str):
+                new_feature_ids += params['feature_ids'].split(',')
+            else:
+                new_feature_ids += params['feature_ids']
         if params.get('feature_ids_custom'):
             new_feature_ids += params['feature_ids_custom'].split(',')
         if new_feature_ids:
@@ -545,7 +557,7 @@ class FeatureSetBuilder:
                 condition_label_pairs = list()
                 for condition_pair in condition_pairs:
                     label_string = condition_pair['label_string'][0].strip()
-                    condition_labels = map(lambda x: x.strip(), label_string.split(','))
+                    condition_labels = [x.strip() for x in label_string.split(',')]
                     condition_label_pairs.append(condition_labels)
 
         up_feature_set_ref_list = list()
@@ -553,7 +565,7 @@ class FeatureSetBuilder:
         filtered_expression_matrix_ref_list = list()
 
         for condition_label_pair in condition_label_pairs:
-            condition_string = '_' + '_'.join(condition_label_pair)
+            condition_string = '-'.join(reversed(condition_label_pair))
             diff_expr_matrix_file, genome_id, diff_expr_matrix_ref = self._process_diff_expression(
                                                                 diff_expression_set_ref,
                                                                 result_directory,
@@ -563,28 +575,26 @@ class FeatureSetBuilder:
                                                                 params.get('p_cutoff'),
                                                                 params.get('q_cutoff'),
                                                                 params.get('fold_change_cutoff'))
-            filtered_expression_matrix_suffix = condition_string + \
-                params.get('filtered_expression_matrix_suffix')
+            filtered_em_name = _sanitize_name(condition_string) + params.get('filtered_expression_matrix_suffix')
             if params.get('expression_matrix_ref'):
                 filtered_expression_matrix_ref = self._filter_expression_matrix(
                                                 params.get('expression_matrix_ref'),
                                                 up_feature_ids + down_feature_ids,
-                                                params.get('workspace_name'),
-                                                filtered_expression_matrix_suffix,
-                                                diff_expr_matrix_ref)
+                                                params.get('workspace_name'), "",
+                                                diff_expr_matrix_ref, filtered_em_name)
                 filtered_expression_matrix_ref_list.append(filtered_expression_matrix_ref)
 
-            feature_set_suffix = params.get('feature_set_suffix')
-            up_feature_set_name = diff_expression_set_name + \
-                condition_string + '_up' + feature_set_suffix
+            feature_set_suffix = params.get('feature_set_suffix', "")
+            up_feature_set_name = "{}_{}_up{}".format(
+                diff_expression_set_name, _sanitize_name(condition_string), feature_set_suffix)
             up_feature_set_ref = self._generate_feature_set(up_feature_ids,
                                                             genome_id,
                                                             params.get('workspace_name'),
                                                             up_feature_set_name)
             up_feature_set_ref_list.append(up_feature_set_ref)
 
-            down_feature_set_name = diff_expression_set_name + \
-                condition_string + '_down' + feature_set_suffix
+            down_feature_set_name = "{}_{}_down{}".format(
+                diff_expression_set_name, _sanitize_name(condition_string), feature_set_suffix)
             down_feature_set_ref = self._generate_feature_set(down_feature_ids,
                                                               genome_id,
                                                               params.get('workspace_name'),
@@ -653,7 +663,7 @@ class FeatureSetBuilder:
         feature_set_obj_ref = '{}/{}/{}'.format(dfu_oi[6], dfu_oi[0], dfu_oi[4])
 
         objects_created = [{'ref': feature_set_obj_ref,
-                            'description': 'Filtered ExpressionMatrix Object'}]
+                            'description': 'Feature Set'}]
         message = 'A new feature set containing {} features was created.'.format(
             len(new_feature_set['elements']))
 

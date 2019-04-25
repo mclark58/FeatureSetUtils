@@ -57,7 +57,7 @@
         {
             "id" : "feature_set_suffix",
             "optional" : false,
-            "advanced" : true,
+            "advanced" : false,
             "allow_multiple" : false,
             "default_values" : [ "_feature_set" ],
             "field_type" : "text"
@@ -65,7 +65,7 @@
         {
             "id" : "filtered_expression_matrix_suffix",
             "optional" : false,
-            "advanced" : true,
+            "advanced" : false,
             "allow_multiple" : false,
             "default_values" : [ "_filtered_expression_matrix" ],
             "field_type" : "text"

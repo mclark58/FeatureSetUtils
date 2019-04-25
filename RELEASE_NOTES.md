@@ -4,7 +4,7 @@
 
 - 1.0.1: Add calculate_average_expression_matrix method
 
-- 1.1.0: Add Filtered Expression Matrix From Differential Expression
+- 1.1.0: Add Filtered Expression Matrix From Differential Expression 
 
 - 1.1.2: Fix all 0 expresion matrix value issue
 
@@ -23,3 +23,5 @@
 - 1.2.2: Allow filtering app to work on KBaseMatrices
 
 - 1.2.3: changed citations to PLOS format 
+
+- 1.2.4: Update filtered expression matrix and feature set output names
