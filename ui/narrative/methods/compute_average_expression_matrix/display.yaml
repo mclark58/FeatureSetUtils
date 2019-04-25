@@ -4,7 +4,7 @@
 name: Create Average ExpressionMatrix
 
 tooltip: |
-    Average ExpressionMatrix values based on conditions
+    Create an average ExpressionMatrix data object with one column per condition.
 
 icon: kb_expr-yellow.png
 
@@ -25,24 +25,22 @@ method-suggestions :
 parameters :
     expression_matrix_ref :
         ui-name : |
-            Expression Matrix Object
+            Expression Matrix
         short-hint : |
-            Expression Matrix Object
+            The ExpressionMatrix data object from which the average ExpressionMatrix will be genereated.
 
     output_suffix :
         ui-name : |
             Average Expression Matrix Name Suffix
         short-hint : |
-            Average Expression Matrix Name Suffix
+            The suffix that will be appended to the input ExpressionMatrix name.
 
 description : |
-    <p>This app creates an average ExpressionMatrix from input ExpressionMatrix</p>
+    <p>This App takes as input an ExpressionMatrix object and creates an output ExpressionMatrix object consisting of one column per condition averaged over all the replicates for the given condition. The output matrix, therefore, has the same number of columns as there are conditions.</p>
 
-    <p><strong>NOTE:</strong> The average value is computed by averaging values for each condition from ExpressoinMatrix</p>
+    <p><strong>NOTE:</strong> The average value for a given feature row and a condition column is computed by taking the arithmetic average of the replicate columns associated with the condition and the feature.</p>
 
-    <p>This method is one of the steps of the <a href= "http://kbase.us/rna-seq/"> KBase RNA-seq Pipeline </a>, however it can also be run standalone.</p>
-
-    <p><strong>Team members who developed & deployed algorithm in KBase:</strong> Tianhao Gu</p>
+    <p><strong>Team members who developed &amp; deployed algorithm in KBase:</strong> Tianhao Gu. For questions, please <a href="http://kbase.us/contact-us/">contact us</a>.</p>
 
 publications :
     -

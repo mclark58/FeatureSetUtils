@@ -1,10 +1,10 @@
 #
 # define display information
 #
-name: Create Feature Set/Filtered Expression Matrix From Differential Expression
+name: Create an Upregulated and/or Downregulated FeatureSet and ExpressionMatrix
 
 tooltip: |
-    Create FeatureSet/Filtered Expression Matrix based on given threshold cutoffs
+    Create an upregulated and/or downregulated FeatureSet and ExpressionMatrix from differential expression data based on given cutoffs.
 
 icon: data-yellow.png
 
@@ -27,65 +27,61 @@ parameters :
         ui-name : |
             Differential Expression Matrix Set
         short-hint : |
-            Differential Expression Matrix Set
+            Select the input DifferentialExpressionMatrixSet data object.
 
     expression_matrix_ref :
         ui-name : |
             Expression Matrix
         short-hint : |
-            Expression Matrix
+            Select the input ExpressionMatrix data object.
 
     q_cutoff :
         ui-name : |
             Alpha Cutoff
         short-hint : |
-            q-value (corrected p-value) cutoff
+            The q-value (corrected p-value) cutoff for filtering features.
 
     fold_change_cutoff :
         ui-name : |
             Log2 Fold Change Cutoff
         short-hint : |
-            Fold change cutoff on log2 scale
+            The absolute value of log2 fold change cutoff for filtering features.
 
     feature_set_suffix :
         ui-name : |
             FeatureSet Suffix
         short-hint : |
-            FeatureSet Suffix
+            The suffix that will be appended to the DifferentialExpressionMatrixSet name.
 
     filtered_expression_matrix_suffix :
         ui-name : |
             Filtered ExpressionMatrix Suffix
         short-hint : |
-            Filtered ExpressionMatrix Suffix
+            The suffix that will be appended to the name of pairwise conditions.
 
     run_all_combinations:
         ui-name : |
-          Run All Paired Condition Combinations
+          All Pairwise Conditions
         short-hint : |
-          Run All Paired Condition Combinations
+          Run all paired condition combinations.
 
     label_string:
         ui-name : |
-          Paired Condition
+          Pairwise Condition
         short-hint : |
-          Paired Condition (conditions are separated by comma)
+          The list of paired conditions (separated by commas).
 
 parameter-groups :
     condition_pairs :
-        ui-name : Run Partial Paired Condition Combinations
-        short-hint : Select partial paired condition labels to run (Please uncheck 'Run All Paired Condition Combinations')
+        ui-name : Specific Pairwise Conditions
+        short-hint : Select the specific paired condition labels that you are interested in. Note that when using this parameter, you will need to uncheck the "All Pairwise Conditions" option.
 
 description : |
-    <p>This App filters feature ids from DifferentialExpressoinMatrixSet with input Alpha Cutoff and Fold Change Cutoff. And then produce a subset of ExpressionMatrix only containing those feature ids.</p>
-    <p>It also creates FeatureSet containing filtered feature ids</p>
+    <p>This App selects feature IDs from the input DifferentialExpressionMatrixSet object for features that exhibit an absolute log2 fold change higher than the input cutoff and corrected p-value lower than the input alpha cutoff. It then generates a set of features along with feature type, alias, and associated functional information. </p>
 
-    <p>Up and Down features are determined by comparing original fold change values with positive and negative Fold Change Cutoff</p>
-    <p><strong>NOTE:</strong> If 'Fold Change Cutoff Type' is linear, app is calulating the base 2 logarithm of the original fold change value. Then app uses this computed value to compare with positive and negative Fold Change Cutoff</p>
+    <p>The App also generates a subset ExpressionMatrix by projecting the output features on the input ExpressionMatrix.</p>
 
-    <p>This method is one of the steps of the <a href= "http://kbase.us/rna-seq/"> KBase RNA-seq Pipeline </a>, however it can also be run standalone.</p>
-
-    <p><strong>Team members who developed & deployed algorithm in KBase:</strong> Tianhao Gu</p>
+    <p><strong>NOTE:</strong>The upregulated and downregulated feature sets exhibit positive and negative log fold change, respectively.</p>
 
 publications :
     -
