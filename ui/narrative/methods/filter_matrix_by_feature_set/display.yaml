@@ -1,10 +1,10 @@
 #
 # define display information
 #
-name: Filter Expression Matrix With Feature Set
+name: Filter ExpressionMatrix with FeatureSet
 
 tooltip: |
-    Create a Filtered Expression Matrix matching a provided Feature Set
+    Create a subset of gene expression values including only genes, which match genes provided in a list.
 
 icon: data-yellow.png
 
@@ -28,21 +28,31 @@ parameters :
         ui-name : |
             Expression Matrix
         short-hint : |
-            Expression Matrix
+            The gene expression values.
 
     feature_set_ref :
         ui-name : |
             Feature Set
         short-hint : |
-            The Feature Set which will be used to filter the Expression Matrix
+            The list of genes which will be used to select a subset of gene expression values.
 
     filtered_expression_matrix_suffix :
         ui-name : |
             Filtered ExpressionMatrix Suffix
         short-hint : |
-            Filtered ExpressionMatrix Suffix
+            A suffix to be appended to the input matrix to form the name of the output subset of gene expression values.
 
 description : |
-    <p>This App filters Expression Matrix to contain only the rows present in the supplied Feature Set.</p>
+    <p>This App lets users select a subset of expression values from an ExpressionMatrix which corresponds to a set of genes of interest.</p>
 
-    <p><strong>Team members who developed & deployed algorithm in KBase:</strong> Tianhao Gu</p>
+    <p>It takes two inputs: (i) an ExpressionMatrix object (a table of transcript expression values, where rows correspond to genes and columns correspond to experiment conditions, such as that produced from the <a href=”https://narrative.kbase.us/#catalog/apps/kb_stringtie/run_stringtie/release”>StringTie</a> or <a href=”https://narrative.kbase.us/#catalog/apps/kb_cufflinks/assemble_transcripts_using_cufflinks/release”>Cufflinks</a> Apps; and (ii) a genome FeatureSet, such as that produced by <a href=”https://narrative.kbase.us/#catalog/apps/FeatureSetUtils/build_feature_set/release”>Build FeatureSet from Genome<a> or one of the BLAST or HMMER search Apps.</p>
+
+    <p>This App produces a new, smaller ExpressionMatrix object (its name formed from the input matrix and the input suffix), which has only those rows corresponding to the genes in the input feature set.</p>
+
+    <p><strong>Team members who developed &amp; deployed algorithm in KBase:</strong> James Jeffryes. For questions, please <a href=”http://kbase.us/contact-us/”>contact us</a>.</p>
+
+publications :
+    -
+        display-text: |
+            Arkin AP, Cottingham RW, Henry CS, Harris NL, Stevens RL, Maslov S, et al. KBase: The United States Department of Energy Systems Biology Knowledgebase. Nature Biotechnology. 2018;36: 566. doi: 10.1038/nbt.4163
+        link: https://www.nature.com/articles/nbt.4163
