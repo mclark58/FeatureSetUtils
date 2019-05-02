@@ -45,7 +45,7 @@ parameters :
 description : |
     <p>This App lets users select a subset of expression values from an ExpressionMatrix which corresponds to a set of genes of interest.</p>
 
-    <p>It takes two inputs: (i) an ExpressionMatrix object (a table of transcript expression values, where rows correspond to genes and columns correspond to experiment conditions, such as that produced from the <a href=”https://narrative.kbase.us/#catalog/apps/kb_stringtie/run_stringtie/release”>StringTie</a> or <a href=”https://narrative.kbase.us/#catalog/apps/kb_cufflinks/assemble_transcripts_using_cufflinks/release”>Cufflinks</a> Apps; and (ii) a genome FeatureSet, such as that produced by <a href=”https://narrative.kbase.us/#catalog/apps/FeatureSetUtils/build_feature_set/release”>Build FeatureSet from Genome<a> or one of the BLAST or HMMER search Apps.</p>
+    <p>It takes two inputs: (i) an ExpressionMatrix object (a table of transcript expression values, where rows correspond to genes and columns correspond to experiment conditions, such as that produced from the <a href=”https://narrative.kbase.us/#catalog/apps/kb_stringtie/run_stringtie/release”>StringTie</a> or <a href=”https://narrative.kbase.us/#catalog/apps/kb_cufflinks/assemble_transcripts_using_cufflinks/release”>Cufflinks</a> Apps; and (ii) a genome FeatureSet, such as that produced by <a href=”https://narrative.kbase.us/#catalog/apps/FeatureSetUtils/build_feature_set/release”>Build FeatureSet from Genome</a> or one of the BLAST or HMMER search Apps.</p>
 
     <p>This App produces a new, smaller ExpressionMatrix object (its name formed from the input matrix and the input suffix), which has only those rows corresponding to the genes in the input feature set.</p>
 
