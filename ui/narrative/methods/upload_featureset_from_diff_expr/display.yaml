@@ -1,10 +1,10 @@
 #
 # define display information
 #
-name: Create an Upregulated and/or Downregulated FeatureSet and ExpressionMatrix
+name: Create Up/Down Regulated FeatureSet and ExpressionMatrix
 
 tooltip: |
-    Create an upregulated and/or downregulated FeatureSet and ExpressionMatrix from differential expression data based on given cutoffs.
+    Create up/down regulated FeatureSet and ExpressionMatrix from differential expression data based on given cutoffs. 
 
 icon: data-yellow.png
 
